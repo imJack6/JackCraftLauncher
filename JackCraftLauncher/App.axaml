@@ -6,6 +6,6 @@
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.Styles>
-        <themes:MaterialTheme BaseTheme="Inherit" PrimaryColor="Yellow" SecondaryColor="Lime" />
+        <themes:MaterialTheme BaseTheme="Inherit" PrimaryColor="Amber" SecondaryColor="Green" />
     </Application.Styles>
 </Application>
