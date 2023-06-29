@@ -1,1 +1,1 @@
-# JackCraftLauncher
+# JackCraft Launcher
