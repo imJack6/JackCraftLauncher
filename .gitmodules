@@ -1,0 +1,3 @@
+[submodule "ProjBobcat"]
+	path = ProjBobcat
+	url = https://github.com/Corona-Studio/ProjBobcat.git
