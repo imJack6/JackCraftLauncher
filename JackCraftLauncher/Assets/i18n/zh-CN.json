@@ -1,3 +1,18 @@
 ﻿{
-  "Language": "语言"
+  "StartGame": "开始游戏",
+  "Login": "登录",
+  "Start": "开始",
+  "Download": "下载",
+  "Setting": "设置",
+  "Loading": "加载中",
+  "LoginSuccess": "登录成功",
+  "LoginFail": "登录失败",
+  "StartingGame": "正在启动游戏",
+  "Launcher": "启动器",
+  "Success": "成功",
+  "Fail": "失败",
+  "ResourceCompletion": "资源补全",
+  "Completed": "完成",
+  "Retry": "重试",
+  "Error": "错误"
 }

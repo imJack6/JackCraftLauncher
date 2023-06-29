@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Text;
-using Avalonia;
 using Avalonia.Platform;
-using Newtonsoft.Json;
 
 namespace JackCraftLauncher.Localizer;
 
