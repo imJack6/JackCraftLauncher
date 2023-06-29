@@ -1,0 +1,18 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i18N="clr-namespace:JackCraftLauncher.Localizer"
+             xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="JackCraftLauncher.Views.MainMenus.StartGameMenu">
+    <Grid>
+        <TextBlock Text="{i18N:Localize StartingGame}" Margin="20" Classes="Headline4" />
+        <controls:Card Padding="0"
+                       Margin="20,75,20,20"
+                       CornerRadius="15">
+            <ListBox Name="StartGameLogListBox"
+                     SelectionChanged="StartGameLogListBox_OnSelectionChanged" />
+        </controls:Card>
+    </Grid>
+</UserControl>
