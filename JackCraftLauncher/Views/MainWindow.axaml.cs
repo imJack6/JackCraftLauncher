@@ -1,9 +1,14 @@
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using DialogHostAvalonia;
+using JackCraftLauncher.Class;
 using JackCraftLauncher.Class.Launch;
-using ProjBobcat.Class.Model;
+using JackCraftLauncher.Class.Models;
+using JackCraftLauncher.Views.MainMenus;
+using ProjBobcat.Platforms.Windows;
 
 namespace JackCraftLauncher.Views;
 
@@ -52,11 +57,36 @@ public partial class MainWindow : Window
         DownloadRadioButton.IsEnabled = false;
         SettingRadioButton.IsEnabled = false;
         StartGameButton.IsEnabled = false;
-        MenuTabControl.SelectedIndex = 4;
         StartGameMenuItem.ClearStartGameLog();
         try
         {
-            await GameHandler.StartGame(new VersionInfo());
+            if (StartMenu.Instance!.EditionSelectTabControl.SelectedIndex == 0)
+            {
+                if (StartMenu.Instance.LocalGameListBox.SelectedIndex == -1)
+                {
+                    DialogHost.Show(new WarningTemplateModel(Localizer.Localizer.Instance["NoVersionSelected"],Localizer.Localizer.Instance["SelectJavaEditionGameVersion"]), "MainDialogHost");
+                }
+                else
+                {
+                    MenuTabControl.SelectedIndex = 4;
+                    await GameHandler.StartGame(
+                        GlobalVariable.LocalGameList[StartMenu.Instance!.LocalGameListBox.SelectedIndex]);
+                }
+            }
+            else if (StartMenu.Instance.EditionSelectTabControl.SelectedIndex == 1)
+            {
+                await GameHandler.CheckMCBedrockInstalled();
+                if (StartMenu.Instance.NotFoundMinecraftBedrockEditionTextBlock.IsVisible)
+                {
+                    await Task.Delay(1);
+                    DialogHost.Show(new WarningTemplateModel(Localizer.Localizer.Instance["MinecraftBedrockEditionNotInstalled"],Localizer.Localizer.Instance["NotFoundMinecraftBedrockEdition"]), "MainDialogHost");
+                }
+                else
+                {
+                    MenuTabControl.SelectedIndex = 4;
+                    await GameHandler.StartBedrockGame();
+                }
+            }
         }
         finally
         {
@@ -92,6 +122,17 @@ public partial class MainWindow : Window
 
     private void TitleBar_OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
+        MoveDragWindow(e);
+    }
+
+    private void DialogHost_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (DialogHost.IsDialogOpen("MainDialogHost"))
+            MoveDragWindow(e);
+    }
+
+    private void MoveDragWindow(PointerPressedEventArgs e)
+    {
         if (e.ClickCount <= 1)
             BeginMoveDrag(e);
         else if (e.ClickCount == 2)
@@ -100,6 +141,6 @@ public partial class MainWindow : Window
             else if (WindowState == WindowState.Normal)
                 WindowState = WindowState.Maximized;
     }
-
+    
     #endregion
 }

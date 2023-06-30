@@ -5,6 +5,8 @@
         xmlns:i18N="clr-namespace:JackCraftLauncher.Localizer"
         xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
         xmlns:mainMenus="clr-namespace:JackCraftLauncher.Views.MainMenus"
+        xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
+        xmlns:models="clr-namespace:JackCraftLauncher.Class.Models"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         MinWidth="550" MinHeight="300"
         x:Class="JackCraftLauncher.Views.MainWindow"
@@ -12,125 +14,148 @@
         ExtendClientAreaToDecorationsHint="True"
         Icon="/Assets/JackCraft-2-Shadow.png"
         Title="JackCraftLauncher">
-
-    <controls:SnackbarHost HostName="Root" TemplateApplied="TemplatedControl_OnTemplateApplied">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="50" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="60" />
-            </Grid.RowDefinitions>
-            <!--中间-->
-            <Grid Grid.Row="1">
-                <TabControl Margin="0,-15,0,0"
-                            Padding="0,15,0,0"
-                            SelectedIndex="1"
-                            Name="MenuTabControl">
-                    <TabItem IsVisible="False">
-                        <mainMenus:LoginMenu Name="LoginMenuItem" />
-                    </TabItem>
-                    <TabItem IsVisible="False">
-                        <mainMenus:StartMenu Name="StartMenuItem" />
-                    </TabItem>
-                    <TabItem IsVisible="False">
-                        <mainMenus:DownloadMenu Name="DownloadMenuItem" />
-                    </TabItem>
-                    <TabItem IsVisible="False">
-                        <mainMenus:SettingMenu Name="SettingMenuItem" />
-                    </TabItem>
-                    <TabItem IsVisible="False">
-                        <mainMenus:StartGameMenu Name="StartGameMenuItem" />
-                    </TabItem>
-                </TabControl>
-            </Grid>
-            <!--标题栏-->
-            <controls:Card Grid.Row="0"
-                           Margin="0,-10,0,0"
-                           PointerPressed="TitleBar_OnPointerPressed"
-                           CornerRadius="15">
-                <Grid Margin="5,10,5,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0"
-                                Orientation="Horizontal"
-                                VerticalAlignment="Center"
-                                Spacing="5">
-                        <Image Source="/Assets/JackCraft-2-64p.png"
-                               VerticalAlignment="Center" />
-                        <TextBlock Text="JackCraft Launcher"
-                                   Classes="Headline6"
+    <Window.DataTemplates>
+        <DataTemplate DataType="models:WarningTemplateModel">
+            <StackPanel Margin="10"
+                        Spacing="5">
+                <TextBlock TextAlignment="Left"
+                           Classes="Headline5"
+                           Text="{i18N:Localize Warning}"
+                           Margin="0,0,0,5" />
+                <TextBlock Classes="Headline6"
+                           TextAlignment="Center"
+                           Text="{Binding Header1}" />
+                <TextBlock Classes="Body1"
+                           TextAlignment="Center"
+                           Text="{Binding Content1}"
+                           Margin="0,0,0,5" />
+                <Button Content="{i18N:Localize OK}"
+                        HorizontalAlignment="Right"
+                        Theme="{StaticResource FlatButton}"
+                        Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=dialogHostAvalonia:DialogHost}, Path=CloseDialogCommand}" />
+            </StackPanel>
+        </DataTemplate>
+    </Window.DataTemplates>
+    <dialogHostAvalonia:DialogHost Identifier="MainDialogHost" PointerPressed="DialogHost_OnPointerPressed">
+        <controls:SnackbarHost HostName="Root" TemplateApplied="TemplatedControl_OnTemplateApplied">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="60" />
+                </Grid.RowDefinitions>
+                <!--中间-->
+                <Grid Grid.Row="1">
+                    <TabControl Margin="0,-15,0,0"
+                                Padding="0,15,0,0"
+                                SelectedIndex="1"
+                                Name="MenuTabControl">
+                        <TabItem IsVisible="False">
+                            <mainMenus:LoginMenu Name="LoginMenuItem" />
+                        </TabItem>
+                        <TabItem IsVisible="False">
+                            <mainMenus:StartMenu Name="StartMenuItem" />
+                        </TabItem>
+                        <TabItem IsVisible="False">
+                            <mainMenus:DownloadMenu Name="DownloadMenuItem" />
+                        </TabItem>
+                        <TabItem IsVisible="False">
+                            <mainMenus:SettingMenu Name="SettingMenuItem" />
+                        </TabItem>
+                        <TabItem IsVisible="False">
+                            <mainMenus:StartGameMenu Name="StartGameMenuItem" />
+                        </TabItem>
+                    </TabControl>
+                </Grid>
+                <!--标题栏-->
+                <controls:Card Grid.Row="0"
+                               Margin="0,-10,0,0"
+                               PointerPressed="TitleBar_OnPointerPressed"
+                               CornerRadius="15">
+                    <Grid Margin="5,10,5,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0"
+                                    Orientation="Horizontal"
+                                    VerticalAlignment="Center"
+                                    Spacing="5">
+                            <Image Source="/Assets/JackCraft-2-64p.png"
                                    VerticalAlignment="Center" />
-                    </StackPanel>
-                    <StackPanel Grid.Column="2"
-                                Orientation="Horizontal"
-                                VerticalAlignment="Center"
-                                Spacing="5">
-                        <Button Background="#FEBC2E" Click="WindowMinimizedButton_OnClick" Width="30" Height="20"
-                                CornerRadius="25" />
-                        <Button Background="#28C840" Click="WindowMaximizedButton_OnClick" Width="30" Height="20"
-                                CornerRadius="25" />
-                        <Button Background="#FF5F57" Click="WindowCloseButton_OnClick" Width="40" Height="20"
-                                CornerRadius="25" />
-                    </StackPanel>
-                </Grid>
-            </controls:Card>
-            <!--底部-->
-            <controls:Card Grid.Row="2"
-                           Margin="0,0,0,-10"
-                           CornerRadius="15">
-                <Grid Margin="5,0,5,10">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <RadioButton Grid.Column="0"
-                                 GroupName="MainMenuRadioButtonGroup"
-                                 Theme="{StaticResource OutlineButton}"
-                                 Classes="accent"
-                                 Content="{i18N:Localize Login}"
-                                 Click="MenuRadioButton_Click"
-                                 Name="LoginRadioButton"
-                                 Width="130"
-                                 CornerRadius="16" />
-                    <controls:Card Grid.Column="1"
-                                   Padding="0"
-                                   InsideClipping="True"
-                                   CornerRadius="25"
-                                   HorizontalAlignment="Center">
-                        <controls:Card.Styles>
-                            <Style Selector="RadioButton">
-                                <Setter Property="Theme" Value="{StaticResource RadioButton}" />
-                            </Style>
-                        </controls:Card.Styles>
-                        <StackPanel Orientation="Horizontal">
-                            <RadioButton GroupName="MainMenuRadioButtonGroup" MinWidth="80"
-                                         HorizontalContentAlignment="Center" Content="{i18N:Localize Start}"
-                                         Name="StartRadioButton"
-                                         Click="MenuRadioButton_Click"
-                                         IsChecked="True" />
-                            <RadioButton GroupName="MainMenuRadioButtonGroup" MinWidth="80"
-                                         Name="DownloadRadioButton"
-                                         Click="MenuRadioButton_Click"
-                                         HorizontalContentAlignment="Center" Content="{i18N:Localize Download}" />
-                            <RadioButton GroupName="MainMenuRadioButtonGroup" MinWidth="80"
-                                         Name="SettingRadioButton"
-                                         Click="MenuRadioButton_Click"
-                                         HorizontalContentAlignment="Center" Content="{i18N:Localize Setting}" />
+                            <TextBlock Text="JackCraft Launcher"
+                                       Classes="Headline6"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
-                    </controls:Card>
-                    <Button Grid.Column="2"
-                            Width="130"
-                            Classes="accent"
-                            Name="StartGameButton"
-                            Click="StartGameButton_OnClick"
-                            Content="{i18N:Localize StartGame}"
-                            CornerRadius="16" />
-                </Grid>
-            </controls:Card>
-        </Grid>
-    </controls:SnackbarHost>
+                        <StackPanel Grid.Column="2"
+                                    Orientation="Horizontal"
+                                    VerticalAlignment="Center"
+                                    Spacing="5">
+                            <Button Background="#FEBC2E" Click="WindowMinimizedButton_OnClick" Width="30" Height="20"
+                                    CornerRadius="25" />
+                            <Button Background="#28C840" Click="WindowMaximizedButton_OnClick" Width="30" Height="20"
+                                    CornerRadius="25" />
+                            <Button Background="#FF5F57" Click="WindowCloseButton_OnClick" Width="40" Height="20"
+                                    CornerRadius="25" />
+                        </StackPanel>
+                    </Grid>
+                </controls:Card>
+                <!--底部-->
+                <controls:Card Grid.Row="2"
+                               Margin="0,0,0,-10"
+                               CornerRadius="15">
+                    <Grid Margin="5,0,5,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <RadioButton Grid.Column="0"
+                                     GroupName="MainMenuRadioButtonGroup"
+                                     Theme="{StaticResource OutlineButton}"
+                                     Classes="accent"
+                                     Content="{i18N:Localize Login}"
+                                     Click="MenuRadioButton_Click"
+                                     Name="LoginRadioButton"
+                                     Width="130"
+                                     CornerRadius="16" />
+                        <controls:Card Grid.Column="1"
+                                       Padding="0"
+                                       InsideClipping="True"
+                                       CornerRadius="25"
+                                       HorizontalAlignment="Center">
+                            <controls:Card.Styles>
+                                <Style Selector="RadioButton">
+                                    <Setter Property="Theme" Value="{StaticResource RadioButton}" />
+                                </Style>
+                            </controls:Card.Styles>
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton GroupName="MainMenuRadioButtonGroup" MinWidth="80"
+                                             HorizontalContentAlignment="Center" Content="{i18N:Localize Start}"
+                                             Name="StartRadioButton"
+                                             Click="MenuRadioButton_Click"
+                                             IsChecked="True" />
+                                <RadioButton GroupName="MainMenuRadioButtonGroup" MinWidth="80"
+                                             Name="DownloadRadioButton"
+                                             Click="MenuRadioButton_Click"
+                                             HorizontalContentAlignment="Center" Content="{i18N:Localize Download}" />
+                                <RadioButton GroupName="MainMenuRadioButtonGroup" MinWidth="80"
+                                             Name="SettingRadioButton"
+                                             Click="MenuRadioButton_Click"
+                                             HorizontalContentAlignment="Center" Content="{i18N:Localize Setting}" />
+                            </StackPanel>
+                        </controls:Card>
+                        <Button Grid.Column="2"
+                                Width="130"
+                                Classes="accent"
+                                Name="StartGameButton"
+                                Click="StartGameButton_OnClick"
+                                Content="{i18N:Localize StartGame}"
+                                CornerRadius="16" />
+                    </Grid>
+                </controls:Card>
+            </Grid>
+        </controls:SnackbarHost>
+    </dialogHostAvalonia:DialogHost>
 </Window>

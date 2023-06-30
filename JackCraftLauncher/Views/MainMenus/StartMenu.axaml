@@ -3,10 +3,104 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
+             xmlns:i18N="clr-namespace:JackCraftLauncher.Localizer"
+             xmlns:class="clr-namespace:JackCraftLauncher.Class"
+             xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="JackCraftLauncher.Views.MainMenus.StartMenu">
+    <UserControl.Resources>
+        <!-- ReSharper disable once Xaml.RedundantResource -->
+        <StackPanel x:Key="LoadingView" Spacing="15" Margin="20">
+            <TextBlock HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Classes="Headline6"
+                       Text="{i18N:Localize Loading}"/>
+            <ProgressBar Classes="circular"
+                         IsIndeterminate="True"
+                         Height="25"
+                         Width="25"/>
+        </StackPanel>
+    </UserControl.Resources>
     <Grid>
         <controls:Card Padding="0"
-                       Margin="30" />
+                       Name="RootCard"
+                       CornerRadius="15"
+                       Margin="20">
+            <TabControl Name="EditionSelectTabControl" SelectionChanged="EditionSelectTabControl_OnSelectionChanged">
+                <TabItem Header="Minecraft: Java Edition">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Expander Grid.Row="1"
+                                  Name="GameListExpander"
+                                  VerticalAlignment="Bottom"
+                                  ExpandDirection="Down">
+                            <Expander.Header>
+                                <StackPanel HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Orientation="Horizontal">
+                                    <TextBlock Text="{i18N:Localize GameList}" />
+                                    <TextBlock Text=" " />
+                                    <TextBlock Text="(" />
+                                    <TextBlock Text="{Binding ElementName=LocalGameListBox,Path=ItemCount}" />
+                                    <TextBlock Text=") - " />
+                                    <TextBlock Text="{Binding ElementName=LocalGameListBox,Path=SelectedItem}" />
+                                </StackPanel>
+                            </Expander.Header>
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                          VerticalScrollBarVisibility="Auto">
+                                <StackPanel Orientation="Vertical">
+                                    <ListBox HorizontalAlignment="Stretch"
+                                             Name="LocalGameListBox">
+                                        <ListBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel />
+                                            </ItemsPanelTemplate>
+                                        </ListBox.ItemsPanel>
+                                    </ListBox>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Expander>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Minecraft Bedrock Edition">
+                    <controls:Card Margin="15" VerticalAlignment="Top" Padding="15">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <WrapPanel Grid.Column="0" Orientation="Horizontal">
+                                <TextBlock Classes="Headline6" 
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center"
+                                           TextWrapping="Wrap"
+                                           IsVisible="True"
+                                           Name="NotFoundMinecraftBedrockEditionTextBlock"
+                                           Text="{i18N:Localize NotFoundMinecraftBedrockEdition}" />
+                                <TextBlock Classes="Headline6" 
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center"
+                                           TextWrapping="Wrap"
+                                           IsVisible="False"
+                                           Name="FoundMinecraftBedrockEditionCanStartTextBlock"
+                                           Text="{i18N:Localize FoundMinecraftBedrockEditionCanStart}" />
+                                <Button Theme="{StaticResource FlatButton}"
+                                        Click="RefreshMCBedrockInstalledButton_OnClick"
+                                        Content="{i18N:Localize Refresh}"/>
+                            </WrapPanel>
+                            <Button Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    Name="GoToMicrosoftStoreButton"
+                                    IsVisible="True"
+                                    Click="GoToMicrosoftStoreButton_OnClick"
+                                    Content="{i18N:Localize GoToMicrosoftStore}"/>
+                        </Grid>
+                    </controls:Card>
+                </TabItem>
+            </TabControl>
+        </controls:Card>
     </Grid>
 </UserControl>

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Threading;
+using DialogHostAvalonia;
 using JackCraftLauncher.Views;
+using JackCraftLauncher.Views.MainMenus;
 using ProjBobcat.Class.Helper;
 using ProjBobcat.Class.Model;
 using ProjBobcat.Class.Model.LauncherProfile;
@@ -13,6 +15,7 @@ using ProjBobcat.DefaultComponent.Launch.GameCore;
 using ProjBobcat.DefaultComponent.Logging;
 using ProjBobcat.DefaultComponent.ResourceInfoResolver;
 using ProjBobcat.Interface;
+using ProjBobcat.Platforms.Windows;
 
 namespace JackCraftLauncher.Class.Launch;
 
@@ -136,6 +139,39 @@ public class GameHandler
         });
     }
 
+    public static async Task StartBedrockGame()
+    {
+        var errorI18N = Localizer.Localizer.Instance["Error"];
+        var launcherI18N = Localizer.Localizer.Instance["Launcher"];
+        var uwpCore = new DefaultMineCraftUWPCore();
+        uwpCore.LaunchLogEventDelegate += (sender, eventArgs) =>
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                MainWindow.Instance?.StartGameMenuItem.AddStartGameLog($"[{launcherI18N}] {eventArgs.Item}");
+            });
+        };
+        var result = uwpCore.Launch();
+        
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            if (result.Error != null)
+            {
+                MainWindow.Instance?.StartGameMenuItem.AddStartGameLog(
+                    $"[{launcherI18N}] [{errorI18N}] {result.Error.Error}");
+                MainWindow.Instance?.StartGameMenuItem.AddStartGameLog(
+                    $"[{launcherI18N}] [{errorI18N}] {result.Error.ErrorMessage}");
+                MainWindow.Instance?.StartGameMenuItem.AddStartGameLog(
+                    $"[{launcherI18N}] [{errorI18N}] {result.Error.Cause}");
+            }
+            /*if (logWindow.IsVisible)
+                {
+                    logWindow.LaunchResult = result;
+                    logWindow.Title = $"日志显示 (PID:{result.GameProcess!.Id})";
+                    logWindow.TitleTextBlock.Text = $"日志显示 (PID:{result.GameProcess!.Id})";
+                }*/
+        });
+    }
     public static async Task<DefaultResourceCompleter> GetResourceCompletion(VersionInfo versionInfo)
     {
         var versionManifest = await DownloadSourceHandler
@@ -199,5 +235,29 @@ public class GameHandler
         };
 
         return completer;
+    }
+    public static async Task CheckMCBedrockInstalled()
+    {
+        DialogHost.Show(StartMenu.Instance!.Resources["LoadingView"]!, "MainDialogHost");
+        await Task.Delay(1000);
+        await Task.Run(async () =>
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                if (ProjBobcat.Platforms.Windows.SystemInfoHelper.IsMinecraftUWPInstalled())
+                {
+                    StartMenu.Instance.NotFoundMinecraftBedrockEditionTextBlock.IsVisible = false;
+                    StartMenu.Instance.FoundMinecraftBedrockEditionCanStartTextBlock.IsVisible = true;
+                    StartMenu.Instance.GoToMicrosoftStoreButton.IsVisible = false;
+                }
+                else
+                {
+                    StartMenu.Instance.NotFoundMinecraftBedrockEditionTextBlock.IsVisible = true;
+                    StartMenu.Instance.FoundMinecraftBedrockEditionCanStartTextBlock.IsVisible = false;
+                    StartMenu.Instance.GoToMicrosoftStoreButton.IsVisible = true;
+                }
+            });
+        });
+        DialogHost.Close("MainDialogHost",null);
     }
 }
