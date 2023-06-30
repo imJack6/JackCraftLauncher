@@ -14,5 +14,18 @@
   "ResourceCompletion": "资源补全",
   "Completed": "完成",
   "Retry": "重试",
-  "Error": "错误"
+  "Error": "错误",
+  "Warning": "警告",
+  "GameList": "游戏列表",
+  "OK": "好的",
+  "Refresh": "刷新",
+  "NoVersionSelected": "没有选择版本",
+  "MinecraftBedrockEditionNotInstalled": "基岩版没有找到",
+  "SelectJavaEditionGameVersion": "请先选择Java版要启动的游戏版本",
+  "GoToMicrosoftStore": "前往 Microsoft Store",
+  "AttemptedStartMicrosoftStore": "已尝试启动 Microsoft Store",
+  "NotFoundMinecraftBedrockEdition": "没有在您的电脑上找到 Minecraft基岩版",
+  "FoundMinecraftBedrockEditionCanStart": "已在您的电脑上找到 Minecraft基岩版，并且准备启动",
+  "YourOperatingSystemNotSupported": "不支持您的操作系统",
+  "MinecraftBedrockEditionOnlySupportWindows": "Minecraft基岩版仅支持 Windows 系统"
 }
