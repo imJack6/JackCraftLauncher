@@ -18,11 +18,11 @@ public class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        Core = LaunchHandler.InitLaunch();
+        
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             desktop.MainWindow = new MainWindow();
-
-        Core = LaunchHandler.InitLaunch();
-
+        
         base.OnFrameworkInitializationCompleted();
     }
 }
