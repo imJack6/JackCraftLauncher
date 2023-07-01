@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using DialogHostAvalonia;
+using JackCraftLauncher.Class.Utils;
 using JackCraftLauncher.Views;
 using JackCraftLauncher.Views.MainMenus;
 using ProjBobcat.Class.Helper;
@@ -10,12 +10,12 @@ using ProjBobcat.Class.Model;
 using ProjBobcat.Class.Model.LauncherProfile;
 using ProjBobcat.Class.Model.Mojang;
 using ProjBobcat.DefaultComponent;
-using ProjBobcat.DefaultComponent.Authenticator;
 using ProjBobcat.DefaultComponent.Launch.GameCore;
 using ProjBobcat.DefaultComponent.Logging;
 using ProjBobcat.DefaultComponent.ResourceInfoResolver;
 using ProjBobcat.Interface;
 using ProjBobcat.Platforms.Windows;
+using SystemInfoHelper = ProjBobcat.Platforms.Windows.SystemInfoHelper;
 
 namespace JackCraftLauncher.Class.Launch;
 
@@ -65,11 +65,7 @@ public class GameHandler
             GameName = versionInfo.Name, // 游戏名称
             VersionLocator = core.VersionLocator, // 游戏定位器 
             LauncherName = "JackCraft Launcher",
-            Authenticator = new OfflineAuthenticator
-            {
-                Username = "imJack_",
-                LauncherAccountParser = core.VersionLocator!.LauncherAccountParser
-            }
+            Authenticator = GlobalVariable.AccountAuthenticator // 账户验证器
         };
         core.LaunchLogEventDelegate += (sender, args) =>
         {
@@ -152,7 +148,7 @@ public class GameHandler
             });
         };
         var result = uwpCore.Launch();
-        
+
         Dispatcher.UIThread.InvokeAsync(() =>
         {
             if (result.Error != null)
@@ -172,6 +168,7 @@ public class GameHandler
                 }*/
         });
     }
+
     public static async Task<DefaultResourceCompleter> GetResourceCompletion(VersionInfo versionInfo)
     {
         var versionManifest = await DownloadSourceHandler
@@ -236,6 +233,7 @@ public class GameHandler
 
         return completer;
     }
+
     public static async Task CheckMCBedrockInstalled()
     {
         DialogHost.Show(StartMenu.Instance!.Resources["LoadingView"]!, "MainDialogHost");
@@ -244,7 +242,7 @@ public class GameHandler
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                if (ProjBobcat.Platforms.Windows.SystemInfoHelper.IsMinecraftUWPInstalled())
+                if (SystemInfoHelper.IsMinecraftUWPInstalled())
                 {
                     StartMenu.Instance.NotFoundMinecraftBedrockEditionTextBlock.IsVisible = false;
                     StartMenu.Instance.FoundMinecraftBedrockEditionCanStartTextBlock.IsVisible = true;
@@ -258,6 +256,6 @@ public class GameHandler
                 }
             });
         });
-        DialogHost.Close("MainDialogHost",null);
+        DialogHostUtils.Close();
     }
 }

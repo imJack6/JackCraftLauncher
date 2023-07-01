@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+using Avalonia.Interactivity;
+using JackCraftLauncher.Class.Launch.AuthenticatorHandler;
 
 namespace JackCraftLauncher.Views.MainMenus;
 
@@ -8,10 +9,13 @@ public partial class LoginMenu : UserControl
     public LoginMenu()
     {
         InitializeComponent();
+        Instance = this;
     }
 
-    private void InitializeComponent()
+    public static LoginMenu Instance { get; private set; } = null!;
+
+    private void LogOutOfLoginButton_OnClick(object? sender, RoutedEventArgs e)
     {
-        AvaloniaXamlLoader.Load(this);
+        AccountAuthenticatorHandler.LogOut();
     }
 }

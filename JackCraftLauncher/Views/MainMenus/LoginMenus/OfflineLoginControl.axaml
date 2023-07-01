@@ -1,0 +1,53 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:i18N="clr-namespace:JackCraftLauncher.Localizer"
+             xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" Name="RootControl"
+             x:Class="JackCraftLauncher.Views.MainMenus.LoginMenus.OfflineLoginControl">
+    <UserControl.Resources>
+        <!-- ReSharper disable once Xaml.RedundantResource -->
+        <StackPanel x:Key="EnterUserNameView" Spacing="15" Margin="20">
+            <TextBlock HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Classes="Headline6"
+                       Text="{i18N:Localize PleaseEnterUserName}" />
+            <Button Content="{i18N:Localize OK}"
+                    Margin="0,5,0,0"
+                    Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=dialogHostAvalonia:DialogHost}, Path=CloseDialogCommand}" />
+        </StackPanel>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0"
+                    Margin="30,10,30,0">
+            <avalonia:MaterialIcon Kind="AccountLock"
+                                   Margin="0,5,0,0"
+                                   Width="50"
+                                   Height="50" />
+            <TextBlock Text="{i18N:Localize Login}"
+                       Classes="Headline4"
+                       HorizontalAlignment="Center" />
+            <TextBox UseFloatingWatermark="True"
+                     Classes="clearButton"
+                     Name="UserNameTextBox"
+                     assists:TextFieldAssist.Label="{i18N:Localize UserName}" />
+        </StackPanel>
+        <Button Grid.Row="1"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Bottom"
+                MaxHeight="50"
+                Height="40"
+                MinHeight="30"
+                Margin="30,0,30,20"
+                Click="LoginButton_OnClick"
+                CornerRadius="15"
+                Content="{i18N:Localize Login}" />
+    </Grid>
+</UserControl>

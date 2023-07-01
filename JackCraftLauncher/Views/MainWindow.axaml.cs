@@ -5,10 +5,10 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using DialogHostAvalonia;
 using JackCraftLauncher.Class;
+using JackCraftLauncher.Class.ConfigHandler;
 using JackCraftLauncher.Class.Launch;
 using JackCraftLauncher.Class.Models;
 using JackCraftLauncher.Views.MainMenus;
-using ProjBobcat.Platforms.Windows;
 
 namespace JackCraftLauncher.Views;
 
@@ -19,6 +19,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         Instance = this;
         Localizer.Localizer.Instance.LoadLanguage("zh-CN");
+        DefaultConfigHandler.LoadSettingsConfig();
     }
 
     public static MainWindow? Instance { get; private set; }
@@ -64,13 +65,24 @@ public partial class MainWindow : Window
             {
                 if (StartMenu.Instance.LocalGameListBox.SelectedIndex == -1)
                 {
-                    DialogHost.Show(new WarningTemplateModel(Localizer.Localizer.Instance["NoVersionSelected"],Localizer.Localizer.Instance["SelectJavaEditionGameVersion"]), "MainDialogHost");
+                    DialogHost.Show(
+                        new WarningTemplateModel(Localizer.Localizer.Instance["NoVersionSelected"],
+                            Localizer.Localizer.Instance["SelectJavaEditionGameVersion"]), "MainDialogHost");
                 }
                 else
                 {
-                    MenuTabControl.SelectedIndex = 4;
-                    await GameHandler.StartGame(
-                        GlobalVariable.LocalGameList[StartMenu.Instance!.LocalGameListBox.SelectedIndex]);
+                    if (GlobalVariable.AccountAuthenticator == null)
+                    {
+                        DialogHost.Show(
+                            new WarningTemplateModel(Localizer.Localizer.Instance["NotLogin"],
+                                Localizer.Localizer.Instance["NoAccountLogin"]), "MainDialogHost");
+                    }
+                    else
+                    {
+                        MenuTabControl.SelectedIndex = 4;
+                        await GameHandler.StartGame(
+                            GlobalVariable.LocalGameList[StartMenu.Instance!.LocalGameListBox.SelectedIndex]);
+                    }
                 }
             }
             else if (StartMenu.Instance.EditionSelectTabControl.SelectedIndex == 1)
@@ -79,7 +91,9 @@ public partial class MainWindow : Window
                 if (StartMenu.Instance.NotFoundMinecraftBedrockEditionTextBlock.IsVisible)
                 {
                     await Task.Delay(1);
-                    DialogHost.Show(new WarningTemplateModel(Localizer.Localizer.Instance["MinecraftBedrockEditionNotInstalled"],Localizer.Localizer.Instance["NotFoundMinecraftBedrockEdition"]), "MainDialogHost");
+                    DialogHost.Show(
+                        new WarningTemplateModel(Localizer.Localizer.Instance["MinecraftBedrockEditionNotInstalled"],
+                            Localizer.Localizer.Instance["NotFoundMinecraftBedrockEdition"]), "MainDialogHost");
                 }
                 else
                 {
@@ -141,6 +155,6 @@ public partial class MainWindow : Window
             else if (WindowState == WindowState.Normal)
                 WindowState = WindowState.Maximized;
     }
-    
+
     #endregion
 }

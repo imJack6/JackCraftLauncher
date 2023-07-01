@@ -1,0 +1,101 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
+             xmlns:i18N="clr-namespace:JackCraftLauncher.Localizer"
+             xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="JackCraftLauncher.Views.MainMenus.LoginMenus.MicrosoftLoginControl">
+    <UserControl.Resources>
+    </UserControl.Resources>
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <TabControl>
+                <TabItem Header="登录方式一">
+                    <Grid>
+                        <StackPanel Name="NoLoginType1StackPanel" IsVisible="False">
+                            <controls:Card Margin="20">
+                                <TextBlock Text="此方法需前往浏览器登录，登录完成后无需任何操作。"
+                                           Classes="Headline7"
+                                           Margin="5"
+                                           TextWrapping="Wrap" />
+                            </controls:Card>
+                            <Button HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Bottom"
+                                    MaxHeight="50"
+                                    Height="40"
+                                    MinHeight="30"
+                                    Margin="20,0,20,20"
+                                    Click="LoginType1LoginButton_OnClick"
+                                    CornerRadius="15"
+                                    Content="{i18N:Localize Login}" />
+                        </StackPanel>
+                        <StackPanel Name="LoginType1StackPanel" IsVisible="True">
+                            <controls:Card Margin="20">
+                                <StackPanel Margin="10"
+                                            Spacing="5">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox Grid.Column="0"
+                                                 Classes="outline dense"
+                                                 UseFloatingWatermark="True"
+                                                 Name="LoginType1AddressTextBox"
+                                                 assists:TextFieldAssist.Label="登录地址"
+                                                 IsReadOnly="True" />
+                                        <Button Grid.Column="1"
+                                                Name="LoginType1CopyAddressButton"
+                                                Content="复制"
+                                                Click="LoginType1CopyAddressButton_OnClick"
+                                                CornerRadius="25"
+                                                Margin="5,8,0,0" />
+                                        <Button Grid.Column="2"
+                                                Name="LoginType1OpenAddressButton"
+                                                Content="打开"
+                                                Click="LoginType1OpenAddressButton_OnClick"
+                                                CornerRadius="25"
+                                                Margin="5,8,0,0" />
+                                    </Grid>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox Grid.Column="0"
+                                                 Classes="outline dense"
+                                                 UseFloatingWatermark="True"
+                                                 Name="LoginType1CodeTextBox"
+                                                 assists:TextFieldAssist.Label="登录代码"
+                                                 IsReadOnly="True" />
+                                        <Button Grid.Column="1"
+                                                Name="LoginType1CopyCodeButton"
+                                                Content="复制"
+                                                Click="LoginType1CopyCodeButton_OnClick"
+                                                CornerRadius="25"
+                                                Margin="5,8,0,0" />
+                                    </Grid>
+                                    <TextBox UseFloatingWatermark="True"
+                                             Classes="clearButton"
+                                             Name="LoginType1CodeExpiresInTextBox"
+                                             assists:TextFieldAssist.Label="有效期"
+                                             IsReadOnly="True" />
+                                </StackPanel>
+                            </controls:Card>
+                            <Button Margin="20,0"
+                                    Name="LoginType1CancelLoginButton"
+                                    Click="LoginType1CancelLoginButton_OnClick"
+                                    Height="40"
+                                    CornerRadius="15"
+                                    Content="取消登录" />
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
