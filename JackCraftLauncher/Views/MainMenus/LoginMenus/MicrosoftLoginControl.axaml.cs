@@ -44,11 +44,12 @@ public partial class MicrosoftLoginControl : UserControl
     {
         var currentTime = DateTime.Now;
         var expiresInDateTime = DateTime.Now.AddSeconds(deviceTokenNotifier.ExpiresIn);
+        string expireInSecond = string.Format(Localizer.Localizer.Instance["ExpireInSecond"],deviceTokenNotifier.ExpiresIn,expiresInDateTime);
         Dispatcher.UIThread.InvokeAsync(() =>
         {
             LoginType1AddressTextBox.Text = deviceTokenNotifier.VerificationUri;
             LoginType1CodeTextBox.Text = deviceTokenNotifier.UserCode;
-            LoginType1CodeExpiresInTextBox.Text = $"{deviceTokenNotifier.ExpiresIn} 秒后过期 / {expiresInDateTime}";
+            LoginType1CodeExpiresInTextBox.Text = expireInSecond;
             DialogHostUtils.Close();
         });
         /*Task.Run(async () =>

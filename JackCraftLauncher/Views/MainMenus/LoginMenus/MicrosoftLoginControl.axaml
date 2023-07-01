@@ -12,11 +12,11 @@
     <Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <TabControl>
-                <TabItem Header="登录方式一">
+                <TabItem Header="{i18N:Localize LoginType1}">
                     <Grid>
-                        <StackPanel Name="NoLoginType1StackPanel" IsVisible="False">
+                        <StackPanel Name="NoLoginType1StackPanel" IsVisible="True">
                             <controls:Card Margin="20">
-                                <TextBlock Text="此方法需前往浏览器登录，登录完成后无需任何操作。"
+                                <TextBlock Text="{i18N:Localize ToBrowserLoggingAndNoActionAfter}"
                                            Classes="Headline7"
                                            Margin="5"
                                            TextWrapping="Wrap" />
@@ -31,7 +31,7 @@
                                     CornerRadius="15"
                                     Content="{i18N:Localize Login}" />
                         </StackPanel>
-                        <StackPanel Name="LoginType1StackPanel" IsVisible="True">
+                        <StackPanel Name="LoginType1StackPanel" IsVisible="False">
                             <controls:Card Margin="20">
                                 <StackPanel Margin="10"
                                             Spacing="5">
@@ -45,17 +45,17 @@
                                                  Classes="outline dense"
                                                  UseFloatingWatermark="True"
                                                  Name="LoginType1AddressTextBox"
-                                                 assists:TextFieldAssist.Label="登录地址"
+                                                 assists:TextFieldAssist.Label="{i18N:Localize LoginAddress}"
                                                  IsReadOnly="True" />
                                         <Button Grid.Column="1"
                                                 Name="LoginType1CopyAddressButton"
-                                                Content="复制"
+                                                Content="{i18N:Localize Copy}"
                                                 Click="LoginType1CopyAddressButton_OnClick"
                                                 CornerRadius="25"
                                                 Margin="5,8,0,0" />
                                         <Button Grid.Column="2"
                                                 Name="LoginType1OpenAddressButton"
-                                                Content="打开"
+                                                Content="{i18N:Localize Open}"
                                                 Click="LoginType1OpenAddressButton_OnClick"
                                                 CornerRadius="25"
                                                 Margin="5,8,0,0" />
@@ -70,11 +70,11 @@
                                                  Classes="outline dense"
                                                  UseFloatingWatermark="True"
                                                  Name="LoginType1CodeTextBox"
-                                                 assists:TextFieldAssist.Label="登录代码"
+                                                 assists:TextFieldAssist.Label="{i18N:Localize LoginCode}"
                                                  IsReadOnly="True" />
                                         <Button Grid.Column="1"
                                                 Name="LoginType1CopyCodeButton"
-                                                Content="复制"
+                                                Content="{i18N:Localize Copy}"
                                                 Click="LoginType1CopyCodeButton_OnClick"
                                                 CornerRadius="25"
                                                 Margin="5,8,0,0" />
@@ -82,7 +82,7 @@
                                     <TextBox UseFloatingWatermark="True"
                                              Classes="clearButton"
                                              Name="LoginType1CodeExpiresInTextBox"
-                                             assists:TextFieldAssist.Label="有效期"
+                                             assists:TextFieldAssist.Label="{i18N:Localize PeriodOfValidity}"
                                              IsReadOnly="True" />
                                 </StackPanel>
                             </controls:Card>
@@ -91,7 +91,7 @@
                                     Click="LoginType1CancelLoginButton_OnClick"
                                     Height="40"
                                     CornerRadius="15"
-                                    Content="取消登录" />
+                                    Content="{i18N:Localize CancelLogin}" />
                         </StackPanel>
                     </Grid>
                 </TabItem>

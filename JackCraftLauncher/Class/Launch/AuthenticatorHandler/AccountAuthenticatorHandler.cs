@@ -45,8 +45,7 @@ public class AccountAuthenticatorHandler
 
         if (authResult.AuthStatus != AuthStatus.Succeeded)
         {
-            var loginFailErrorMessage = Localizer.Localizer.Instance["LoginFailErrorMessage1"];
-            loginFailErrorMessage = string.Format(loginFailErrorMessage, authResult.AuthStatus, authResult.Error.Error,
+            var loginFailErrorMessage = string.Format(Localizer.Localizer.Instance["LoginFailErrorMessage1"], authResult.AuthStatus, authResult.Error.Error,
                 authResult.Error.ErrorMessage, authResult.Error.Cause);
             DialogHost.Show(new WarningTemplateModel(Localizer.Localizer.Instance["LoginFail"], loginFailErrorMessage),
                 "MainDialogHost");

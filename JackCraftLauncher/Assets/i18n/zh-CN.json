@@ -70,5 +70,12 @@
   "LoginErrorOrTimeOut": "登录失败或超时",
   "ClipboardError": "剪贴板错误",
   "CopyContentToClipboardError": "在复制内容到剪切板时出现了错误",
-  "ClipboardIsNull": "剪贴板为Null"
+  "ClipboardIsNull": "剪贴板为Null",
+  "LoginType1": "登录方式一",
+  "ToBrowserLoggingAndNoActionAfter": "此方法需前往浏览器登录，登录完成后无需任何操作。",
+  "LoginAddress": "登录地址",
+  "LoginCode": "登录代码",
+  "PeriodOfValidity": "有效期",
+  "CancelLogin": "取消登录",
+  "ExpireInSecond": "{0} 秒后过期 / {1}"
 }
