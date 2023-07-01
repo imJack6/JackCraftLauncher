@@ -2,7 +2,7 @@
 
 public class WarningTemplateModel
 {
-    public WarningTemplateModel(string header1,string content1)
+    public WarningTemplateModel(string header1, string content1)
     {
         Header1 = header1;
         Content1 = content1;
