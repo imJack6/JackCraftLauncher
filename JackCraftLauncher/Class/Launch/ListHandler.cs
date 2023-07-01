@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using JackCraftLauncher.Views.MainMenus;
 using ProjBobcat.Class.Model;
@@ -12,13 +11,13 @@ public class ListHandler
     {
         try
         {
-            List<VersionInfo> gameList = GetLocalGameList();
+            var gameList = GetLocalGameList();
             if (StartMenu.Instance != null)
             {
                 if (gameList == null)
                 {
-                    GlobalVariable.LocalGameList = new();
-                    StartMenu.Instance.LocalGameListBox.ItemsSource = 
+                    GlobalVariable.LocalGameList = new List<VersionInfo>();
+                    StartMenu.Instance.LocalGameListBox.ItemsSource =
                         GlobalVariable.LocalGameList.Select(x => x.Name ?? x.Id).ToList();
                 }
                 else
@@ -26,7 +25,7 @@ public class ListHandler
                     if (GlobalVariable.LocalGameList != gameList)
                     {
                         GlobalVariable.LocalGameList = gameList;
-                        StartMenu.Instance.LocalGameListBox.ItemsSource = 
+                        StartMenu.Instance.LocalGameListBox.ItemsSource =
                             GlobalVariable.LocalGameList.Select(x => x.Name ?? x.Id).ToList();
                     }
                 }
@@ -37,6 +36,7 @@ public class ListHandler
             // ignored
         }
     }
+
     private static List<VersionInfo> GetLocalGameList()
     {
         List<VersionInfo> gameList = null!;
@@ -48,6 +48,7 @@ public class ListHandler
         {
             // ignored
         }
+
         return gameList;
     }
 }

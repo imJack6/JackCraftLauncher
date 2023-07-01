@@ -7,7 +7,6 @@ public partial class StartGameMenu : UserControl
     public StartGameMenu()
     {
         InitializeComponent();
-        Localizer.Localizer.Instance.LoadLanguage("zh-CN");
     }
 
     public void ClearStartGameLog()
