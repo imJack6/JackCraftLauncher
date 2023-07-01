@@ -2,7 +2,55 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:i18N="clr-namespace:JackCraftLauncher.Localizer"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="JackCraftLauncher.Views.MainMenus.SettingMenu">
-    Welcome to Avalonia!
+    <controls:Card Padding="0"
+                   Name="RootCard"
+                   CornerRadius="15"
+                   Margin="20">
+        <StackPanel Spacing="5" Margin="30">
+            <TextBlock Text="{i18N:Localize Theme}"
+                       Classes="Headline4" />
+            <controls:Card Padding="0"
+                           InsideClipping="True"
+                           Height="45"
+                           HorizontalAlignment="Left">
+                <controls:Card.Styles>
+                    <Style Selector="RadioButton">
+                        <Setter Property="Theme" Value="{StaticResource RadioButton}" />
+                    </Style>
+                </controls:Card.Styles>
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton GroupName="ThemeRadioButtonGroup" Name="ThemeFollowSystemModeRadioButton"
+                                 Click="ThemeModeRadioButton_OnClick" IsChecked="True">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <avalonia:MaterialIcon Width="30" Height="30" Kind="ThemeLightDark"
+                                                   VerticalAlignment="Center" />
+                            <TextBlock FontSize="15" Text="{i18N:Localize FollowSystem}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton GroupName="ThemeRadioButtonGroup" Name="ThemeLightModeRadioButton"
+                                 Click="ThemeModeRadioButton_OnClick">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <avalonia:MaterialIcon Width="30" Height="30" Kind="WhiteBalanceSunny"
+                                                   VerticalAlignment="Center" />
+                            <TextBlock FontSize="15" Text="{i18N:Localize ThemeLightMode}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton GroupName="ThemeRadioButtonGroup" Name="ThemeDarkModeRadioButton"
+                                 Click="ThemeModeRadioButton_OnClick">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <avalonia:MaterialIcon Width="30" Height="30" Kind="WeatherNight"
+                                                   VerticalAlignment="Center" />
+                            <TextBlock FontSize="15" Text="{i18N:Localize ThemeDarkMode}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </RadioButton>
+                </StackPanel>
+            </controls:Card>
+
+        </StackPanel>
+    </controls:Card>
 </UserControl>
