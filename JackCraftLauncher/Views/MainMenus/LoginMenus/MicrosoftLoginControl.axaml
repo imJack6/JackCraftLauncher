@@ -8,6 +8,23 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="JackCraftLauncher.Views.MainMenus.LoginMenus.MicrosoftLoginControl">
     <UserControl.Resources>
+        <!-- ReSharper disable once Xaml.RedundantResource -->
+        <StackPanel x:Key="LoadingAndCancelLoginView" 
+                    Spacing="20" 
+                    Margin="15"
+                    Width="70">
+            <TextBlock Text="{i18N:Localize Loading}"
+                       HorizontalAlignment="Center"
+                       Classes="Headline7"/>
+            <ProgressBar Classes="circular"
+                         Width="30"
+                         Height="30"
+                         HorizontalAlignment="Center"
+                         IsIndeterminate="True" />
+            <Button Theme="{StaticResource FlatButton}"
+                    Content="{i18N:Localize Cancel}"
+                    Click="LoadingAndCancelLoginViewCancelButton_OnClick"/>
+        </StackPanel>
     </UserControl.Resources>
     <Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
