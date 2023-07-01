@@ -100,7 +100,8 @@ public class DefaultConfigHandler
             var property = type.GetProperty(propertyNames[i]);
             if (property == null)
             {
-                var PropertyNotFoundInClass = string.Format(Localizer.Localizer.Instance["PropertyNotFoundInClass"], type.Name, propertyNames[i]);
+                var PropertyNotFoundInClass = string.Format(Localizer.Localizer.Instance["PropertyNotFoundInClass"],
+                    type.Name, propertyNames[i]);
                 MyErrorWindow.CreateErrorWindow(
                     ErrorType.InternalError,
                     Localizer.Localizer.Instance["InternalError"],
@@ -129,7 +130,8 @@ public class DefaultConfigHandler
             var property = type.GetProperty(propertyNames[i]);
             if (property == null)
             {
-                var PropertyNotFoundInClass = string.Format(Localizer.Localizer.Instance["PropertyNotFoundInClass"], type.Name, propertyNames[i]);
+                var PropertyNotFoundInClass = string.Format(Localizer.Localizer.Instance["PropertyNotFoundInClass"],
+                    type.Name, propertyNames[i]);
                 MyErrorWindow.CreateErrorWindow(
                     ErrorType.InternalError,
                     Localizer.Localizer.Instance["InternalError"],
@@ -146,7 +148,8 @@ public class DefaultConfigHandler
         var lastProperty = type.GetProperty(propertyNames[propertyNames.Length - 1]);
         if (lastProperty == null)
         {
-            var PropertyNotFoundInClass = string.Format(Localizer.Localizer.Instance["PropertyNotFoundInClass"], type.Name, propertyNames[propertyNames.Length - 1]);
+            var PropertyNotFoundInClass = string.Format(Localizer.Localizer.Instance["PropertyNotFoundInClass"],
+                type.Name, propertyNames[propertyNames.Length - 1]);
             MyErrorWindow.CreateErrorWindow(
                 ErrorType.InternalError,
                 Localizer.Localizer.Instance["InternalError"],

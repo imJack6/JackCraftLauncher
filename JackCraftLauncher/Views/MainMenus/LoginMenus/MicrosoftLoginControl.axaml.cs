@@ -44,7 +44,8 @@ public partial class MicrosoftLoginControl : UserControl
     {
         var currentTime = DateTime.Now;
         var expiresInDateTime = DateTime.Now.AddSeconds(deviceTokenNotifier.ExpiresIn);
-        string expireInSecond = string.Format(Localizer.Localizer.Instance["ExpireInSecond"],deviceTokenNotifier.ExpiresIn,expiresInDateTime);
+        var expireInSecond = string.Format(Localizer.Localizer.Instance["ExpireInSecond"],
+            deviceTokenNotifier.ExpiresIn, expiresInDateTime);
         Dispatcher.UIThread.InvokeAsync(() =>
         {
             LoginType1AddressTextBox.Text = deviceTokenNotifier.VerificationUri;

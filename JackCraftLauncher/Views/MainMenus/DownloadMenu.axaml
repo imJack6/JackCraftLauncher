@@ -8,7 +8,5 @@
     <controls:Card Padding="0"
                    Name="RootCard"
                    CornerRadius="15"
-                   Margin="20">
-        
-    </controls:Card>
+                   Margin="20" />
 </UserControl>
