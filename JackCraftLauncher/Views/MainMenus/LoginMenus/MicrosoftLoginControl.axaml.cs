@@ -42,7 +42,7 @@ public partial class MicrosoftLoginControl : UserControl
 
     private void DeviceTokenNotifier(DeviceIdResponseModel deviceTokenNotifier)
     {
-        var currentTime = DateTime.Now;
+        //var currentTime = DateTime.Now;
         var expiresInDateTime = DateTime.Now.AddSeconds(deviceTokenNotifier.ExpiresIn);
         var expireInSecond = string.Format(Localizer.Localizer.Instance["ExpireInSecond"],
             deviceTokenNotifier.ExpiresIn, expiresInDateTime);

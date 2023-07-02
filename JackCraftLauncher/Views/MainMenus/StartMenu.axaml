@@ -11,7 +11,7 @@
         <StackPanel x:Key="LoadingView" Spacing="20" Margin="15">
             <TextBlock Text="{i18N:Localize Loading}"
                        HorizontalAlignment="Center"
-                       Classes="Headline7"/>
+                       Classes="Headline7" />
             <ProgressBar Classes="circular"
                          Width="30"
                          Height="30"
