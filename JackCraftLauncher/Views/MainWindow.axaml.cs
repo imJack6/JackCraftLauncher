@@ -44,6 +44,7 @@ public partial class MainWindow : Window
                 break;
             case "DownloadRadioButton":
                 MenuTabControl.SelectedIndex = 2;
+                DownloadMenu.RefreshLocalMinecraftDownloadList();
                 break;
             case "SettingRadioButton":
                 MenuTabControl.SelectedIndex = 3;

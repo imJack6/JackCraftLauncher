@@ -3,10 +3,242 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
+             xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+             xmlns:i18N="clr-namespace:JackCraftLauncher.Localizer"
+             xmlns:listTemplate="clr-namespace:JackCraftLauncher.Class.Models.ListTemplate"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="JackCraftLauncher.Views.MainMenus.DownloadMenu">
+    <UserControl.Resources>
+        <!-- ReSharper disable once Xaml.RedundantResource -->
+        <StackPanel x:Key="LoadingAndCancelView"
+                    Spacing="20"
+                    Margin="15"
+                    Width="70">
+            <TextBlock Text="{i18N:Localize Loading}"
+                       HorizontalAlignment="Center"
+                       Classes="Headline7" />
+            <ProgressBar Classes="circular"
+                         Width="30"
+                         Height="30"
+                         HorizontalAlignment="Center"
+                         IsIndeterminate="True" />
+            <Button Theme="{StaticResource FlatButton}"
+                    Content="{i18N:Localize Cancel}"
+                    Click="LoadingAndCancelViewCancelButton_OnClick" />
+        </StackPanel>
+    </UserControl.Resources>
     <controls:Card Padding="0"
                    Name="RootCard"
                    CornerRadius="15"
-                   Margin="20" />
+                   Margin="20">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <StackPanel Margin="20"
+                            Spacing="15" IsVisible="False"
+                            Name="SelectDownloadMinecraftVersionStackPanel">
+                    <controls:Card CornerRadius="16">
+                        <StackPanel Spacing="5">
+                            <TextBlock Text="{i18N:Localize LatestVersion}" Margin="5,0" />
+                            <Button Theme="{StaticResource FlatButton}"
+                                    Name="LatestReleaseVersionButton"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Foreground="{DynamicResource MaterialDesignBody}"
+                                    Click="LatestReleaseVersionButton_OnClick"
+                                    CornerRadius="50">
+                                <Grid Margin="10,0">
+                                    <Image Source="\Assets\Icons\Grass_Block.png"
+                                           Margin="0,0,0,0"
+                                           Height="40"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Left" />
+                                    <TextBlock Text="Latest Release Version&#x0a;yyyy/mm/dd"
+                                               Name="LatestReleaseVersionTextBlock"
+                                               FontSize="12"
+                                               VerticalAlignment="Center"
+                                               Margin="50,0,0,0" />
+                                </Grid>
+                            </Button>
+                            <Button Theme="{StaticResource FlatButton}"
+                                    Name="LatestSnapshotVersionButton"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Foreground="{DynamicResource MaterialDesignBody}"
+                                    Click="LatestSnapshotVersionButton_OnClick"
+                                    CornerRadius="50">
+                                <Grid Margin="10,0">
+                                    <Image Source="\Assets\Icons\Impulse_Command_Block.gif"
+                                           Margin="0,0,0,0"
+                                           Height="40"
+                                           VerticalAlignment="Top"
+                                           HorizontalAlignment="Left" />
+                                    <TextBlock Text="Latest Snapshot Version&#x0a;yyyy/mm/dd"
+                                               Name="LatestSnapshotVersionTextBlock"
+                                               FontSize="12"
+                                               VerticalAlignment="Center"
+                                               Margin="50,0,0,0" />
+                                </Grid>
+                            </Button>
+                        </StackPanel>
+                    </controls:Card>
+                    <StackPanel Spacing="5">
+                        <Expander CornerRadius="16">
+                            <Expander.Header>
+                                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                    <TextBlock Text="{i18N:Localize OfficialVersion}" />
+                                    <TextBlock Text=" (" />
+                                    <TextBlock Text="{Binding ElementName=ReleaseVersionListBox, Path=ItemCount}" />
+                                    <TextBlock Text=")" />
+                                </StackPanel>
+                            </Expander.Header>
+                            <ListBox Name="ReleaseVersionListBox"
+                                     SelectionChanged="VersionListBox_OnSelectionChanged">
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel />
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate x:DataType="listTemplate:DefaultDownloadList">
+                                        <Grid>
+                                            <Image Source="\Assets\Icons\Grass_Block.png" Margin="10,0,0,0"
+                                                   Height="35"
+                                                   HorizontalAlignment="Left" />
+                                            <TextBlock Text="{Binding Path=Version}" FontSize="15"
+                                                       Margin="50,0,0,0"
+                                                       HorizontalAlignment="Left" />
+                                            <TextBlock Text="{Binding Path=Time}" FontSize="12" Margin="51,20,0,0"
+                                                       HorizontalAlignment="Left" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Expander>
+                        <Expander CornerRadius="16">
+                            <Expander.Header>
+                                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                    <TextBlock Text="{i18N:Localize BetaVersion}" />
+                                    <TextBlock Text=" (" />
+                                    <TextBlock Text="{Binding ElementName=SnapshotVersionListBox, Path=ItemCount}" />
+                                    <TextBlock Text=")" />
+                                </StackPanel>
+                            </Expander.Header>
+                            <ListBox Name="SnapshotVersionListBox"
+                                     SelectionChanged="VersionListBox_OnSelectionChanged">
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel />
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate x:DataType="listTemplate:DefaultDownloadList">
+                                        <Grid>
+                                            <Image Source="\Assets\Icons\Impulse_Command_Block.gif"
+                                                   Margin="10,0,0,0"
+                                                   Height="35" HorizontalAlignment="Left" />
+                                            <TextBlock Text="{Binding Path=Version}" FontSize="15"
+                                                       Margin="50,0,0,0"
+                                                       HorizontalAlignment="Left" />
+                                            <TextBlock Text="{Binding Path=Time}" FontSize="12" Margin="51,20,0,0"
+                                                       HorizontalAlignment="Left" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Expander>
+                        <Expander CornerRadius="16">
+                            <Expander.Header>
+                                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                    <TextBlock Text="{i18N:Localize OldVersion}" />
+                                    <TextBlock Text=" (" />
+                                    <TextBlock Text="{Binding ElementName=OldVersionListBox, Path=ItemCount}" />
+                                    <TextBlock Text=")" />
+                                </StackPanel>
+                            </Expander.Header>
+                            <ListBox Name="OldVersionListBox"
+                                     SelectionChanged="VersionListBox_OnSelectionChanged">
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel />
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate x:DataType="listTemplate:DefaultDownloadList">
+                                        <Grid>
+                                            <Image Source="\Assets\Icons\Badlands_Grass_Block.png"
+                                                   Margin="10,0,0,0"
+                                                   Height="35" HorizontalAlignment="Left" />
+                                            <TextBlock Text="{Binding Path=Version}" FontSize="15"
+                                                       Margin="50,0,0,0"
+                                                       HorizontalAlignment="Left" />
+                                            <TextBlock Text="{Binding Path=Time}" FontSize="12" Margin="51,20,0,0"
+                                                       HorizontalAlignment="Left" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Expander>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Margin="20"
+                            IsVisible="True"
+                            Spacing="10"
+                            Name="SelectDownloadAttachmentsStackPanel">
+                    <Button HorizontalAlignment="Left"
+                            Click="BackToSelectVersionButton_Click"
+                            Theme="{StaticResource FlatButton}"
+                            Padding="5">
+                        <avalonia:MaterialIcon Width="45" Height="25" Kind="BackspaceOutline" />
+                    </Button>
+                    <controls:Card CornerRadius="16">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Image Grid.Column="0"
+                                   Source="\Assets\Icons\Grass_Block.png"
+                                   Name="SelectDownloadAttachmentsImage"
+                                   Margin="20,0,0,0"
+                                   Height="40"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Left" />
+                            <StackPanel Grid.Column="1"
+                                        Margin="5,0,10,0"
+                                        VerticalAlignment="Center">
+                                <TextBlock Text="Version"
+                                           Name="InstallMinecraftVersionTextBlock" />
+                                <TextBlock Text="Attachments" IsVisible="False"
+                                           Name="InstallAttachmentsTextBlock" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBox UseFloatingWatermark="True"
+                                         Margin="0,-10,0,0"
+                                         Classes="clearButton"
+                                         Name="DownloadSaveVersionNameTextBox"
+                                         TextChanged="DownloadSaveVersionNameTextBox_OnTextChanged"
+                                         VerticalAlignment="Center"
+                                         assists:TextFieldAssist.Label="{i18N:Localize VersionName}" />
+                                <TextBlock Text="{i18N:Localize PleaseTypeVersionName}"
+                                           Name="PleaseTypeVersionNameTextBlock"
+                                           IsVisible="False" />
+                                <TextBlock Text="{i18N:Localize FolderAlreadyExists}"
+                                           Name="FolderAlreadyExistsTextBlock"
+                                           IsVisible="False" />
+                            </StackPanel>
+                            <Button Grid.Column="3"
+                                    Margin="15,0" VerticalAlignment="Center"
+                                    Name="StartInstallButton"
+                                    Theme="{StaticResource OutlineButton}">
+                                <avalonia:MaterialIcon Width="25" Height="25" Kind="ArrowRight" />
+                            </Button>
+                        </Grid>
+                    </controls:Card>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+    </controls:Card>
 </UserControl>
