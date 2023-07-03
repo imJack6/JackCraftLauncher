@@ -82,7 +82,7 @@ public partial class MainWindow : Window
                     {
                         MenuTabControl.SelectedIndex = 4;
                         await GameHandler.StartGame(
-                            GlobalVariable.LocalGameList[StartMenu.Instance!.LocalGameListBox.SelectedIndex]);
+                            GlobalVariable.LocalGameList[StartMenu.Instance.LocalGameListBox.SelectedIndex]);
                     }
                 }
             }
