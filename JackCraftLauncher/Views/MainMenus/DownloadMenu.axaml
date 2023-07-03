@@ -35,7 +35,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <Grid>
                 <StackPanel Margin="20"
-                            Spacing="15" IsVisible="False"
+                            Spacing="15" IsVisible="True"
                             Name="SelectDownloadMinecraftVersionStackPanel">
                     <controls:Card CornerRadius="16">
                         <StackPanel Spacing="5">
@@ -182,7 +182,7 @@
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Margin="20"
-                            IsVisible="True"
+                            IsVisible="False"
                             Spacing="10"
                             Name="SelectDownloadAttachmentsStackPanel">
                     <Button HorizontalAlignment="Left"
@@ -232,12 +232,42 @@
                             <Button Grid.Column="3"
                                     Margin="15,0" VerticalAlignment="Center"
                                     Name="StartInstallButton"
+                                    Click="StartInstallButton_OnClick"
                                     Theme="{StaticResource OutlineButton}">
                                 <avalonia:MaterialIcon Width="25" Height="25" Kind="ArrowRight" />
                             </Button>
                         </Grid>
                     </controls:Card>
+                    <TextBlock Text="TODO: 其它安装器" />
                 </StackPanel>
+                <Grid Margin="20"
+                      IsVisible="False"
+                      Name="StartInstallGrid">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0"
+                                IsVisible="True"
+                                Spacing="10">
+                        <TextBlock Text="{i18N:Localize Install}"
+                                   Classes="Headline4" />
+                        <TextBlock Text="{i18N:Localize GameIsCurrentlyBeingInstalledAndDoNotExit}" />
+                        <ProgressBar Name="InstallProgressBar"
+                                     Minimum="0"
+                                     Maximum="100"
+                                     Value="0"
+                                     IsIndeterminate="True"
+                                     IsVisible="True" />
+                    </StackPanel>
+                    <controls:Card Grid.Row="1"
+                                   CornerRadius="15"
+                                   Margin="0,20,0,0">
+
+                        <ListBox Name="InstallLogListBox"
+                                 SelectionChanged="InstallLogListBox_OnSelectionChanged" />
+                    </controls:Card>
+                </Grid>
             </Grid>
         </ScrollViewer>
     </controls:Card>

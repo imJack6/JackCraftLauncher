@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using JackCraftLauncher.Class.Launch;
 using JackCraftLauncher.Class.Models.ListTemplate;
+using JackCraftLauncher.Class.Models.MinecraftVersionManifest;
 using JackCraftLauncher.Class.Utils;
 using ProjBobcat.Class.Model;
 using ProjBobcat.Interface;
@@ -28,22 +29,29 @@ public class GlobalVariable
 
     public class MinecraftDownload
     {
-        public static ObservableCollection<DefaultDownloadList> ReleaseVersionDownloadList = new(); // 正式版下载列表
-        public static ObservableCollection<DefaultDownloadList> SnapshotVersionDownloadList = new(); // 测试版下载列表
-        public static ObservableCollection<DefaultDownloadList> OldVersionDownloadList = new(); // 远古版下载列表
+        public static MinecraftVersionManifestModel MinecraftVersionManifestModel { get; set; } =
+            null!; // Minecraft 版本清单
 
-        public static string LatestMinecraftReleaseVersion = string.Empty; // 最新正式版
-        public static string LatestMinecraftSnapshotVersion = string.Empty; // 最新快照版
+        public static ObservableCollection<DefaultDownloadList> ReleaseVersionDownloadList { get; set; } =
+            new(); // 正式版下载列表
 
-        public static List<string> MinecraftIdList = new(); // Minecraft ID 版本列表
-        public static List<string> MinecraftTypeList = new(); // Minecraft Type 类型列表
-        public static List<string> MinecraftUrlList = new(); // Minecraft Url 地址列表
-        public static List<string> MinecraftTimeList = new(); // Minecraft 时间列表
-        public static List<string> MinecraftReleaseTimeList = new(); // Minecraft 发布时间列表
+        public static ObservableCollection<DefaultDownloadList> SnapshotVersionDownloadList { get; set; } =
+            new(); // 测试版下载列表
 
-        public static List<string> MinecraftReleaseList = new(); // Minecraft 正式版列表
-        public static List<string> MinecraftSnapshotList = new(); // Minecraft 快照列表
-        public static List<string> MinecraftOldList = new(); // Minecraft 远古列表
+        public static ObservableCollection<DefaultDownloadList> OldVersionDownloadList { get; set; } = new(); // 远古版下载列表
+
+        public static string LatestMinecraftReleaseVersion { get; set; } = string.Empty; // 最新正式版
+        public static string LatestMinecraftSnapshotVersion { get; set; } = string.Empty; // 最新快照版
+
+        public static List<string> MinecraftIdList { get; set; } = new(); // Minecraft ID 版本列表
+        public static List<string> MinecraftTypeList { get; set; } = new(); // Minecraft Type 类型列表
+        public static List<string> MinecraftUrlList { get; set; } = new(); // Minecraft Url 地址列表
+        public static List<DateTime> MinecraftTimeList { get; set; } = new(); // Minecraft 时间列表
+        public static List<DateTime> MinecraftReleaseTimeList { get; set; } = new(); // Minecraft 发布时间列表
+
+        public static List<string> MinecraftReleaseList { get; set; } = new(); // Minecraft 正式版列表
+        public static List<string> MinecraftSnapshotList { get; set; } = new(); // Minecraft 快照列表
+        public static List<string> MinecraftOldList { get; set; } = new(); // Minecraft 远古列表
     }
 
     #endregion

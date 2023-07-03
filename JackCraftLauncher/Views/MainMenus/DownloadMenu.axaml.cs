@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
@@ -12,6 +13,8 @@ using JackCraftLauncher.Class.Launch;
 using JackCraftLauncher.Class.Models;
 using JackCraftLauncher.Class.Models.ListTemplate;
 using JackCraftLauncher.Class.Utils;
+using ProjBobcat.Class.Helper;
+using ProjBobcat.Class.Model;
 
 namespace JackCraftLauncher.Views.MainMenus;
 
@@ -29,6 +32,17 @@ public partial class DownloadMenu : UserControl
     }
 
     public static DownloadMenu Instance { get; private set; } = null!;
+
+    #region 选择要安装的附加内容界面
+
+    private void StartInstallButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        StartInstall();
+    }
+
+    #endregion
+
+    #region 选择要安装的Minecraft界面
 
     public static async void RefreshLocalMinecraftDownloadList()
     {
@@ -62,7 +76,7 @@ public partial class DownloadMenu : UserControl
         MainWindow.Instance.StartRadioButton.IsChecked = true;
     }
 
-    public void GoToSelectDownloadAttachmentsStackPane(string mcVersion, VersionType versionType)
+    private void GoToSelectDownloadAttachmentsStackPanel(string mcVersion, VersionType versionType)
     {
         switch (versionType)
         {
@@ -136,7 +150,7 @@ public partial class DownloadMenu : UserControl
         {
             var defaultDownloadList = (DefaultDownloadList)listBox.SelectedItem!;
             var selectVersion = defaultDownloadList.Version;
-            GoToSelectDownloadAttachmentsStackPane(selectVersion, defaultDownloadList.versionType);
+            GoToSelectDownloadAttachmentsStackPanel(selectVersion, defaultDownloadList.versionType);
             // InstallVersionName = selectVersion;
             listBox.SelectedIndex = -1;
         }
@@ -144,13 +158,129 @@ public partial class DownloadMenu : UserControl
 
     private void LatestReleaseVersionButton_OnClick(object? sender, RoutedEventArgs e)
     {
-        GoToSelectDownloadAttachmentsStackPane(GlobalVariable.MinecraftDownload.LatestMinecraftReleaseVersion,
+        GoToSelectDownloadAttachmentsStackPanel(GlobalVariable.MinecraftDownload.LatestMinecraftReleaseVersion,
             VersionType.Official);
     }
 
     private void LatestSnapshotVersionButton_OnClick(object? sender, RoutedEventArgs e)
     {
-        GoToSelectDownloadAttachmentsStackPane(GlobalVariable.MinecraftDownload.LatestMinecraftReleaseVersion,
+        GoToSelectDownloadAttachmentsStackPanel(GlobalVariable.MinecraftDownload.LatestMinecraftReleaseVersion,
             VersionType.Beta);
     }
+
+    #endregion
+
+    #region 开始安装界面
+
+    private async void StartInstall()
+    {
+        MainWindow.Instance!.LoginRadioButton.IsEnabled = false;
+        MainWindow.Instance.StartRadioButton.IsEnabled = false;
+        MainWindow.Instance.DownloadRadioButton.IsEnabled = false;
+        MainWindow.Instance.SettingRadioButton.IsEnabled = false;
+        MainWindow.Instance.StartGameButton.IsEnabled = false;
+        SelectDownloadMinecraftVersionStackPanel.IsVisible = false;
+        SelectDownloadAttachmentsStackPanel.IsVisible = false;
+        StartInstallGrid.IsVisible = true;
+        InstallProgressBar.IsIndeterminate = false;
+        InstallProgressBar.Value = 0;
+        ClearInstallLog();
+        try
+        {
+            #region 初始化
+
+            var installMinecraftVersion = InstallMinecraftVersionTextBlock.Text!;
+            var saveVersionName = DownloadSaveVersionNameTextBox.Text!;
+            AddInstallLog(
+                $"[{Localizer.Localizer.Instance["Initialize"]}] {string.Format(Localizer.Localizer.Instance["InstallingMinecraftWithVersionAndName"], installMinecraftVersion, saveVersionName)}");
+            AddInstallLog(
+                $"[{Localizer.Localizer.Instance["Initialize"]}] {string.Format(Localizer.Localizer.Instance["CreateFolder"])}");
+            var folderPath =
+                $"{App.Core.RootPath}{Path.DirectorySeparatorChar}versions{Path.DirectorySeparatorChar}{DownloadSaveVersionNameTextBox.Text}";
+            DirectoryUtils.CreateDirectory(folderPath);
+            InstallProgressBar.Value = 10;
+
+            #endregion
+
+            #region 下载Json
+
+            AddInstallLog(
+                $"[{Localizer.Localizer.Instance["Download"]}] - [{Localizer.Localizer.Instance["Start"]}] JSON - {DownloadSaveVersionNameTextBox.Text}.json");
+            var idToFind = installMinecraftVersion; // 要查找的 id
+            var versionModel =
+                GlobalVariable.MinecraftDownload.MinecraftVersionManifestModel.VersionsModel?.FirstOrDefault(x =>
+                    x.ID == idToFind);
+            var minecraftJsonUrl =
+                DownloadSourceHandler.PistonMetaUrlHandle(GlobalVariable.DownloadSourceEnum, versionModel!.Url!);
+            var downloadSettings = new DownloadSettings
+            {
+                DownloadParts = 32,
+                RetryCount = 2,
+                CheckFile = true,
+                Timeout = (int)TimeSpan.FromMinutes(5).TotalMilliseconds
+            };
+            var downloadFile = new DownloadFile
+            {
+                DownloadUri = minecraftJsonUrl,
+                FileName = $"{saveVersionName}.json",
+                DownloadPath = folderPath,
+                RetryCount = 2
+            };
+            await DownloadHelper.AdvancedDownloadFile(downloadFile, downloadSettings);
+            AddInstallLog(
+                $"[{Localizer.Localizer.Instance["Download"]}] - [{Localizer.Localizer.Instance["Completed"]}] JSON - {DownloadSaveVersionNameTextBox.Text}.json - {Localizer.Localizer.Instance["DownloadCompleted"]}");
+            InstallProgressBar.Value = 20;
+            
+            #endregion
+
+            #region 安装完成
+
+            ListHandler.RefreshLocalGameList();
+            AddInstallLog(
+                $"[{Localizer.Localizer.Instance["Install"]}] - [{Localizer.Localizer.Instance["Completed"]}] {string.Format(Localizer.Localizer.Instance["GameInstallCompleted"], installMinecraftVersion, saveVersionName)}");
+            InstallProgressBar.Value = 100;
+            var timeBack = 3;
+            for (var i = timeBack; i > 0; i--)
+            {
+                AddInstallLog(string.Format(Localizer.Localizer.Instance["ReturnInSeconds"], i));
+                await Task.Delay(1000);
+            }
+
+            #endregion
+        }
+        finally
+        {
+            MainWindow.Instance!.LoginRadioButton.IsEnabled = true;
+            MainWindow.Instance.StartRadioButton.IsEnabled = true;
+            MainWindow.Instance.DownloadRadioButton.IsEnabled = true;
+            MainWindow.Instance.SettingRadioButton.IsEnabled = true;
+            MainWindow.Instance.StartGameButton.IsEnabled = true;
+            SelectDownloadMinecraftVersionStackPanel.IsVisible = true;
+            SelectDownloadAttachmentsStackPanel.IsVisible = false;
+            StartInstallGrid.IsVisible = false;
+            InstallProgressBar.IsIndeterminate = true;
+        }
+    }
+
+    public void ClearInstallLog()
+    {
+        InstallLogListBox.Items.Clear();
+    }
+
+    public void AddInstallLog(string log)
+    {
+        InstallLogListBox.Items.Add(log);
+        if (InstallLogListBox.Scroll != null)
+        {
+            var listboxScroll = (ScrollViewer)InstallLogListBox.Scroll;
+            listboxScroll.ScrollToEnd();
+        }
+    }
+
+    private void InstallLogListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        InstallLogListBox.SelectedIndex = -1;
+    }
+
+    #endregion
 }
