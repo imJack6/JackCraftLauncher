@@ -173,7 +173,9 @@ public class GameHandler
     {
         var versionManifest = await DownloadSourceHandler
             .GetDownloadSource(DownloadSourceHandler.DownloadTargetEnum.VersionInfoV1, null).GetStringAsync();
-        var manifest = JsonConvert.DeserializeObject<VersionManifest>(versionManifest);
+        // Newtonsoft.Json
+        //var manifest = JsonConvert.DeserializeObject<VersionManifest>(versionManifest);
+        var manifest = JsonSerializer.Deserialize<VersionManifest>(versionManifest);
         var versions = manifest!.Versions;
         var basePath = App.Core.RootPath!;
         // Assets 解析器

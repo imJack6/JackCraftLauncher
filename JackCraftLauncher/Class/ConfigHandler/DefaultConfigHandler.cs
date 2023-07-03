@@ -7,7 +7,6 @@ using JackCraftLauncher.Views.MainMenus;
 using JackCraftLauncher.Views.MyWindow;
 using Material.Styles.Themes;
 using Material.Styles.Themes.Base;
-using Newtonsoft.Json.Linq;
 
 namespace JackCraftLauncher.Class.ConfigHandler;
 
@@ -63,7 +62,9 @@ public class DefaultConfigHandler
             var json = File.ReadAllText(ConfigFilePath);
             if (string.IsNullOrWhiteSpace(json))
                 SaveConfig(new Config());
-            return JsonConvert.DeserializeObject<Config>(json)!;
+            // Newtonsoft.Json
+            //return JsonConvert.DeserializeObject<Config>(json)!;
+            return JsonSerializer.Deserialize<Config>(json)!;
         }
         catch (Exception ex)
         {
@@ -85,8 +86,11 @@ public class DefaultConfigHandler
             fileStream.Close();
         }
 
-        var json = JsonConvert.SerializeObject(config);
-        File.WriteAllText(ConfigFilePath, JObject.Parse(json).ToString());
+        // Newtonsoft.Json
+        //var json = JsonConvert.SerializeObject(config);
+        //File.WriteAllText(ConfigFilePath, JObject.Parse(json).ToString());
+        var json = JsonSerializer.Serialize(config);
+        File.WriteAllText(ConfigFilePath, JsonDocument.Parse(json).RootElement.GetRawText());
     }
 
     public static object GetConfig(string propertyName)

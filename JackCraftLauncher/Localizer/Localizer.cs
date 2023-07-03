@@ -38,7 +38,9 @@ public class Localizer : INotifyPropertyChanged
         {
             using (var sr = new StreamReader(AssetLoader.Open(uri), Encoding.UTF8))
             {
-                m_Strings = JsonConvert.DeserializeObject<Dictionary<string, string>>(sr.ReadToEnd());
+                // Newtonsoft.Json
+                //m_Strings = JsonConvert.DeserializeObject<Dictionary<string, string>>(sr.ReadToEnd());
+                m_Strings = JsonSerializer.Deserialize<Dictionary<string, string>>(sr.ReadToEnd());
             }
 
             Invalidate();
