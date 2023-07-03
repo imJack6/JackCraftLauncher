@@ -13,6 +13,7 @@
   "Fail": "失败",
   "ResourceCompletion": "资源补全",
   "Completed": "完成",
+  "DownloadCompleted": "下载完成",
   "Retry": "重试",
   "Error": "错误",
   "Warning": "警告",
@@ -41,6 +42,10 @@
   "OfflineLogin": "离线登录",
   "MicrosoftLogin": "微软登录",
   "ThirdPartyLogin": "第三方登录",
+  "Install": "安装",
+  "GameIsCurrentlyBeingInstalledAndDoNotExit": "您的游戏正在安装，在这期间除非遇到错误，请不要退出",
+  "GameInstallCompleted": "{0} ({1}) 安装完成",
+  "ReturnInSeconds": "{0} 秒后返回",
   "Theme": "主题",
   "ThemeLightMode": "明亮模式",
   "ThemeDarkMode": "暗黑模式",
@@ -89,5 +94,8 @@
   "LoginCode": "登录代码",
   "PeriodOfValidity": "有效期",
   "CancelLogin": "取消登录",
-  "ExpireInSecond": "{0} 秒后过期 / {1}"
+  "ExpireInSecond": "{0} 秒后过期 / {1}",
+  "Initialize": "初始化",
+  "InstallingMinecraftWithVersionAndName": "正在安装Minecraft中: 版本 - {0} | 名称 - {1}",
+  "CreateFolder": "创建文件夹"
 }
