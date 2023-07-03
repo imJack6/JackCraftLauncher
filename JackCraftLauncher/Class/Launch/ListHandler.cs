@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using JackCraftLauncher.Class.Models;
 using JackCraftLauncher.Class.Models.ListTemplate;
+using JackCraftLauncher.Class.Models.MinecraftVersionManifest;
 using JackCraftLauncher.Views.MainMenus;
-using Newtonsoft.Json.Linq;
 using ProjBobcat.Class.Model;
 
 namespace JackCraftLauncher.Class.Launch;
@@ -85,6 +85,91 @@ public class ListHandler
 
         #region 解析版本列表
 
+        if (!string.IsNullOrEmpty(result))
+        {
+            var minecraftVersionManifestModel = JsonSerializer.Deserialize<MinecraftVersionManifestModel>(result)!;
+            GlobalVariable.MinecraftDownload.MinecraftVersionManifestModel = minecraftVersionManifestModel;
+
+            GlobalVariable.MinecraftDownload.LatestMinecraftReleaseVersion =
+                minecraftVersionManifestModel.LatestModel!.Release;
+            GlobalVariable.MinecraftDownload.LatestMinecraftSnapshotVersion =
+                minecraftVersionManifestModel.LatestModel.Snapshot;
+            foreach (var mc in minecraftVersionManifestModel.VersionsModel)
+            {
+                // 添加到数组
+                GlobalVariable.MinecraftDownload.MinecraftIdList.Add(mc.ID!);
+                GlobalVariable.MinecraftDownload.MinecraftTypeList.Add(mc.Type);
+                GlobalVariable.MinecraftDownload.MinecraftUrlList.Add(mc.Url!);
+                GlobalVariable.MinecraftDownload.MinecraftTimeList.Add(mc.Time);
+                GlobalVariable.MinecraftDownload.MinecraftReleaseTimeList.Add(mc.ReleaseTime);
+
+                if (mc.Type is "release")
+                {
+                    GlobalVariable.MinecraftDownload.MinecraftReleaseList.Add(mc.ID!);
+                    var releaseTime = string.Format(Localizer.Localizer.Instance["OfficialVersionAndReleaseDate"],
+                        mc.ReleaseTime);
+                    GlobalVariable.MinecraftDownload.ReleaseVersionDownloadList.Add(
+                        new DefaultDownloadList(mc.ID!, releaseTime, VersionType.Official));
+                }
+                else if (mc.Type is "snapshot")
+                {
+                    GlobalVariable.MinecraftDownload.MinecraftSnapshotList.Add(mc.ID!);
+                    var releaseTime = string.Format(Localizer.Localizer.Instance["BetaVersionAndReleaseDate"],
+                        mc.ReleaseTime);
+                    GlobalVariable.MinecraftDownload.SnapshotVersionDownloadList.Add(
+                        new DefaultDownloadList(mc.ID!, releaseTime, VersionType.Beta));
+                }
+                else if (mc.Type is "old_alpha" or "old_beta")
+                {
+                    GlobalVariable.MinecraftDownload.MinecraftOldList.Add(mc.ID!);
+                    var releaseTime = string.Format(Localizer.Localizer.Instance["OldVersionAndReleaseDate"],
+                        mc.ReleaseTime);
+                    GlobalVariable.MinecraftDownload.OldVersionDownloadList.Add(
+                        new DefaultDownloadList(mc.ID!, releaseTime, VersionType.Old));
+                }
+            }
+
+            DownloadMenu.Instance.ReleaseVersionListBox.ItemsSource =
+                GlobalVariable.MinecraftDownload.ReleaseVersionDownloadList;
+            DownloadMenu.Instance.SnapshotVersionListBox.ItemsSource =
+                GlobalVariable.MinecraftDownload.SnapshotVersionDownloadList;
+            DownloadMenu.Instance.OldVersionListBox.ItemsSource =
+                GlobalVariable.MinecraftDownload.OldVersionDownloadList;
+
+            DownloadMenu.Instance.ReleaseVersionListBox.ItemsSource =
+                GlobalVariable.MinecraftDownload.ReleaseVersionDownloadList;
+            DownloadMenu.Instance.SnapshotVersionListBox.ItemsSource =
+                GlobalVariable.MinecraftDownload.SnapshotVersionDownloadList;
+            DownloadMenu.Instance.OldVersionListBox.ItemsSource =
+                GlobalVariable.MinecraftDownload.OldVersionDownloadList;
+
+            if (GlobalVariable.MinecraftDownload.LatestMinecraftReleaseVersion ==
+                GlobalVariable.MinecraftDownload.LatestMinecraftSnapshotVersion)
+                DownloadMenu.Instance.LatestSnapshotVersionButton.IsVisible = false;
+            DownloadMenu.Instance.LatestReleaseVersionTextBlock.Text =
+                GlobalVariable.MinecraftDownload.LatestMinecraftReleaseVersion;
+            DownloadMenu.Instance.LatestSnapshotVersionTextBlock.Text =
+                GlobalVariable.MinecraftDownload.LatestMinecraftSnapshotVersion;
+
+            var latestReleaseVersionIndex =
+                GlobalVariable.MinecraftDownload.MinecraftIdList.IndexOf(GlobalVariable.MinecraftDownload
+                    .LatestMinecraftReleaseVersion);
+            if (latestReleaseVersionIndex != -1)
+                DownloadMenu.Instance.LatestReleaseVersionTextBlock.Text +=
+                    $"\n{string.Format(Localizer.Localizer.Instance["OfficialVersionAndReleaseDate"], GlobalVariable.MinecraftDownload.MinecraftReleaseTimeList[latestReleaseVersionIndex])}";
+            var latestSnapshotVersionIndex =
+                GlobalVariable.MinecraftDownload.MinecraftIdList.IndexOf(GlobalVariable.MinecraftDownload
+                    .LatestMinecraftSnapshotVersion);
+            if (latestSnapshotVersionIndex != -1)
+                DownloadMenu.Instance.LatestSnapshotVersionTextBlock.Text +=
+                    $"\n{string.Format(Localizer.Localizer.Instance["BetaVersionAndReleaseDate"], GlobalVariable.MinecraftDownload.MinecraftReleaseTimeList[latestSnapshotVersionIndex])}";
+        }
+
+        #endregion
+
+        #region 解析版本列表 旧的
+
+        /*
         var jObject = JObject.Parse(result);
         GlobalVariable.MinecraftDownload.LatestMinecraftReleaseVersion = jObject["latest"]!["release"]!.ToString();
         GlobalVariable.MinecraftDownload.LatestMinecraftSnapshotVersion = jObject["latest"]!["snapshot"]!.ToString();
@@ -161,6 +246,7 @@ public class ListHandler
                                                                          GlobalVariable.MinecraftDownload
                                                                              .MinecraftReleaseTimeList[
                                                                                  LatestSnapshotVersionIndex];
+                                                                                 */
 
         #endregion
     }
