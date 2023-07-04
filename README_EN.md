@@ -6,7 +6,7 @@ README: English | [简体中文](README.md)
 
 > The main author is only [imJack6 (Jack Lei)](https://github.com/imJack6) One person, progress may be slow
 >
-> Development Progress: ≈ 20%
+> Development Progress: ≈ 40%
 >
 > ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
 > ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
@@ -18,7 +18,8 @@ README: English | [简体中文](README.md)
 
 ![Alt](https://repobeats.axiom.co/api/embed/993d2a1760013210fdb331dd9aff324a6b2ed82f.svg)
 
-> If you are interested in or want to contribute to this project, please feel free to contact me or submit Issues and Pull Requests
+> If you are interested in or want to contribute to this project, please feel free to contact me or submit Issues and
+> Pull Requests
 
 ---------------------
 
@@ -34,23 +35,23 @@ Expected functionality and implementation status:
 
 | Function      | State |
 |---------------|-------|
-| Settings      | ❌     |
-| Profile       | ❌     |
+| Settings      | ❎     |
+| Profile       | ❎     |
 | Login         | ❎️    |
-| Game Download | ❌     |
+| Game Download | ❎     |
 | Game Start	   | ❇️    |
 | Game Log		    | ❇️    |
 | ......		      | ...   |
 
 | Login              | State |
 |--------------------|-------|
-| Offline            | ❌     |
-| Online (Microsoft) | ❌     |
+| Offline            | ✅     |
+| Online (Microsoft) | ❇️    |
 | Third Party        | ❌️    |
 
 | Download          | State |
 |-------------------|-------|
-| Original Edition	 | ❌     |
+| Original Edition	 | ✅     |
 | Forge	            | ❌     |
 | Fabric	           | ❌     |
 | Quilt	            | ❌     |
