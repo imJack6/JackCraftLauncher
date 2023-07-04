@@ -25,7 +25,7 @@ public static class DownloadSourceHandler
     public static string GetDownloadSource(DownloadTargetEnum target, DownloadSourceEnum? source,
         string? minecraftVersion = "1.0")
     {
-        if (source == null) source = GlobalVariable.DownloadSourceEnum;
+        if (source == null) source = GlobalVariable.Config.DownloadSourceEnum;
 
         var baseUrl = source switch
         {

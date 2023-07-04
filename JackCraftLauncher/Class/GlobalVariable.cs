@@ -12,19 +12,24 @@ namespace JackCraftLauncher.Class;
 
 public class GlobalVariable
 {
-    public static string MainConfigPath { get; } =
-        $"{PlatformUtils.GetSystemUserDirectory()}{Path.DirectorySeparatorChar}JackCraft{Path.DirectorySeparatorChar}Launcher{Path.DirectorySeparatorChar}Desktop{Path.DirectorySeparatorChar}config.json";
-
     public static List<VersionInfo> LocalGameList { get; set; } = null!;
     public static IAuthenticator AccountAuthenticator { get; set; } = null!;
+    
+    #region 配置
 
-    public static DownloadSourceHandler.DownloadSourceEnum DownloadSourceEnum { get; set; } =
-        DownloadSourceHandler.DownloadSourceEnum.BMCL; // 下载源
+    public class Config
+    {
+        public static string MainConfigPath { get; } =
+            $"{PlatformUtils.GetSystemUserDirectory()}{Path.DirectorySeparatorChar}JackCraft{Path.DirectorySeparatorChar}Launcher{Path.DirectorySeparatorChar}Desktop{Path.DirectorySeparatorChar}config.json";
+        public static DownloadSourceHandler.DownloadSourceEnum DownloadSourceEnum { get; set; } =
+            DownloadSourceHandler.DownloadSourceEnum.BMCL;                          // 下载源
+        public static int DownloadMaxDegreeOfParallelismCount { get; set; } = 8;    // 下载并行数
+        public static int DownloadDownloadPartsCount { get; set; } = 8;             // 下载分段数
+        public static int DownloadRetryCount { get; set; } = 4;                     // 下载重试次数
+    }
 
-    public static int DownloadParallelismCount { get; set; } = 8; // 下载并行数
-    public static int DownloadThreadCount { get; set; } = 8; // 下载线程数
-    public static int DownloadRetryCount { get; set; } = 4; // 下载重试次数
-
+    #endregion
+    
     #region Minecraft Download
 
     public class MinecraftDownload

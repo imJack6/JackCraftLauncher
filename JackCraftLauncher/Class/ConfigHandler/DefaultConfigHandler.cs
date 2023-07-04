@@ -12,7 +12,7 @@ namespace JackCraftLauncher.Class.ConfigHandler;
 
 public class DefaultConfigHandler
 {
-    private static readonly string ConfigFilePath = GlobalVariable.MainConfigPath;
+    private static readonly string ConfigFilePath = GlobalVariable.Config.MainConfigPath;
 
     #region 加载配置文件
 
@@ -186,6 +186,8 @@ public class DefaultConfigHandler
     public class Config
     {
         public LauncherSettings LauncherSettings { get; set; } = new();
+        public DownloadSettings DownloadSettings { get; set; } = new();
+        public GlobalGameSettings GlobalGameSettings { get; set; } = new();
     }
 
     public class LauncherSettings
@@ -193,5 +195,15 @@ public class DefaultConfigHandler
         public BaseThemeMode ThemeMode { get; set; } = BaseThemeMode.Inherit;
     }
 
+    public class DownloadSettings
+    {
+        
+    }
+    
+    public class GlobalGameSettings
+    {
+        
+    }
+    
     #endregion
 }

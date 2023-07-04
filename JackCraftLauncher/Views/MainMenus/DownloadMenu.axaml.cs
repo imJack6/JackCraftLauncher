@@ -211,7 +211,7 @@ public partial class DownloadMenu : UserControl
                 GlobalVariable.MinecraftDownload.MinecraftVersionManifestModel.VersionsModel?.FirstOrDefault(x =>
                     x.ID == idToFind);
             var minecraftJsonUrl =
-                DownloadSourceHandler.PistonMetaUrlHandle(GlobalVariable.DownloadSourceEnum, versionModel!.Url!);
+                DownloadSourceHandler.PistonMetaUrlHandle(GlobalVariable.Config.DownloadSourceEnum, versionModel!.Url!);
             var downloadSettings = new DownloadSettings
             {
                 DownloadParts = 32,

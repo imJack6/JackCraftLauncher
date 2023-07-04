@@ -220,7 +220,7 @@ public class GameHandler
         // 资源补全器
         var completer = new DefaultResourceCompleter
         {
-            MaxDegreeOfParallelism = GlobalVariable.DownloadParallelismCount,
+            MaxDegreeOfParallelism = GlobalVariable.Config.DownloadMaxDegreeOfParallelismCount,
             ResourceInfoResolvers = new List<IResourceInfoResolver>
             {
                 resolverAsset,
@@ -228,9 +228,9 @@ public class GameHandler
                 resolverLibrary,
                 resolverVersion
             },
-            TotalRetry = GlobalVariable.DownloadThreadCount,
+            TotalRetry = GlobalVariable.Config.DownloadRetryCount,
             CheckFile = true,
-            DownloadParts = GlobalVariable.DownloadRetryCount
+            DownloadParts = GlobalVariable.Config.DownloadDownloadPartsCount
         };
 
         return completer;
