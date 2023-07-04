@@ -197,13 +197,11 @@ public class DefaultConfigHandler
 
     public class DownloadSettings
     {
-        
     }
-    
+
     public class GlobalGameSettings
     {
-        
     }
-    
+
     #endregion
 }

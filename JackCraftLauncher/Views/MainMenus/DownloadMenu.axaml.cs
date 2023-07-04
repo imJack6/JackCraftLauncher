@@ -230,7 +230,7 @@ public partial class DownloadMenu : UserControl
             AddInstallLog(
                 $"[{Localizer.Localizer.Instance["Download"]}] - [{Localizer.Localizer.Instance["Completed"]}] JSON - {DownloadSaveVersionNameTextBox.Text}.json - {Localizer.Localizer.Instance["DownloadCompleted"]}");
             InstallProgressBar.Value = 20;
-            
+
             #endregion
 
             #region 安装完成
