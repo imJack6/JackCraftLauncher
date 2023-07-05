@@ -121,6 +121,16 @@ public partial class MicrosoftLoginControl : UserControl
                     else
                     {
                         DialogHostUtils.Close();
+                        await Task.Delay(1);
+                        var loginFailErrorMessage = string.Format(
+                            Localizer.Localizer.Instance["LoginFailErrorMessage1"],
+                            authResult.AuthStatus, authResult.Error.Error,
+                            authResult.Error.ErrorMessage, authResult.Error.Cause);
+                        Console.WriteLine(loginFailErrorMessage);
+                        DialogHost.Show(
+                            new WarningTemplateModel(Localizer.Localizer.Instance["LoginFail"], loginFailErrorMessage),
+                            "MainDialogHost");
+                        LoginType1CancelLogin();
                     }
                 });
         }, _loginType1CancellationToken);
