@@ -23,6 +23,17 @@ public class GameHandler
 {
     public static async Task StartGame(VersionInfo versionInfo)
     {
+        var successI18N = Localizer.Localizer.Instance["Success"];
+        var failI18N = Localizer.Localizer.Instance["Fail"];
+        var launcherI18N = Localizer.Localizer.Instance["Launcher"];
+        var completedI18N = Localizer.Localizer.Instance["Completed"];
+        var resourceCompletionI18N = Localizer.Localizer.Instance["ResourceCompletion"];
+        var retryI18N = Localizer.Localizer.Instance["Retry"];
+        var errorI18N = Localizer.Localizer.Instance["Error"];
+
+        MainWindow.Instance?.StartGameMenuItem.AddStartGameLog(
+            $"[{launcherI18N}] {Localizer.Localizer.Instance["StartingGameVersion"]}");
+
         var core = new DefaultGameCore
         {
             ClientToken = App.Core.ClientToken,
@@ -32,29 +43,20 @@ public class GameHandler
         };
         var resourceCompletion = await GetResourceCompletion(versionInfo);
 
-        var successI18N = Localizer.Localizer.Instance["Success"];
-        var failI18N = Localizer.Localizer.Instance["Fail"];
-        var launcherI18N = Localizer.Localizer.Instance["Launcher"];
-        var completedI18N = Localizer.Localizer.Instance["Completed"];
-        var resourceCompletionI18N = Localizer.Localizer.Instance["ResourceCompletion"];
-        var retryI18N = Localizer.Localizer.Instance["Retry"];
-        var errorI18N = Localizer.Localizer.Instance["Error"];
-
-
         var launchSettings = new LaunchSettings
         {
             FallBackGameArguments =
                 new GameArguments // 游戏启动参数缺省值，适用于以该启动设置启动的所有游戏，对于具体的某个游戏，可以设置（见下）具体的启动参数，如果所设置的具体参数出现缺失，将使用这个补全
                 {
-                    GcType = GcType.G1Gc, // GC类型
-                    JavaExecutable = @"C:\Program Files\Zulu\zulu-17\bin\java.exe", // Java路径
+                    GcType = GlobalVariable.Config.GameGcType, // GC类型
+                    JavaExecutable = GlobalVariable.Config.GameStartJavaPath, // Java路径
                     Resolution = new ResolutionModel // 游戏窗口分辨率
                     {
-                        Height = 350, // 高度
-                        Width = 800 // 宽度
+                        Height = GlobalVariable.Config.GameResolutionHeight, // 高度
+                        Width = GlobalVariable.Config.GameResolutionWidth // 宽度
                     },
                     MinMemory = 2048, // 最小内存
-                    MaxMemory = 4196 // 最大内存
+                    MaxMemory = 4096 // 最大内存
                 },
             Version = versionInfo.Id!, // 需要启动的游戏ID，例如1.7.10或者1.15.2
             //VersionInsulation = false, // 版本隔离
@@ -114,6 +116,8 @@ public class GameHandler
             });
         };
         await resourceCompletion.CheckAndDownloadTaskAsync().ConfigureAwait(false);
+
+        Console.WriteLine("Try Start Game: " + GlobalVariable.Config.GameStartJavaPath);
         var result = await core.LaunchTaskAsync(launchSettings).ConfigureAwait(true); // 返回游戏启动结果，以及异常信息（如果存在）
         Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -230,7 +234,7 @@ public class GameHandler
             },
             TotalRetry = GlobalVariable.Config.DownloadRetryCount,
             CheckFile = true,
-            DownloadParts = GlobalVariable.Config.DownloadDownloadPartsCount
+            DownloadParts = GlobalVariable.Config.DownloadPartsCount
         };
 
         return completer;

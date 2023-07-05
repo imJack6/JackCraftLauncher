@@ -72,17 +72,28 @@ public partial class MainWindow : Window
                 }
                 else
                 {
-                    if (GlobalVariable.AccountAuthenticator == null)
+                    if (SettingMenu.Instance.StartJavaSelectComboBox.SelectedIndex == -1)
                     {
-                        DialogHost.Show(
-                            new WarningTemplateModel(Localizer.Localizer.Instance["NotLogin"],
-                                Localizer.Localizer.Instance["NoAccountLogin"]), "MainDialogHost");
+                        await DialogHost.Show(
+                            new WarningTemplateModel(Localizer.Localizer.Instance["NotSelectJava"],
+                                Localizer.Localizer.Instance["SettingNotSelectJava"]), "MainDialogHost");
+                        SettingRadioButton.IsChecked = true;
+                        MenuTabControl.SelectedIndex = 3;
                     }
                     else
                     {
-                        MenuTabControl.SelectedIndex = 4;
-                        await GameHandler.StartGame(
-                            GlobalVariable.LocalGameList[StartMenu.Instance.LocalGameListBox.SelectedIndex]);
+                        if (GlobalVariable.AccountAuthenticator == null)
+                        {
+                            DialogHost.Show(
+                                new WarningTemplateModel(Localizer.Localizer.Instance["NotLogin"],
+                                    Localizer.Localizer.Instance["NoAccountLogin"]), "MainDialogHost");
+                        }
+                        else
+                        {
+                            MenuTabControl.SelectedIndex = 4;
+                            await GameHandler.StartGame(
+                                GlobalVariable.LocalGameList[StartMenu.Instance.LocalGameListBox.SelectedIndex]);
+                        }
                     }
                 }
             }
