@@ -1,16 +1,45 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DialogHostAvalonia;
+using JackCraftLauncher.Class.ConfigHandler;
 using JackCraftLauncher.Class.Models;
 using JackCraftLauncher.Class.Models.ListTemplate;
 using JackCraftLauncher.Class.Models.MinecraftVersionManifest;
+using JackCraftLauncher.Class.Utils;
 using JackCraftLauncher.Views.MainMenus;
+using Material.Styles.Assists;
+using ProjBobcat.Class.Helper;
 using ProjBobcat.Class.Model;
 
 namespace JackCraftLauncher.Class.Launch;
 
 public class ListHandler
 {
+    public static async Task RefreshLocalJavaList(bool fullSearch = false)
+    {
+        DialogHost.Show(SettingMenu.Instance.Resources["SearchingForJavaLoadingView"]!, "MainDialogHost");
+        ComboBoxAssist.SetLabel(SettingMenu.Instance.StartJavaSelectComboBox,
+            Localizer.Localizer.Instance["SearchingForJava"]);
+        SettingMenu.Instance.StartJavaSelectComboBox.PlaceholderText = Localizer.Localizer.Instance["SearchingForJava"];
+        SettingMenu.Instance.RefreshLocalJavaComboBoxButton.IsEnabled = false;
+        var task = Task.Run(async () =>
+        {
+            var javaList = SystemInfoHelper.FindJava(fullSearch);
+            GlobalVariable.LocalJavaList = await javaList.ToListAsync();
+        });
+        await task;
+        SettingMenu.Instance.StartJavaSelectComboBox.ItemsSource = GlobalVariable.LocalJavaList;
+        await Task.Delay(1);
+        DialogHostUtils.Close();
+        ComboBoxAssist.SetLabel(SettingMenu.Instance.StartJavaSelectComboBox,
+            Localizer.Localizer.Instance["SelectJava"]);
+        SettingMenu.Instance.StartJavaSelectComboBox.PlaceholderText = Localizer.Localizer.Instance["SelectJava"];
+        SettingMenu.Instance.RefreshLocalJavaComboBoxButton.IsEnabled = true;
+        DefaultConfigHandler.SetConfig(DefaultConfigConstants.GlobalGameSettingsNodes.JavaPathListNode,
+            GlobalVariable.LocalJavaList);
+    }
+
     public static void RefreshLocalGameList()
     {
         try
