@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using ProjBobcat.Class.Model.MicrosoftAuth;
 using ProjBobcat.DefaultComponent.Authenticator;
 using ProjBobcat.DefaultComponent.Launch;
@@ -28,7 +27,7 @@ public class LaunchHandler
         };
         MicrosoftAuthenticator.Configure(new MicrosoftAuthenticatorAPISettings
         {
-            ClientId = "f7bbc3a7-8c12-4f20-9ac4-0237cbff25e1",
+            ClientId = EncryptHandler.JcDecrypt("fFlRXiZKWFZZfgRDWU5cAUp9TFpTJRNMU0AtUkZbBQ4GEytV"),
             TenentId = "consumers",
             Scopes = new[] { "XboxLive.signin", "offline_access", "openid", "profile", "email" }
         });
