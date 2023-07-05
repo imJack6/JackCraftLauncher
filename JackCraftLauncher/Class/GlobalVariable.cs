@@ -13,6 +13,7 @@ namespace JackCraftLauncher.Class;
 public class GlobalVariable
 {
     public static List<VersionInfo> LocalGameList { get; set; } = null!;
+    public static List<string> LocalJavaList { get; set; } = new();
     public static IAuthenticator AccountAuthenticator { get; set; } = null!;
 
     #region 配置
@@ -22,12 +23,26 @@ public class GlobalVariable
         public static string MainConfigPath { get; } =
             $"{PlatformUtils.GetSystemUserDirectory()}{Path.DirectorySeparatorChar}JackCraft{Path.DirectorySeparatorChar}Launcher{Path.DirectorySeparatorChar}Desktop{Path.DirectorySeparatorChar}config.json";
 
+        #region 下载
+
         public static DownloadSourceHandler.DownloadSourceEnum DownloadSourceEnum { get; set; } =
             DownloadSourceHandler.DownloadSourceEnum.BMCL; // 下载源
 
         public static int DownloadMaxDegreeOfParallelismCount { get; set; } = 8; // 下载并行数
-        public static int DownloadDownloadPartsCount { get; set; } = 8; // 下载分段数
+        public static int DownloadPartsCount { get; set; } = 8; // 下载分段数
         public static int DownloadRetryCount { get; set; } = 4; // 下载重试次数
+
+        #endregion
+
+        #region 游戏
+
+        public static int GameStartJavaIndex { get; set; } = -1; // 游戏启动 Java 索引
+        public static string GameStartJavaPath { get; set; } = ""; // 游戏启动 Java 路径
+        public static GcType GameGcType { get; set; } = GcType.G1Gc; // 游戏 GC 类型
+        public static uint GameResolutionWidth { get; set; } = 800; // 游戏分辨率宽度
+        public static uint GameResolutionHeight { get; set; } = 450; // 游戏分辨率高度
+
+        #endregion
     }
 
     #endregion

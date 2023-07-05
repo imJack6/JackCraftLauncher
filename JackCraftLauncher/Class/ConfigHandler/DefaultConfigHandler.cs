@@ -1,12 +1,15 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using Avalonia;
+using JackCraftLauncher.Class.Launch;
 using JackCraftLauncher.Class.Models.ErrorModels;
 using JackCraftLauncher.Class.Utils;
 using JackCraftLauncher.Views.MainMenus;
 using JackCraftLauncher.Views.MyWindow;
 using Material.Styles.Themes;
 using Material.Styles.Themes.Base;
+using ProjBobcat.Class.Model;
 
 namespace JackCraftLauncher.Class.ConfigHandler;
 
@@ -19,6 +22,8 @@ public class DefaultConfigHandler
     public static void LoadSettingsConfig()
     {
         LoadLauncherConfig();
+        LoadDownloadConfig();
+        LoadGameConfig();
     }
 
     private static void LoadLauncherConfig()
@@ -26,11 +31,26 @@ public class DefaultConfigHandler
         LoadThemeConfig();
     }
 
+    private static void LoadDownloadConfig()
+    {
+        LoadDownloadSourceConfig();
+        LoadDownloadMaxDegreeOfParallelismCountConfig();
+        LoadDownloadPartsCountConfig();
+        LoadDownloadRetryCountConfig();
+    }
+
+    private static void LoadGameConfig()
+    {
+        LoadStartJavaConfig();
+        LoadGameGcTypeConfig();
+        LoadGameResolutionConfig();
+    }
+
     #region 启动器配置
 
     private static void LoadThemeConfig()
     {
-        var theme = (BaseThemeMode)GetConfig(GlobalConstants.ConfigThemeNode);
+        var theme = (BaseThemeMode)GetConfig(DefaultConfigConstants.LauncherSettingsNodes.ThemeNode);
         Application.Current!.LocateMaterialTheme<MaterialTheme>().BaseTheme = theme;
         switch (theme)
         {
@@ -44,6 +64,74 @@ public class DefaultConfigHandler
                 SettingMenu.Instance.ThemeDarkModeRadioButton.IsChecked = true;
                 break;
         }
+    }
+
+    #endregion
+
+    #region 下载配置
+
+    private static void LoadDownloadSourceConfig()
+    {
+        var downloadSource = (DownloadSourceHandler.DownloadSourceEnum)GetConfig(
+            DefaultConfigConstants.DownloadSettingsNodes.DownloadSourceNode);
+        GlobalVariable.Config.DownloadSourceEnum = downloadSource;
+        SettingMenu.Instance.DownloadSourceSelectComboBox.SelectedIndex = (int)downloadSource;
+    }
+
+    private static void LoadDownloadMaxDegreeOfParallelismCountConfig()
+    {
+        var parallelismCount =
+            (int)GetConfig(DefaultConfigConstants.DownloadSettingsNodes.MaxDegreeOfParallelismCountNode);
+        GlobalVariable.Config.DownloadMaxDegreeOfParallelismCount = parallelismCount;
+        SettingMenu.Instance.DownloadMaxDegreeOfParallelismCountSlider.Value = parallelismCount;
+    }
+
+    private static void LoadDownloadPartsCountConfig()
+    {
+        var downloadPartsCount = (int)GetConfig(DefaultConfigConstants.DownloadSettingsNodes.PartsCountNode);
+        GlobalVariable.Config.DownloadPartsCount = downloadPartsCount;
+        SettingMenu.Instance.DownloadSegmentsForLargeFileSlider.Value = downloadPartsCount;
+    }
+
+    private static void LoadDownloadRetryCountConfig()
+    {
+        var downloadRetryCount = (int)GetConfig(DefaultConfigConstants.DownloadSettingsNodes.RetryCountNode);
+        GlobalVariable.Config.DownloadRetryCount = downloadRetryCount;
+        SettingMenu.Instance.DownloadTotalRetrySlider.Value = downloadRetryCount;
+    }
+
+    #endregion
+
+    #region 游戏配置
+
+    private static void LoadStartJavaConfig()
+    {
+        var startJavaPathList =
+            (List<string>)GetConfig(DefaultConfigConstants.GlobalGameSettingsNodes.JavaPathListNode);
+        var startJavaIndex = (int)GetConfig(DefaultConfigConstants.GlobalGameSettingsNodes.SelectedJavaIndexNode);
+        GlobalVariable.LocalJavaList = startJavaPathList;
+        GlobalVariable.Config.GameStartJavaIndex = startJavaIndex;
+        if (startJavaIndex > -1)
+            GlobalVariable.Config.GameStartJavaPath = startJavaPathList[startJavaIndex];
+        SettingMenu.Instance.StartJavaSelectComboBox.ItemsSource = startJavaPathList;
+        SettingMenu.Instance.StartJavaSelectComboBox.SelectedIndex = startJavaIndex;
+    }
+
+    private static void LoadGameGcTypeConfig()
+    {
+        var gameGcType = (GcType)GetConfig(DefaultConfigConstants.GlobalGameSettingsNodes.GcTypeNode);
+        GlobalVariable.Config.GameGcType = gameGcType;
+        SettingMenu.Instance.GcTypeSelectComboBox.SelectedIndex = (int)gameGcType;
+    }
+
+    private static void LoadGameResolutionConfig()
+    {
+        var resolutionWidth = (uint)GetConfig(DefaultConfigConstants.GlobalGameSettingsNodes.ResolutionWidthNode);
+        var resolutionHeight = (uint)GetConfig(DefaultConfigConstants.GlobalGameSettingsNodes.ResolutionHeightNode);
+        GlobalVariable.Config.GameResolutionWidth = resolutionWidth;
+        GlobalVariable.Config.GameResolutionHeight = resolutionHeight;
+        SettingMenu.Instance!.GameResolutionWidthTextBox.Text = resolutionWidth.ToString();
+        SettingMenu.Instance!.GameResolutionHeightTextBox.Text = resolutionHeight.ToString();
     }
 
     #endregion
@@ -197,10 +285,21 @@ public class DefaultConfigHandler
 
     public class DownloadSettings
     {
+        public DownloadSourceHandler.DownloadSourceEnum DownloadSource { get; set; } =
+            DownloadSourceHandler.DownloadSourceEnum.BMCL; // 下载源
+
+        public int MaxDegreeOfParallelismCount { get; set; } = 8; // 最大并行下载数
+        public int PartsCount { get; set; } = 8; // 分段下载的段数
+        public int RetryCount { get; set; } = 4; // 重试次数
     }
 
     public class GlobalGameSettings
     {
+        public int SelectedJavaIndex { get; set; } = -1;
+        public List<string> JavaPathList { get; set; } = new();
+        public GcType GcType { get; set; } = GcType.G1Gc;
+        public uint ResolutionWidth { get; set; } = 800;
+        public uint ResolutionHeight { get; set; } = 450;
     }
 
     #endregion

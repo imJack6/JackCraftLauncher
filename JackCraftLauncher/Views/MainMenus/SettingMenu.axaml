@@ -5,53 +5,313 @@
              xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:i18N="clr-namespace:JackCraftLauncher.Localizer"
+             xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="JackCraftLauncher.Views.MainMenus.SettingMenu">
+    <UserControl.Resources>
+        <!-- ReSharper disable once Xaml.RedundantResource -->
+        <StackPanel x:Key="SearchingForJavaLoadingView" Spacing="20" Margin="15">
+            <TextBlock Text="{i18N:Localize SearchingForJava}"
+                       HorizontalAlignment="Center"
+                       Classes="Headline7" />
+            <ProgressBar Classes="circular"
+                         Width="30"
+                         Height="30"
+                         HorizontalAlignment="Center"
+                         IsIndeterminate="True" />
+        </StackPanel>
+    </UserControl.Resources>
     <controls:Card Padding="0"
                    Name="RootCard"
                    CornerRadius="15"
                    Margin="20">
-        <StackPanel Spacing="5" Margin="30">
-            <TextBlock Text="{i18N:Localize Theme}"
-                       Classes="Headline4" />
-            <controls:Card Padding="0"
-                           InsideClipping="True"
-                           Height="45"
-                           HorizontalAlignment="Left">
-                <controls:Card.Styles>
-                    <Style Selector="RadioButton">
-                        <Setter Property="Theme" Value="{StaticResource RadioButton}" />
-                    </Style>
-                </controls:Card.Styles>
-                <StackPanel Orientation="Horizontal">
-                    <RadioButton GroupName="ThemeRadioButtonGroup" Name="ThemeFollowSystemModeRadioButton"
-                                 Click="ThemeModeRadioButton_OnClick" IsChecked="True">
-                        <StackPanel Orientation="Horizontal" Spacing="5">
-                            <avalonia:MaterialIcon Width="30" Height="30" Kind="ThemeLightDark"
-                                                   VerticalAlignment="Center" />
-                            <TextBlock FontSize="15" Text="{i18N:Localize FollowSystem}" VerticalAlignment="Center" />
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="10" Margin="30">
+                <StackPanel Spacing="5">
+                    <TextBlock Text="{i18N:Localize Game}"
+                               Classes="Headline4" />
+                    <controls:Card Padding="0"
+                                   InsideClipping="True"
+                                   CornerRadius="15"
+                                   HorizontalAlignment="Stretch">
+                        <StackPanel Margin="0,10"
+                                    Spacing="5">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition MinWidth="106" Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                           Margin="20,5"
+                                           Text="{i18N:Localize StartJava}"
+                                           VerticalAlignment="Center"
+                                           FontSize="16" />
+                                <ComboBox Grid.Column="1"
+                                          Name="StartJavaSelectComboBox"
+                                          SelectionChanged="StartJavaSelectComboBox_OnSelectionChanged"
+                                          Margin="0,-5,5,0"
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Center"
+                                          Classes="Outline"
+                                          SelectedIndex="1"
+                                          assists:ComboBoxAssist.Label="{i18N:Localize SelectJava}"
+                                          PlaceholderText="{i18N:Localize SelectJava}" />
+                                <Menu Grid.Column="2"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      Name="RefreshLocalJavaComboBoxButton"
+                                      Margin="0,0,20,0">
+                                    <MenuItem Padding="5">
+                                        <MenuItem.Header>
+                                            <avalonia:MaterialIcon Kind="Refresh" Width="25" Height="25" />
+                                        </MenuItem.Header>
+                                        <MenuItem Header="{i18N:Localize DeepSearchJava}"
+                                                  Click="RefreshLocalJavaComboBoxFullSearch_OnClick" />
+                                        <MenuItem Header="{i18N:Localize NormalSearchJava}"
+                                                  Click="RefreshLocalJavaComboBoxNormalSearch_OnClick" />
+                                    </MenuItem>
+                                </Menu>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition MinWidth="106" Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                           Margin="20,5"
+                                           Text="{i18N:Localize GCType}"
+                                           VerticalAlignment="Center"
+                                           FontSize="16" />
+                                <ComboBox Grid.Column="1"
+                                          Name="GcTypeSelectComboBox"
+                                          SelectionChanged="GcTypeSelectComboBox_OnSelectionChanged"
+                                          Classes="Outline"
+                                          assists:ComboBoxAssist.Label="{i18N:Localize SelectGCType}"
+                                          Margin="0,-5,20,0"
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Center"
+                                          SelectedIndex="1"
+                                          PlaceholderText="{i18N:Localize SelectGCType}">
+                                    <ComboBoxItem Content="{i18N:Localize Disable}" />
+                                    <ComboBoxItem Content="{i18N:Localize GCTypeG1Gc}" />
+                                    <ComboBoxItem Content="{i18N:Localize GCTypeSerialGc}" />
+                                    <ComboBoxItem Content="{i18N:Localize GCTypeParallelGc}" />
+                                    <ComboBoxItem Content="{i18N:Localize GCTypeCmsGc}" />
+                                    <ComboBoxItem Content="{i18N:Localize GCTypeZGc}" />
+                                </ComboBox>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition MinWidth="106" Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                           Margin="20,5"
+                                           Text="{i18N:Localize ResolutionRatio}"
+                                           VerticalAlignment="Center"
+                                           FontSize="16" />
+                                <Grid Grid.Column="1"
+                                      Margin="0,0,20,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Grid.Column="0"
+                                             UseFloatingWatermark="True"
+                                             Classes="outline dense"
+                                             Theme="{StaticResource OutlineTextBox}"
+                                             assists:TextFieldAssist.Label="{i18N:Localize Width}"
+                                             TextChanging="ResolutionDigitsOnly_OnTextChanging"
+                                             Text="800"
+                                             Name="GameResolutionWidthTextBox"
+                                             Watermark="{i18N:Localize DefaultWidth}"
+                                             Margin="0,0,10,0" />
+                                    <TextBox Grid.Column="1"
+                                             UseFloatingWatermark="True"
+                                             Classes="outline dense"
+                                             Theme="{StaticResource OutlineTextBox}"
+                                             assists:TextFieldAssist.Label="{i18N:Localize Height}"
+                                             TextChanging="ResolutionDigitsOnly_OnTextChanging"
+                                             Text="450"
+                                             Name="GameResolutionHeightTextBox"
+                                             Watermark="{i18N:Localize DefaultHeight}"
+                                             Margin="10,0,0,0" />
+                                </Grid>
+                            </Grid>
                         </StackPanel>
-                    </RadioButton>
-                    <RadioButton GroupName="ThemeRadioButtonGroup" Name="ThemeLightModeRadioButton"
-                                 Click="ThemeModeRadioButton_OnClick">
-                        <StackPanel Orientation="Horizontal" Spacing="5">
-                            <avalonia:MaterialIcon Width="30" Height="30" Kind="WhiteBalanceSunny"
-                                                   VerticalAlignment="Center" />
-                            <TextBlock FontSize="15" Text="{i18N:Localize ThemeLightMode}" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </RadioButton>
-                    <RadioButton GroupName="ThemeRadioButtonGroup" Name="ThemeDarkModeRadioButton"
-                                 Click="ThemeModeRadioButton_OnClick">
-                        <StackPanel Orientation="Horizontal" Spacing="5">
-                            <avalonia:MaterialIcon Width="30" Height="30" Kind="WeatherNight"
-                                                   VerticalAlignment="Center" />
-                            <TextBlock FontSize="15" Text="{i18N:Localize ThemeDarkMode}" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </RadioButton>
+                    </controls:Card>
                 </StackPanel>
-            </controls:Card>
-
-
-        </StackPanel>
+                <StackPanel Spacing="5">
+                    <TextBlock Text="{i18N:Localize Download}"
+                               Classes="Headline4" />
+                    <controls:Card Padding="0"
+                                   InsideClipping="True"
+                                   CornerRadius="15"
+                                   HorizontalAlignment="Stretch">
+                        <StackPanel Margin="0,10"
+                                    Spacing="5">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition MinWidth="106" Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                           Margin="20,5"
+                                           Text="{i18N:Localize DownloadSource}"
+                                           VerticalAlignment="Center"
+                                           FontSize="16" />
+                                <ComboBox Grid.Column="1"
+                                          Classes="Outline"
+                                          assists:ComboBoxAssist.Label="{i18N:Localize SelectDownloadSource}"
+                                          Name="DownloadSourceSelectComboBox"
+                                          SelectionChanged="DownloadSourceSelectComboBox_OnSelectionChanged"
+                                          Margin="0,-5,20,0"
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Center"
+                                          SelectedIndex="1"
+                                          PlaceholderText="{i18N:Localize SelectDownloadSource}">
+                                    <ComboBoxItem Content="{i18N:Localize ShowDownloadMCBBSSource}" />
+                                    <ComboBoxItem Content="{i18N:Localize ShowDownloadBMCLSource}" />
+                                    <ComboBoxItem Content="{i18N:Localize ShowDownloadOfficialSource}" />
+                                </ComboBox>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition MinWidth="110" Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                           Margin="20,15"
+                                           Text="{i18N:Localize DownloadMaxDegreeOfParallelismCount}"
+                                           VerticalAlignment="Center"
+                                           FontSize="16"
+                                           ToolTip.Tip="{i18N:Localize DownloadMaxDegreeOfParallelismCountTip}" />
+                                <Slider Grid.Column="1"
+                                        Value="8"
+                                        Minimum="1"
+                                        Maximum="16"
+                                        Margin="0,0,70,0"
+                                        Name="DownloadMaxDegreeOfParallelismCountSlider"
+                                        PointerCaptureLost="DownloadMaxDegreeOfParallelismCountSlider_OnPointerCaptureLost"
+                                        Orientation="Horizontal"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Stretch"
+                                        IsSnapToTickEnabled="True"
+                                        Classes=" Discrete Accent Ticks"
+                                        TickPlacement="BottomRight"
+                                        TickFrequency="1" />
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding ElementName=DownloadMaxDegreeOfParallelismCountSlider, Path=Value}"
+                                           Margin="0,15,40,0"
+                                           HorizontalAlignment="Right" />
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition MinWidth="110" Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                           Margin="20,15"
+                                           Text="{i18N:Localize DownloadSegmentsForLargeFileCount}"
+                                           VerticalAlignment="Center"
+                                           FontSize="16"
+                                           ToolTip.Tip="{i18N:Localize DownloadSegmentsForLargeFileCountTip}" />
+                                <Slider Grid.Column="1"
+                                        Value="8"
+                                        Minimum="1"
+                                        Maximum="32"
+                                        Margin="0,0,70,0"
+                                        Name="DownloadSegmentsForLargeFileSlider"
+                                        PointerCaptureLost="DownloadSegmentsForLargeFileSlider_OnPointerCaptureLost"
+                                        Orientation="Horizontal"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Stretch"
+                                        IsSnapToTickEnabled="True"
+                                        Classes=" Discrete Accent Ticks"
+                                        TickPlacement="BottomRight"
+                                        TickFrequency="1" />
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding ElementName=DownloadSegmentsForLargeFileSlider, Path=Value}"
+                                           Margin="0,15,40,0"
+                                           HorizontalAlignment="Right" />
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition MinWidth="110" Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                           Margin="20,15"
+                                           Text="{i18N:Localize DownloadTotalRetryCount}"
+                                           VerticalAlignment="Center"
+                                           FontSize="16" />
+                                <Slider Grid.Column="1"
+                                        Value="4"
+                                        Minimum="0"
+                                        Maximum="12"
+                                        Margin="0,0,70,0"
+                                        Name="DownloadTotalRetrySlider"
+                                        PointerCaptureLost="DownloadTotalRetrySlider_OnPointerCaptureLost"
+                                        Orientation="Horizontal"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Stretch"
+                                        IsSnapToTickEnabled="True"
+                                        Classes=" Discrete Accent Ticks"
+                                        TickPlacement="BottomRight"
+                                        TickFrequency="1" />
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding ElementName=DownloadTotalRetrySlider, Path=Value}"
+                                           Margin="0,15,40,0"
+                                           HorizontalAlignment="Right" />
+                            </Grid>
+                        </StackPanel>
+                    </controls:Card>
+                </StackPanel>
+                <StackPanel Spacing="5">
+                    <TextBlock Text="{i18N:Localize Theme}"
+                               Classes="Headline4" />
+                    <controls:Card Padding="0"
+                                   InsideClipping="True"
+                                   Height="45"
+                                   HorizontalAlignment="Left">
+                        <controls:Card.Styles>
+                            <Style Selector="RadioButton">
+                                <Setter Property="Theme" Value="{StaticResource RadioButton}" />
+                            </Style>
+                        </controls:Card.Styles>
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton GroupName="ThemeRadioButtonGroup" Name="ThemeFollowSystemModeRadioButton"
+                                         Click="ThemeModeRadioButton_OnClick" IsChecked="True">
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <avalonia:MaterialIcon Width="30" Height="30" Kind="ThemeLightDark"
+                                                           VerticalAlignment="Center" />
+                                    <TextBlock FontSize="15" Text="{i18N:Localize FollowSystem}"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton GroupName="ThemeRadioButtonGroup" Name="ThemeLightModeRadioButton"
+                                         Click="ThemeModeRadioButton_OnClick">
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <avalonia:MaterialIcon Width="30" Height="30" Kind="WhiteBalanceSunny"
+                                                           VerticalAlignment="Center" />
+                                    <TextBlock FontSize="15" Text="{i18N:Localize ThemeLightMode}"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton GroupName="ThemeRadioButtonGroup" Name="ThemeDarkModeRadioButton"
+                                         Click="ThemeModeRadioButton_OnClick">
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <avalonia:MaterialIcon Width="30" Height="30" Kind="WeatherNight"
+                                                           VerticalAlignment="Center" />
+                                    <TextBlock FontSize="15" Text="{i18N:Localize ThemeDarkMode}"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                            </RadioButton>
+                        </StackPanel>
+                    </controls:Card>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
     </controls:Card>
 </UserControl>
