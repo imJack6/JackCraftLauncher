@@ -10,6 +10,7 @@ using JackCraftLauncher.Views.MyWindow;
 using Material.Styles.Themes;
 using Material.Styles.Themes.Base;
 using ProjBobcat.Class.Model;
+using ProjBobcat.DefaultComponent.Authenticator;
 
 namespace JackCraftLauncher.Class.ConfigHandler;
 
@@ -276,6 +277,7 @@ public class DefaultConfigHandler
         public LauncherSettings LauncherSettings { get; set; } = new();
         public DownloadSettings DownloadSettings { get; set; } = new();
         public GlobalGameSettings GlobalGameSettings { get; set; } = new();
+        public LoginInformation LoginInformation { get; set; } = new();
     }
 
     public class LauncherSettings
@@ -302,5 +304,12 @@ public class DefaultConfigHandler
         public uint ResolutionHeight { get; set; } = 450;
     }
 
+    public class LoginInformation
+    {
+        public OfflineAuthenticator OfflineAuthenticator { get; set; } = new();
+        public MicrosoftAuthenticator MicrosoftAuthenticator { get; set; } = new();
+        public YggdrasilAuthenticator YggdrasilAuthenticator { get; set; } = new();
+    }
+    
     #endregion
 }

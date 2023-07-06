@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using DialogHostAvalonia;
+using JackCraftLauncher.Class.ConfigHandler;
 using JackCraftLauncher.Class.Models;
 using JackCraftLauncher.Views.MainMenus;
 using JackCraftLauncher.Views.MainMenus.LoginMenus;
@@ -31,6 +32,7 @@ public class AccountAuthenticatorHandler
         {
             LoginAs = string.Format(LoginAs, Localizer.Localizer.Instance["OfflineLogin"]);
             authResult = await authenticator.AuthTaskAsync(false);
+            DefaultConfigHandler.SetConfig("LoginInformation.OfflineAuthenticator", authenticator);
         }
         else if (authenticator is MicrosoftAuthenticator)
         {
