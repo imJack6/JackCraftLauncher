@@ -39,8 +39,8 @@ public class GlobalVariable
         public static int GameStartJavaIndex { get; set; } = -1; // 游戏启动 Java 索引
         public static string GameStartJavaPath { get; set; } = ""; // 游戏启动 Java 路径
         public static GcType GameGcType { get; set; } = GcType.G1Gc; // 游戏 GC 类型
-        public static uint GameResolutionWidth { get; set; } = 800; // 游戏分辨率宽度
-        public static uint GameResolutionHeight { get; set; } = 450; // 游戏分辨率高度
+        public static uint GameResolutionWidth { get; set; } = 854; // 游戏分辨率宽度
+        public static uint GameResolutionHeight { get; set; } = 480; // 游戏分辨率高度
 
         #endregion
     }
@@ -82,8 +82,6 @@ public class GlobalVariable
 
     public class MicrosoftLogin // 微软登录
     {
-        public static DateTime CurrentAuthTime { get; set; } = new(); // 当前的验证时间
-        public static int ExpiresIn { get; set; } = 0; // Token 失效时间 (秒)
         public static string RefreshToken { get; set; } = string.Empty; // 刷新用 Token
     }
 

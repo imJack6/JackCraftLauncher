@@ -123,7 +123,7 @@
                                              Theme="{StaticResource OutlineTextBox}"
                                              assists:TextFieldAssist.Label="{i18N:Localize Width}"
                                              TextChanging="ResolutionDigitsOnly_OnTextChanging"
-                                             Text="800"
+                                             Text="854"
                                              Name="GameResolutionWidthTextBox"
                                              Watermark="{i18N:Localize DefaultWidth}"
                                              Margin="0,0,10,0" />
@@ -133,7 +133,7 @@
                                              Theme="{StaticResource OutlineTextBox}"
                                              assists:TextFieldAssist.Label="{i18N:Localize Height}"
                                              TextChanging="ResolutionDigitsOnly_OnTextChanging"
-                                             Text="450"
+                                             Text="480"
                                              Name="GameResolutionHeightTextBox"
                                              Watermark="{i18N:Localize DefaultHeight}"
                                              Margin="10,0,0,0" />
