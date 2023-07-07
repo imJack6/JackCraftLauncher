@@ -22,17 +22,24 @@ public class EncryptHandler
 
     public static string JcDecrypt(string encryptStr)
     {
-        var str = Encoding.UTF8.GetString(Convert.FromBase64String(encryptStr));
-        var decryptStr = string.Empty;
-        var encryptKey = Assembly.GetEntryAssembly()!.GetName().Name!;
-        var encryptKeyLength = encryptKey.Length;
-        var strLength = str.Length;
-        for (var i = 0; i < strLength; i++)
+        try
         {
-            var k = i % encryptKeyLength;
-            decryptStr += (char)(str[i] ^ encryptKey[k]);
-        }
+            var str = Encoding.UTF8.GetString(Convert.FromBase64String(encryptStr));
+            var decryptStr = string.Empty;
+            var encryptKey = Assembly.GetEntryAssembly()!.GetName().Name!;
+            var encryptKeyLength = encryptKey.Length;
+            var strLength = str.Length;
+            for (var i = 0; i < strLength; i++)
+            {
+                var k = i % encryptKeyLength;
+                decryptStr += (char)(str[i] ^ encryptKey[k]);
+            }
 
-        return decryptStr;
+            return decryptStr;
+        }
+        catch (Exception)
+        {
+            return encryptStr;
+        }
     }
 }
