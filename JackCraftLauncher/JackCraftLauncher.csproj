@@ -30,34 +30,34 @@
     </PropertyGroup>
     <!-- Symbol Definitions -->
 
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'"/>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
 
     <PropertyGroup>
         <NoWarn>IL2026</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
-        <AvaloniaResource Include="Assets\**"/>
+        <AvaloniaResource Include="Assets\**" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Assets\Fonts\JetBrainsMono-Medium.ttf"/>
-        <None Remove="Assets\Fonts\MSYHMONO.ttf"/>
+        <None Remove="Assets\Fonts\JetBrainsMono-Medium.ttf" />
+        <None Remove="Assets\Fonts\MSYHMONO.ttf" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.0.999-cibuild0036218-beta"/>
-        <PackageReference Include="Avalonia.Desktop" Version="11.0.999-cibuild0036218-beta"/>
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.999-cibuild0036218-beta"/>
+        <PackageReference Include="Avalonia" Version="11.0.0" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.0.0" />
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.0" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.999-cibuild0036218-beta"/>
-        <PackageReference Include="DialogHost.Avalonia" Version="0.7.4"/>
-        <PackageReference Include="Flurl.Http" Version="3.2.4"/>
-        <PackageReference Include="Material.Avalonia" Version="3.0.0-avalonia11-preview5.191-nightly"/>
-        <PackageReference Include="Material.Icons.Avalonia" Version="2.0.1"/>
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.0" />
+        <PackageReference Include="DialogHost.Avalonia" Version="0.7.5" />
+        <PackageReference Include="Flurl.Http" Version="3.2.4" />
+        <PackageReference Include="Material.Avalonia" Version="3.0.0-avalonia11-preview5.202-nightly" />
+        <PackageReference Include="Material.Icons.Avalonia" Version="2.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ProjBobcat\ProjBobcat\ProjBobcat\ProjBobcat.csproj"/>
+        <ProjectReference Include="..\ProjBobcat\ProjBobcat\ProjBobcat\ProjBobcat.csproj" />
     </ItemGroup>
 </Project>
