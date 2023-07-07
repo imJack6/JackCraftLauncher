@@ -8,8 +8,8 @@
              x:Class="JackCraftLauncher.Views.MainMenus.StartGameMenu">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0"
                     Margin="20"
@@ -18,19 +18,19 @@
             <Grid Name="DownloadingGrid1" IsVisible="False">
                 <ProgressBar Name="DownloadingProgressBar1"
                              Height="15"
-                             CornerRadius="25"/>
+                             CornerRadius="25" />
                 <TextBlock HorizontalAlignment="Center"
                            VerticalAlignment="Center"
-                           Name="DownloadingTextBlock1"/>
+                           Name="DownloadingTextBlock1" />
             </Grid>
             <Grid Name="DownloadingGrid2" IsVisible="False">
                 <ProgressBar Name="DownloadingProgressBar2"
                              Height="15"
                              Maximum="1"
-                             CornerRadius="25"/>
+                             CornerRadius="25" />
                 <TextBlock HorizontalAlignment="Center"
                            VerticalAlignment="Center"
-                           Name="DownloadingTextBlock2"/>
+                           Name="DownloadingTextBlock2" />
             </Grid>
         </StackPanel>
         <controls:Card Grid.Row="1" Padding="0"

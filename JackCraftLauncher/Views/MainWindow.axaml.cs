@@ -22,7 +22,7 @@ public partial class MainWindow : Window
         DefaultConfigHandler.LoadSettingsConfig();
     }
 
-    public static MainWindow? Instance { get; private set; }
+    public static MainWindow Instance { get; private set; } = null!;
 
     private void TemplatedControl_OnTemplateApplied(object? sender, TemplateAppliedEventArgs e)
     {
