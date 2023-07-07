@@ -2,6 +2,7 @@
 using DialogHostAvalonia;
 using JackCraftLauncher.Class.ConfigHandler;
 using JackCraftLauncher.Class.Models;
+using JackCraftLauncher.Class.Models.LoginModels;
 using JackCraftLauncher.Views.MainMenus;
 using JackCraftLauncher.Views.MainMenus.LoginMenus;
 using ProjBobcat.Class.Model;
@@ -18,6 +19,7 @@ public class AccountAuthenticatorHandler
 
     public static void LogOut()
     {
+        DefaultConfigHandler.SetConfig(DefaultConfigConstants.LoginInformationNodes.LoginModeNode, LoginType.None);
         GlobalVariable.AccountAuthenticator = null!;
         MicrosoftLoginControl.Instance.LoginType1CancelLogin();
         LoginMenu.Instance.LoginTabControl.IsVisible = true;
@@ -26,27 +28,36 @@ public class AccountAuthenticatorHandler
 
     public static async Task Login(IAuthenticator authenticator, string username)
     {
-        var LoginAs = Localizer.Localizer.Instance["LoginAs"];
+        var loginAs = Localizer.Localizer.Instance["LoginAs"];
         AuthResultBase authResult = null!;
         if (authenticator is OfflineAuthenticator)
         {
-            LoginAs = string.Format(LoginAs, Localizer.Localizer.Instance["OfflineLogin"]);
+            loginAs = string.Format(loginAs, Localizer.Localizer.Instance["OfflineLogin"]);
             authResult = await authenticator.AuthTaskAsync(false);
-            DefaultConfigHandler.SetConfig("LoginInformation.OfflineAuthenticator", authenticator);
+            DefaultConfigHandler.SetConfig(DefaultConfigConstants.LoginInformationNodes.LoginModeNode,
+                LoginType.Offline);
         }
         else if (authenticator is MicrosoftAuthenticator)
         {
-            LoginAs = string.Format(LoginAs, Localizer.Localizer.Instance["MicrosoftLogin"]);
+            loginAs = string.Format(loginAs, Localizer.Localizer.Instance["MicrosoftLogin"]);
             authResult = await authenticator.AuthTaskAsync(false);
+            DefaultConfigHandler.SetConfig(DefaultConfigConstants.LoginInformationNodes.LoginModeNode,
+                LoginType.Microsoft);
         }
         else if (authenticator is YggdrasilAuthenticator)
         {
-            LoginAs = string.Format(LoginAs, Localizer.Localizer.Instance["ThirdPartyLogin"]);
+            loginAs = string.Format(loginAs, Localizer.Localizer.Instance["ThirdPartyLogin"]);
             authResult = await authenticator.AuthTaskAsync(false);
+            DefaultConfigHandler.SetConfig(DefaultConfigConstants.LoginInformationNodes.LoginModeNode,
+                LoginType.Yggdrasil);
         }
+
+        DefaultConfigHandler.SetConfig(DefaultConfigConstants.LoginInformationNodes.UsernameNode, username);
 
         if (authResult.AuthStatus != AuthStatus.Succeeded)
         {
+            DefaultConfigHandler.SetConfig(DefaultConfigConstants.LoginInformationNodes.LoginModeNode, LoginType.None);
+
             var loginFailErrorMessage = string.Format(Localizer.Localizer.Instance["LoginFailErrorMessage1"],
                 authResult.AuthStatus, authResult.Error.Error,
                 authResult.Error.ErrorMessage, authResult.Error.Cause);
@@ -57,7 +68,7 @@ public class AccountAuthenticatorHandler
         else
         {
             LoginMenu.Instance.UserNameTextBlock.Text = username;
-            LoginMenu.Instance.LoginAsTextBlock.Text = LoginAs;
+            LoginMenu.Instance.LoginAsTextBlock.Text = loginAs;
             GlobalVariable.AccountAuthenticator = authenticator;
             LoginMenu.Instance.LoginTabControl.IsVisible = false;
             LoginMenu.Instance.LoginInGrid.IsVisible = true;

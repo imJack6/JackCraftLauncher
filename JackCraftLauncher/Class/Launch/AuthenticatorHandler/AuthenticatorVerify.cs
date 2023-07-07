@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using JackCraftLauncher.Class.ConfigHandler;
 using ProjBobcat.Class.Helper;
 using ProjBobcat.Class.Model.Microsoft.Graph;
 using ProjBobcat.DefaultComponent.Authenticator;
@@ -9,8 +10,8 @@ namespace JackCraftLauncher.Class.Launch.AuthenticatorHandler;
 
 public class AuthenticatorVerify
 {
-    public int ExpiresIn = 0;
-    public DateTime LastRefreshedTime = DateTime.MinValue;
+    // public int ExpiresIn = 0;
+    // public DateTime LastRefreshedTime = DateTime.MinValue;
     public string XblRefreshToken = string.Empty;
 
     private static HttpClient DefaultClient => HttpClientHelper.DefaultClient;
@@ -40,6 +41,8 @@ public class AuthenticatorVerify
             return (true, result);
         }*/
 
+        DefaultConfigHandler.SetConfig(DefaultConfigConstants.LoginInformationNodes.MicrosoftLoginRefreshTokenNode,
+            EncryptHandler.JcEncrypt(XblRefreshToken));
         // 请求新的登录令牌 
         var refreshReqDic = new List<KeyValuePair<string, string>>
         {
@@ -68,6 +71,9 @@ public class AuthenticatorVerify
 
             return (false, default);
         }
+
+        DefaultConfigHandler.SetConfig(DefaultConfigConstants.LoginInformationNodes.MicrosoftLoginRefreshTokenNode,
+            EncryptHandler.JcEncrypt(model.RefreshToken));
 
         return (true, model);
     }

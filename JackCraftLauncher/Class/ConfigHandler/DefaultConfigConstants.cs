@@ -23,4 +23,14 @@ public static class DefaultConfigConstants
     {
         public const string ThemeNode = "LauncherSettings.ThemeMode";
     }
+
+    public class LoginInformationNodes
+    {
+        public const string LoginModeNode = "LoginInformation.LoginMode";
+        public const string UsernameNode = "LoginInformation.Username";
+        public const string MicrosoftLoginRefreshTokenNode = "LoginInformation.MicrosoftLogin.RefreshToken";
+        public const string YggdrasilLoginAuthServerNode = "LoginInformation.YggdrasilLogin.AuthServer";
+        public const string YggdrasilLoginEmailNode = "LoginInformation.YggdrasilLogin.Email";
+        public const string YggdrasilLoginPasswordNode = "LoginInformation.YggdrasilLogin.Password";
+    }
 }

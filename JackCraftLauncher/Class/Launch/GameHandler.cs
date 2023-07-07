@@ -32,7 +32,7 @@ public class GameHandler
         var errorI18N = Localizer.Localizer.Instance["Error"];
 
         MainWindow.Instance?.StartGameMenuItem.AddStartGameLog(
-            $"[{launcherI18N}] {string.Format(Localizer.Localizer.Instance["StartingGameVersion"],$"{versionInfo.Name}({versionInfo.Id})")}");
+            $"[{launcherI18N}] {string.Format(Localizer.Localizer.Instance["StartingGameVersion"], $"{versionInfo.Name}({versionInfo.Id})")}");
 
         var core = new DefaultGameCore
         {
@@ -74,7 +74,8 @@ public class GameHandler
             if (!args.Item.StartsWith("-Xm"))
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    MainWindow.Instance?.StartGameMenuItem.AddStartGameLog($"[{launcherI18N}] [{args.ItemRunTime}] {args.Item}");
+                    MainWindow.Instance?.StartGameMenuItem.AddStartGameLog(
+                        $"[{launcherI18N}] [{args.ItemRunTime}] {args.Item}");
                 });
         };
         /*core.GameLogEventDelegate += (sender, args) =>
@@ -109,11 +110,11 @@ public class GameHandler
                 // 类型为 DownloadFileChangedEventArgs
                 MainWindow.Instance!.StartGameMenuItem.DownloadingGrid2.IsVisible = true;
                 MainWindow.Instance.StartGameMenuItem.DownloadingProgressBar2.Value = args.ProgressPercentage;
-                string data = string.Empty;
+                var data = string.Empty;
                 if (args.BytesReceived != 0 || args.TotalBytes != null)
                     data = $"{args.BytesReceived} / {args.TotalBytes} - ";
                 MainWindow.Instance.StartGameMenuItem.DownloadingTextBlock2.Text =
-                    $"{data}{(args.Speed):0.00}/s - {(args.ProgressPercentage * 100):0.00}%";
+                    $"{data}{args.Speed:0.00}/s - {args.ProgressPercentage * 100:0.00}%";
                 if (Math.Abs(args.ProgressPercentage - 1) < 0.01)
                     MainWindow.Instance.StartGameMenuItem.DownloadingGrid2.IsVisible = false;
             });
@@ -123,8 +124,10 @@ public class GameHandler
             Dispatcher.UIThread.InvokeAsync(() =>
             {
                 if (sender is not DownloadFile file) return;
-                MainWindow.Instance!.StartGameMenuItem.DownloadingProgressBar1.Maximum = resourceCompletion.NeedToDownload;
-                MainWindow.Instance.StartGameMenuItem.DownloadingProgressBar1.Value = resourceCompletion.TotalDownloaded;
+                MainWindow.Instance!.StartGameMenuItem.DownloadingProgressBar1.Maximum =
+                    resourceCompletion.NeedToDownload;
+                MainWindow.Instance.StartGameMenuItem.DownloadingProgressBar1.Value =
+                    resourceCompletion.TotalDownloaded;
                 if (resourceCompletion.TotalDownloaded == resourceCompletion.NeedToDownload)
                     MainWindow.Instance.StartGameMenuItem.DownloadingGrid1.IsVisible = false;
                 var isSuccess = args.Success == null

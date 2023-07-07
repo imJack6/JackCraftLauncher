@@ -99,14 +99,10 @@ public partial class MicrosoftLoginControl : UserControl
                         (MicrosoftAuthResult)await microsoftAuthenticator.AuthTaskAsync();
                     if (authResult.Error == null)
                     {
-                        GlobalVariable.MicrosoftLogin.CurrentAuthTime = authResult.CurrentAuthTime;
-                        GlobalVariable.MicrosoftLogin.ExpiresIn = authResult.ExpiresIn;
                         GlobalVariable.MicrosoftLogin.RefreshToken = authResult.RefreshToken;
                         AuthenticatorVerify authVerify = new()
                         {
-                            XblRefreshToken = GlobalVariable.MicrosoftLogin.RefreshToken,
-                            LastRefreshedTime = GlobalVariable.MicrosoftLogin.CurrentAuthTime,
-                            ExpiresIn = GlobalVariable.MicrosoftLogin.ExpiresIn
+                            XblRefreshToken = GlobalVariable.MicrosoftLogin.RefreshToken
                         };
                         await AccountAuthenticatorHandler.Login(
                             new MicrosoftAuthenticator

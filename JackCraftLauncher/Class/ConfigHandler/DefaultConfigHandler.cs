@@ -3,7 +3,9 @@ using System.IO;
 using System.Reflection;
 using Avalonia;
 using JackCraftLauncher.Class.Launch;
+using JackCraftLauncher.Class.Launch.AuthenticatorHandler;
 using JackCraftLauncher.Class.Models.ErrorModels;
+using JackCraftLauncher.Class.Models.LoginModels;
 using JackCraftLauncher.Class.Utils;
 using JackCraftLauncher.Views.MainMenus;
 using JackCraftLauncher.Views.MyWindow;
@@ -11,6 +13,8 @@ using Material.Styles.Themes;
 using Material.Styles.Themes.Base;
 using ProjBobcat.Class.Model;
 using ProjBobcat.DefaultComponent.Authenticator;
+using ProjBobcat.DefaultComponent.Launch;
+using ProjBobcat.Interface;
 
 namespace JackCraftLauncher.Class.ConfigHandler;
 
@@ -25,6 +29,7 @@ public class DefaultConfigHandler
         LoadLauncherConfig();
         LoadDownloadConfig();
         LoadGameConfig();
+        LoadLoginConfig();
     }
 
     private static void LoadLauncherConfig()
@@ -133,6 +138,57 @@ public class DefaultConfigHandler
         GlobalVariable.Config.GameResolutionHeight = resolutionHeight;
         SettingMenu.Instance!.GameResolutionWidthTextBox.Text = resolutionWidth.ToString();
         SettingMenu.Instance!.GameResolutionHeightTextBox.Text = resolutionHeight.ToString();
+    }
+
+    #endregion
+
+    #region 登录配置
+
+    private static async void LoadLoginConfig()
+    {
+        //string loginAs = Localizer.Localizer.Instance["LoginAs"];
+        var username = (string)GetConfig(DefaultConfigConstants.LoginInformationNodes.UsernameNode);
+        IAuthenticator authenticator = null!;
+        switch (GetConfig(DefaultConfigConstants.LoginInformationNodes.LoginModeNode))
+        {
+            case LoginType.None:
+                break;
+            case LoginType.Offline:
+                //loginAs = string.Format(loginAs, Localizer.Localizer.Instance["OfflineLogin"]);
+                await AccountAuthenticatorHandler.Login(new OfflineAuthenticator
+                {
+                    Username = username,
+                    LauncherAccountParser = new DefaultLauncherAccountParser(App.Core.RootPath!, App.Core.ClientToken)
+                }, username);
+                break;
+            case LoginType.Microsoft:
+                //loginAs = string.Format(loginAs, Localizer.Localizer.Instance["MicrosoftLogin"]);
+                AuthenticatorVerify authVerify = new()
+                {
+                    XblRefreshToken = EncryptHandler.JcDecrypt((string)GetConfig(DefaultConfigConstants
+                        .LoginInformationNodes.MicrosoftLoginRefreshTokenNode))
+                };
+                await AccountAuthenticatorHandler.Login(
+                    new MicrosoftAuthenticator
+                    {
+                        CacheTokenProvider = authVerify.CacheTokenProviderAsync,
+                        LauncherAccountParser = App.Core.VersionLocator.LauncherAccountParser
+                    },
+                    username);
+                break;
+            case LoginType.Yggdrasil:
+                //loginAs = string.Format(loginAs, Localizer.Localizer.Instance["ThirdPartyLogin"]);
+                break;
+        }
+
+        /*if ((LoginType)GetConfig(DefaultConfigConstants.LoginInformationNodes.LoginModeNode) != LoginType.None)
+        {
+            LoginMenu.Instance.UserNameTextBlock.Text = (string?)GetConfig(DefaultConfigConstants.LoginInformationNodes.UsernameNode);
+            LoginMenu.Instance.LoginAsTextBlock.Text = loginAs;
+            GlobalVariable.AccountAuthenticator = authenticator;
+            LoginMenu.Instance.LoginTabControl.IsVisible = false;
+            LoginMenu.Instance.LoginInGrid.IsVisible = true;
+        }*/
     }
 
     #endregion
@@ -300,16 +356,29 @@ public class DefaultConfigHandler
         public int SelectedJavaIndex { get; set; } = -1;
         public List<string> JavaPathList { get; set; } = new();
         public GcType GcType { get; set; } = GcType.G1Gc;
-        public uint ResolutionWidth { get; set; } = 800;
-        public uint ResolutionHeight { get; set; } = 450;
+        public uint ResolutionWidth { get; set; } = 854;
+        public uint ResolutionHeight { get; set; } = 480;
     }
 
     public class LoginInformation
     {
-        public OfflineAuthenticator OfflineAuthenticator { get; set; } = new();
-        public MicrosoftAuthenticator MicrosoftAuthenticator { get; set; } = new();
-        public YggdrasilAuthenticator YggdrasilAuthenticator { get; set; } = new();
+        public LoginType LoginMode { get; set; } = LoginType.None;
+        public string Username { get; set; } = string.Empty;
+        public MicrosoftLogin MicrosoftLogin { get; set; } = new();
+        public YggdrasilLogin YggdrasilLogin { get; set; } = new();
     }
-    
+
+    public class MicrosoftLogin
+    {
+        public string RefreshToken { get; set; } = string.Empty;
+    }
+
+    public class YggdrasilLogin
+    {
+        public string AuthServer { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+
     #endregion
 }
