@@ -7,9 +7,34 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="JackCraftLauncher.Views.MainMenus.StartGameMenu">
     <Grid>
-        <TextBlock Text="{i18N:Localize StartingGame}" Margin="20" Classes="Headline4" />
-        <controls:Card Padding="0"
-                       Margin="20,75,20,20"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0"
+                    Margin="20"
+                    Spacing="5">
+            <TextBlock Text="{i18N:Localize StartingGame}" Classes="Headline4" />
+            <Grid Name="DownloadingGrid1" IsVisible="False">
+                <ProgressBar Name="DownloadingProgressBar1"
+                             Height="15"
+                             CornerRadius="25"/>
+                <TextBlock HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Name="DownloadingTextBlock1"/>
+            </Grid>
+            <Grid Name="DownloadingGrid2" IsVisible="False">
+                <ProgressBar Name="DownloadingProgressBar2"
+                             Height="15"
+                             Maximum="1"
+                             CornerRadius="25"/>
+                <TextBlock HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Name="DownloadingTextBlock2"/>
+            </Grid>
+        </StackPanel>
+        <controls:Card Grid.Row="1" Padding="0"
+                       Margin="20,0,20,20"
                        CornerRadius="15">
             <ListBox Name="StartGameLogListBox"
                      SelectionChanged="StartGameLogListBox_OnSelectionChanged" />

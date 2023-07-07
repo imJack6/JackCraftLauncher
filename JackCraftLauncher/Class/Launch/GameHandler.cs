@@ -32,7 +32,7 @@ public class GameHandler
         var errorI18N = Localizer.Localizer.Instance["Error"];
 
         MainWindow.Instance?.StartGameMenuItem.AddStartGameLog(
-            $"[{launcherI18N}] {Localizer.Localizer.Instance["StartingGameVersion"]}");
+            $"[{launcherI18N}] {string.Format(Localizer.Localizer.Instance["StartingGameVersion"],$"{versionInfo.Name}({versionInfo.Id})")}");
 
         var core = new DefaultGameCore
         {
@@ -71,10 +71,11 @@ public class GameHandler
         };
         core.LaunchLogEventDelegate += (sender, args) =>
         {
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                MainWindow.Instance?.StartGameMenuItem.AddStartGameLog($"[{launcherI18N}] {args.Item}");
-            });
+            if (!args.Item.StartsWith("-Xm"))
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    MainWindow.Instance?.StartGameMenuItem.AddStartGameLog($"[{launcherI18N}] [{args.ItemRunTime}] {args.Item}");
+                });
         };
         /*core.GameLogEventDelegate += (sender, args) =>
         {
@@ -92,11 +93,40 @@ public class GameHandler
                     logWindow.AddLog("[启动器] 游戏已退出");
             });
         };*/
+        resourceCompletion.GameResourceInfoResolveStatus += (_, args) =>
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                MainWindow.Instance!.StartGameMenuItem.DownloadingGrid1.IsVisible = true;
+                MainWindow.Instance.StartGameMenuItem.DownloadingTextBlock1.Text = args.Status;
+            });
+        };
+        resourceCompletion.DownloadFileChangedEvent += (_, args) =>
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                // args 返回了下载中的文件的具体信息（已接收的字节数、总共的字节数、当前速度、百分比进度）
+                // 类型为 DownloadFileChangedEventArgs
+                MainWindow.Instance!.StartGameMenuItem.DownloadingGrid2.IsVisible = true;
+                MainWindow.Instance.StartGameMenuItem.DownloadingProgressBar2.Value = args.ProgressPercentage;
+                string data = string.Empty;
+                if (args.BytesReceived != 0 || args.TotalBytes != null)
+                    data = $"{args.BytesReceived} / {args.TotalBytes} - ";
+                MainWindow.Instance.StartGameMenuItem.DownloadingTextBlock2.Text =
+                    $"{data}{(args.Speed):0.00}/s - {(args.ProgressPercentage * 100):0.00}%";
+                if (Math.Abs(args.ProgressPercentage - 1) < 0.01)
+                    MainWindow.Instance.StartGameMenuItem.DownloadingGrid2.IsVisible = false;
+            });
+        };
         resourceCompletion.DownloadFileCompletedEvent += (sender, args) =>
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
                 if (sender is not DownloadFile file) return;
+                MainWindow.Instance!.StartGameMenuItem.DownloadingProgressBar1.Maximum = resourceCompletion.NeedToDownload;
+                MainWindow.Instance.StartGameMenuItem.DownloadingProgressBar1.Value = resourceCompletion.TotalDownloaded;
+                if (resourceCompletion.TotalDownloaded == resourceCompletion.NeedToDownload)
+                    MainWindow.Instance.StartGameMenuItem.DownloadingGrid1.IsVisible = false;
                 var isSuccess = args.Success == null
                     ? string.Empty
                     : $"[{(args.Success.Value ? successI18N : failI18N)}]";
@@ -117,7 +147,6 @@ public class GameHandler
         };
         await resourceCompletion.CheckAndDownloadTaskAsync().ConfigureAwait(false);
 
-        Console.WriteLine("Try Start Game: " + GlobalVariable.Config.GameStartJavaPath);
         var result = await core.LaunchTaskAsync(launchSettings).ConfigureAwait(true); // 返回游戏启动结果，以及异常信息（如果存在）
         Dispatcher.UIThread.InvokeAsync(() =>
         {
