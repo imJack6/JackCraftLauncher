@@ -35,7 +35,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <Grid>
                 <StackPanel Margin="20"
-                            Spacing="15" IsVisible="True"
+                            Spacing="15" IsVisible="False"
                             Name="SelectDownloadMinecraftVersionStackPanel">
                     <controls:Card CornerRadius="16">
                         <StackPanel Spacing="5">
@@ -182,7 +182,7 @@
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Margin="20"
-                            IsVisible="False"
+                            IsVisible="True"
                             Spacing="10"
                             Name="SelectDownloadAttachmentsStackPanel">
                     <Button HorizontalAlignment="Left"

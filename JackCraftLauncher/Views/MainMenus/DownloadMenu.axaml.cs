@@ -233,6 +233,12 @@ public partial class DownloadMenu : UserControl
 
             #endregion
 
+            #region 处理第三方加载器
+
+            
+
+            #endregion
+            
             #region 安装完成
 
             ListHandler.RefreshLocalGameList();
