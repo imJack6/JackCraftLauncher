@@ -2,7 +2,6 @@
 
 public enum DownloadAttachmentsType
 {
-    None,
     Optifine,
     Forge,
     Fabric,
