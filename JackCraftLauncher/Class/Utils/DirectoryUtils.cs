@@ -16,4 +16,16 @@ public abstract class DirectoryUtils
                 throw new Exception($"创建文件夹 {path} 失败: {ex}");
             }
     }
+    public static void DeleteDirectory(string path)
+    {
+        if (Directory.Exists(path))
+            try
+            {
+                Directory.Delete(path, true);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"删除文件夹 {path} 失败: {ex}");
+            }
+    }
 }
