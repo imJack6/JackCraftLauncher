@@ -12,27 +12,23 @@ public class JsonUtils
     /// <returns>已合并与添加后的JObject</returns>
     public static JObject MergedJson(JObject source, JObject target)
     {
-        JObject obj1 = target;
-        JObject obj2 = source;
+        var obj1 = target;
+        var obj2 = source;
         // 将第二个 JObject 对象中的属性合并到第一个 JObject 对象中
         foreach (var property in obj2.Properties())
-        {
-            if (obj1[property.Name] != null && obj1[property.Name].Type == JTokenType.Array && property.Value.Type == JTokenType.Array)
+            if (obj1[property.Name] != null && obj1[property.Name].Type == JTokenType.Array &&
+                property.Value.Type == JTokenType.Array)
             {
                 // 如果属性值是数组，则将第二个 JObject 对象中的数组元素添加到第一个 JObject 对象中的数组元素的后面
-                JArray array1 = (JArray)obj1[property.Name];
-                JArray array2 = (JArray)property.Value;
-                foreach (var item in array2)
-                {
-                    array1.Add(item);
-                }
+                var array1 = (JArray)obj1[property.Name];
+                var array2 = (JArray)property.Value;
+                foreach (var item in array2) array1.Add(item);
             }
             else
             {
                 // 否则，将第二个 JObject 对象中的属性值添加到第一个 JObject 对象中的属性值的后面
                 obj1[property.Name] = property.Value;
             }
-        }
 
         return obj1;
         /*var result = new JObject();
