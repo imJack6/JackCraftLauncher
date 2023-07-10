@@ -19,13 +19,18 @@ public static class DownloadSourceHandler
         MinecraftJson,
         MinecraftLibraries,
         MinecraftAssets,
-        MinecraftAssetsIndex
+        MinecraftAssetsIndex,
+        ForgeSupportMcList,
+        ForgeMcList,
+        Forge,
+        ForgeOldMaven,
+        ForgeMaven
     }
 
     public static string GetDownloadSource(DownloadTargetEnum target, DownloadSourceEnum? source,
         string? minecraftVersion = "1.0")
     {
-        if (source == null) source = GlobalVariable.Config.DownloadSourceEnum;
+        source ??= GlobalVariable.Config.DownloadSourceEnum;
 
         var baseUrl = source switch
         {
@@ -37,6 +42,9 @@ public static class DownloadSourceHandler
                 DownloadTargetEnum.MinecraftLibraries => "https://libraries.minecraft.net",
                 DownloadTargetEnum.MinecraftAssets => "http://resources.download.minecraft.net",
                 DownloadTargetEnum.MinecraftAssetsIndex => "https://launchermeta.mojang.com",
+                DownloadTargetEnum.ForgeSupportMcList or DownloadTargetEnum.ForgeMcList => "https://download.mcbbs.net",
+                DownloadTargetEnum.Forge or DownloadTargetEnum.ForgeOldMaven => "https://files.minecraftforge.net",
+                DownloadTargetEnum.ForgeMaven => "https://maven.minecraftforge.net",
                 _ => "http://launchermeta.mojang.com"
             },
             _ => throw new InvalidDataException($"Selected mirror field {source} does not exist.")
@@ -52,6 +60,11 @@ public static class DownloadSourceHandler
             DownloadTargetEnum.MinecraftAssets when source == DownloadSourceEnum.Official => $"{baseUrl}/",
             DownloadTargetEnum.MinecraftAssets => $"{baseUrl}/assets/",
             DownloadTargetEnum.MinecraftAssetsIndex => $"{baseUrl}/",
+            DownloadTargetEnum.ForgeSupportMcList => $"{baseUrl}/forge/minecraft",
+            DownloadTargetEnum.ForgeMcList => $"{baseUrl}/forge/minecraft/{minecraftVersion}",
+            DownloadTargetEnum.Forge or DownloadTargetEnum.ForgeOldMaven => $"{baseUrl}/maven/",
+            DownloadTargetEnum.ForgeMaven when source != DownloadSourceEnum.Official => $"{baseUrl}/maven/",
+            DownloadTargetEnum.ForgeMaven => $"{baseUrl}/",
             _ => throw new InvalidDataException($"Selected target field {target} does not exist.")
         };
     }

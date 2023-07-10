@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,10 +12,13 @@ using DialogHostAvalonia;
 using JackCraftLauncher.Class;
 using JackCraftLauncher.Class.Launch;
 using JackCraftLauncher.Class.Models;
+using JackCraftLauncher.Class.Models.InstallModels;
 using JackCraftLauncher.Class.Models.ListTemplate;
 using JackCraftLauncher.Class.Utils;
 using ProjBobcat.Class.Helper;
 using ProjBobcat.Class.Model;
+using ProjBobcat.DefaultComponent.Installer.ForgeInstaller;
+using ProjBobcat.Interface;
 
 namespace JackCraftLauncher.Views.MainMenus;
 
@@ -35,9 +39,81 @@ public partial class DownloadMenu : UserControl
 
     #region 选择要安装的附加内容界面
 
+    private void BackToSelectVersionButton_Click(object sender, RoutedEventArgs e)
+    {
+        InstallMinecraftVersionTextBlock.Text = string.Empty;
+        DownloadSaveVersionNameTextBox.Text = string.Empty;
+        SelectDownloadMinecraftVersionStackPanel.IsVisible = true;
+        SelectDownloadAttachmentsStackPanel.IsVisible = false;
+
+        #region Forge
+
+        ForgeExpander.IsExpanded = false;
+        ForgeCancelSelectButton.IsVisible = false;
+        ForgeListBox.SelectedIndex = -1;
+
+        #endregion
+    }
+
     private void StartInstallButton_OnClick(object? sender, RoutedEventArgs e)
     {
         StartInstall();
+    }
+
+    #region Forge
+
+    private void ForgeListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (ForgeListBox.SelectedIndex != -1)
+        {
+            var downloadList = (ForgeDownloadList)ForgeListBox.SelectedItem!;
+            RemoveDownloadSelectModel(DownloadAttachmentsType.Forge);
+            AddDownloadSelectModel(
+                new DownloadSelectModel
+                {
+                    InstallAttachmentsType = DownloadAttachmentsType.Forge,
+                    Version = downloadList.Version
+                });
+            ForgeExpander.IsExpanded = false;
+            ForgeCancelSelectButton.IsVisible = true;
+            ForgeSelectVersionTextBlock.Text = downloadList.Version;
+        }
+    }
+
+    private void ForgeCancelSelectButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        RemoveDownloadSelectModel(DownloadAttachmentsType.Forge);
+        ForgeExpander.IsExpanded = false;
+        ForgeCancelSelectButton.IsVisible = false;
+        ForgeListBox.SelectedIndex = -1;
+        ForgeSelectVersionTextBlock.Text = Localizer.Localizer.Instance["NotSelected"];
+    }
+
+    #endregion
+
+    private static void AddDownloadSelectModel(DownloadSelectModel model)
+    {
+        if (GlobalVariable.DownloadSelectAttachmentsModels.Any(m =>
+                m.InstallAttachmentsType == model.InstallAttachmentsType))
+            GlobalVariable.DownloadSelectAttachmentsModels.Remove(
+                GlobalVariable.DownloadSelectAttachmentsModels.First(m =>
+                    m.InstallAttachmentsType == model.InstallAttachmentsType));
+        GlobalVariable.DownloadSelectAttachmentsModels.Add(model);
+        Instance.InstallAttachmentsTextBlock.Text = string.Join(", ",
+            GlobalVariable.DownloadSelectAttachmentsModels.Select(m => $"{m.InstallAttachmentsType} {m.Version}"));
+        Instance.InstallAttachmentsTextBlock.IsVisible = true;
+    }
+
+    private static void RemoveDownloadSelectModel(DownloadAttachmentsType type)
+    {
+        if (GlobalVariable.DownloadSelectAttachmentsModels.Any(m => m.InstallAttachmentsType == type))
+            foreach (var model in GlobalVariable.DownloadSelectAttachmentsModels
+                         .Where(m => m.InstallAttachmentsType == type).ToList())
+                GlobalVariable.DownloadSelectAttachmentsModels.Remove(model);
+        Instance.InstallAttachmentsTextBlock.Text = string.Join(", ",
+            GlobalVariable.DownloadSelectAttachmentsModels.Select(m => $"{m.InstallAttachmentsType} {m.Version}"));
+        if (GlobalVariable.DownloadSelectAttachmentsModels.Count == 0)
+            Instance.InstallAttachmentsTextBlock.IsVisible = false;
     }
 
     #endregion
@@ -67,7 +143,7 @@ public partial class DownloadMenu : UserControl
         DialogHostUtils.Close();
     }
 
-    public static void CancelLoadingDownloadList()
+    private static void CancelLoadingDownloadList()
     {
         _downloadListLoadingCancellationTokenSource.Cancel();
         _downloadListLoadingCancellationTokenSource = new CancellationTokenSource();
@@ -94,18 +170,14 @@ public partial class DownloadMenu : UserControl
                 break;
         }
 
+        GlobalVariable.DownloadSelectAttachmentsModels = new ObservableCollection<DownloadSelectModel>();
+        InstallAttachmentsTextBlock.IsVisible = false;
+        ListHandler.RefreshLocalForgeDownloadList(mcVersion);
+
         InstallMinecraftVersionTextBlock.Text = mcVersion;
         DownloadSaveVersionNameTextBox.Text = mcVersion;
         SelectDownloadMinecraftVersionStackPanel.IsVisible = false;
         SelectDownloadAttachmentsStackPanel.IsVisible = true;
-    }
-
-    private void BackToSelectVersionButton_Click(object sender, RoutedEventArgs e)
-    {
-        InstallMinecraftVersionTextBlock.Text = string.Empty;
-        DownloadSaveVersionNameTextBox.Text = string.Empty;
-        SelectDownloadMinecraftVersionStackPanel.IsVisible = true;
-        SelectDownloadAttachmentsStackPanel.IsVisible = false;
     }
 
     private void DownloadSaveVersionNameTextBox_OnTextChanged(object? sender, TextChangedEventArgs e)
@@ -114,31 +186,46 @@ public partial class DownloadMenu : UserControl
         {
             PleaseTypeVersionNameTextBlock.IsVisible = false;
             var folderPath =
-                $"{App.Core.RootPath}{Path.DirectorySeparatorChar}versions{Path.DirectorySeparatorChar}{DownloadSaveVersionNameTextBox.Text}";
+                $"{App.Core.RootPath}/versions/{DownloadSaveVersionNameTextBox.Text}";
             if (Directory.Exists(folderPath))
             {
                 if (string.IsNullOrWhiteSpace(DownloadSaveVersionNameTextBox.Text))
                 {
                     PleaseTypeVersionNameTextBlock.IsVisible = true;
                     FolderAlreadyExistsTextBlock.IsVisible = false;
+                    FolderNameInvalidCharacterTextBlock.IsVisible = false;
                     StartInstallButton.IsEnabled = false;
                 }
                 else
                 {
                     FolderAlreadyExistsTextBlock.IsVisible = true;
+                    FolderNameInvalidCharacterTextBlock.IsVisible = false;
                     StartInstallButton.IsEnabled = false;
                 }
             }
             else
             {
-                FolderAlreadyExistsTextBlock.IsVisible = false;
-                StartInstallButton.IsEnabled = true;
+                if (DownloadSaveVersionNameTextBox.Text.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+                {
+                    PleaseTypeVersionNameTextBlock.IsVisible = false;
+                    FolderAlreadyExistsTextBlock.IsVisible = false;
+                    FolderNameInvalidCharacterTextBlock.IsVisible = true;
+                    StartInstallButton.IsEnabled = false;
+                }
+                else
+                {
+                    PleaseTypeVersionNameTextBlock.IsVisible = false;
+                    FolderAlreadyExistsTextBlock.IsVisible = false;
+                    FolderNameInvalidCharacterTextBlock.IsVisible = false;
+                    StartInstallButton.IsEnabled = true;
+                }
             }
         }
         else
         {
             FolderAlreadyExistsTextBlock.IsVisible = false;
             PleaseTypeVersionNameTextBlock.IsVisible = true;
+            FolderNameInvalidCharacterTextBlock.IsVisible = false;
             StartInstallButton.IsEnabled = false;
         }
     }
@@ -164,7 +251,7 @@ public partial class DownloadMenu : UserControl
 
     private void LatestSnapshotVersionButton_OnClick(object? sender, RoutedEventArgs e)
     {
-        GoToSelectDownloadAttachmentsStackPanel(GlobalVariable.MinecraftDownload.LatestMinecraftReleaseVersion,
+        GoToSelectDownloadAttachmentsStackPanel(GlobalVariable.MinecraftDownload.LatestMinecraftSnapshotVersion,
             VersionType.Beta);
     }
 
@@ -196,8 +283,15 @@ public partial class DownloadMenu : UserControl
             AddInstallLog(
                 $"[{Localizer.Localizer.Instance["Initialize"]}] {string.Format(Localizer.Localizer.Instance["CreateFolder"])}");
             var folderPath =
-                $"{App.Core.RootPath}{Path.DirectorySeparatorChar}versions{Path.DirectorySeparatorChar}{DownloadSaveVersionNameTextBox.Text}";
+                $"{App.Core.RootPath}/versions/{DownloadSaveVersionNameTextBox.Text}";
             DirectoryUtils.CreateDirectory(folderPath);
+            var downloadSettings = new DownloadSettings
+            {
+                DownloadParts = GlobalVariable.Config.DownloadPartsCount,
+                RetryCount = GlobalVariable.Config.DownloadRetryCount,
+                CheckFile = true,
+                Timeout = (int)TimeSpan.FromMinutes(5).TotalMilliseconds
+            };
             InstallProgressBar.Value = 10;
 
             #endregion
@@ -212,19 +306,12 @@ public partial class DownloadMenu : UserControl
                     x.ID == idToFind);
             var minecraftJsonUrl =
                 DownloadSourceHandler.PistonMetaUrlHandle(GlobalVariable.Config.DownloadSourceEnum, versionModel!.Url!);
-            var downloadSettings = new DownloadSettings
-            {
-                DownloadParts = 32,
-                RetryCount = 2,
-                CheckFile = true,
-                Timeout = (int)TimeSpan.FromMinutes(5).TotalMilliseconds
-            };
             var downloadFile = new DownloadFile
             {
                 DownloadUri = minecraftJsonUrl,
                 FileName = $"{saveVersionName}.json",
                 DownloadPath = folderPath,
-                RetryCount = 2
+                RetryCount = GlobalVariable.Config.DownloadRetryCount
             };
             await DownloadHelper.AdvancedDownloadFile(downloadFile, downloadSettings);
             AddInstallLog(
@@ -235,10 +322,98 @@ public partial class DownloadMenu : UserControl
 
             #region 处理第三方加载器
 
-            
+            if (GlobalVariable.DownloadSelectAttachmentsModels.Any(m =>
+                    m.InstallAttachmentsType == DownloadAttachmentsType.Optifine))
+                // Optifine install
+                InstallProgressBar.Value = 35;
+            if (GlobalVariable.DownloadSelectAttachmentsModels.Any(m =>
+                    m.InstallAttachmentsType == DownloadAttachmentsType.Forge))
+            {
+                // Forge install
+                InstallProgressBar.Value = 50;
+                AddInstallLog("初始化Forge安装");
+                var forgeVersion = GlobalVariable.DownloadSelectAttachmentsModels
+                    .FirstOrDefault(m => m.InstallAttachmentsType == DownloadAttachmentsType.Forge)?.Version!;
+                var forgeFileName = $"forge-{installMinecraftVersion}-{forgeVersion}-installer.jar";
+                var forgeUrl = $"{DownloadSourceHandler
+                    .GetDownloadSource(DownloadSourceHandler.DownloadTargetEnum.ForgeMaven, null)}net/minecraftforge/forge/{installMinecraftVersion}-{forgeVersion}/{forgeFileName}";
+                var forgeInstallFilePath = $"./JCL/cache/{forgeFileName}";
+                var forgeTempVersionName = $"{saveVersionName}-temp";
+                var forgeMcFolderPath = $"{App.Core.RootPath}/versions/{forgeTempVersionName}";
+                DirectoryUtils.CreateDirectory(forgeMcFolderPath);
+                var forgeInstallerDownloadFile = new DownloadFile
+                {
+                    DownloadUri = forgeUrl,
+                    FileName = forgeFileName,
+                    DownloadPath = "./JCL/cache",
+                    RetryCount = GlobalVariable.Config.DownloadRetryCount
+                };
+                InstallProgressBar.Value = 60;
+                AddInstallLog("开始下载Forge安装器");
+                await DownloadHelper.AdvancedDownloadFile(forgeInstallerDownloadFile, downloadSettings);
+                InstallProgressBar.Value = 70;
+                AddInstallLog("下载Forge安装器完成");
+                var isLegacy = ForgeInstallerFactory.IsLegacyForgeInstaller(forgeInstallFilePath, forgeVersion);
+                IForgeInstaller forgeInstaller = isLegacy
+                    ? new LegacyForgeInstaller
+                    {
+                        ForgeExecutablePath = forgeInstallFilePath,
+                        RootPath = App.Core.RootPath,
+                        CustomId = forgeTempVersionName,
+                        ForgeVersion = forgeVersion,
+                        InheritsFrom = installMinecraftVersion
+                    }
+                    : new HighVersionForgeInstaller
+                    {
+                        ForgeExecutablePath = forgeInstallFilePath,
+                        JavaExecutablePath = GlobalVariable.Config.GameStartJavaPath,
+                        RootPath = App.Core.RootPath,
+                        CustomId = forgeTempVersionName,
+                        VersionLocator = App.Core.VersionLocator,
+                        DownloadUrlRoot =
+                            DownloadSourceHandler.GetDownloadSource(
+                                DownloadSourceHandler.DownloadTargetEnum.ForgeOldMaven,
+                                null),
+                        MineCraftVersion = installMinecraftVersion,
+                        MineCraftVersionId = installMinecraftVersion,
+                        InheritsFrom = installMinecraftVersion
+                    };
+                ((InstallerBase)forgeInstaller).StageChangedEventDelegate += (_, args) =>
+                {
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        InstallProgressBar2.IsVisible = true;
+                        InstallProgressBar2.Value = args.Progress * 100;
+                        AddInstallLog($"[Forge] - [{args.Progress * 100:0.00}] - {args.CurrentStage}");
+                        if (Math.Abs(args.Progress - 1) < 0.01)
+                            InstallProgressBar2.IsVisible = false;
+                    });
+                };
+                InstallProgressBar.Value = 80;
+                AddInstallLog("开始安装Forge");
+                await forgeInstaller.InstallForgeTaskAsync();
+                InstallProgressBar.Value = 90;
+
+                AddInstallLog("Forge安装完成");
+            }
+            else if (GlobalVariable.DownloadSelectAttachmentsModels.Any(m =>
+                         m.InstallAttachmentsType == DownloadAttachmentsType.Fabric))
+            {
+                // Fabric install
+            }
+            else if (GlobalVariable.DownloadSelectAttachmentsModels.Any(m =>
+                         m.InstallAttachmentsType == DownloadAttachmentsType.Quilt))
+            {
+                // Quilt install
+            }
+            else if (GlobalVariable.DownloadSelectAttachmentsModels.Any(m =>
+                         m.InstallAttachmentsType == DownloadAttachmentsType.LiteLoader))
+            {
+                // LiteLoader install
+            }
 
             #endregion
-            
+
             #region 安装完成
 
             ListHandler.RefreshLocalGameList();

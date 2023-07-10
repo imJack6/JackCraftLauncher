@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using DialogHostAvalonia;
 using JackCraftLauncher.Class.ConfigHandler;
 using JackCraftLauncher.Class.Models;
+using JackCraftLauncher.Class.Models.ForgeModels;
 using JackCraftLauncher.Class.Models.ListTemplate;
 using JackCraftLauncher.Class.Models.MinecraftVersionManifest;
 using JackCraftLauncher.Class.Utils;
@@ -276,6 +278,68 @@ public class ListHandler
                                                                              .MinecraftReleaseTimeList[
                                                                                  LatestSnapshotVersionIndex];
                                                                                  */
+
+        #endregion
+    }
+
+    public static async Task RefreshLocalForgeDownloadList(string mcVersion)
+    {
+        #region 初始化
+
+        DownloadMenu.Instance.ForgeExpander.IsEnabled = false;
+        DownloadMenu.Instance.ForgeSelectVersionTextBlock.Text = Localizer.Localizer.Instance["Loading"];
+        GlobalVariable.ForgeDownload.ForgeListModel = null!;
+        GlobalVariable.ForgeDownload.ForgeDownloadList.Clear();
+
+        #endregion
+
+        #region 获取列表
+
+        #region 获取支持版本列表
+
+        var forgeSupportResult = await DownloadSourceHandler
+            .GetDownloadSource(DownloadSourceHandler.DownloadTargetEnum.ForgeSupportMcList, null).GetStringAsync();
+        var forgeSupportList = JsonSerializer.Deserialize<string[]>(forgeSupportResult);
+
+        #endregion
+
+        #region 判断是否支持
+
+        if (!forgeSupportList!.Contains(mcVersion))
+        {
+            DownloadMenu.Instance.ForgeSelectVersionTextBlock.Text = Localizer.Localizer.Instance["UnsupportedVersion"];
+            DownloadMenu.Instance.ForgeExpander.IsEnabled = false;
+            return;
+        }
+
+        #endregion
+
+        #region 获取对应版本Forge列表
+
+        var forgeResult = await DownloadSourceHandler
+            .GetDownloadSource(DownloadSourceHandler.DownloadTargetEnum.ForgeMcList, null, mcVersion).GetStringAsync();
+        var forgeList = JsonSerializer.Deserialize<ForgeListModel[]>(forgeResult);
+        forgeList = forgeList!.OrderByDescending(model => model.Modified).ToArray(); // 按时间排序
+        GlobalVariable.ForgeDownload.ForgeListModel = forgeList;
+
+        #endregion
+
+        #endregion
+
+        #region 更新到UI
+
+        GlobalVariable.ForgeDownload.ForgeDownloadList = new ObservableCollection<ForgeDownloadList>();
+        foreach (var forge in forgeList)
+            GlobalVariable.ForgeDownload.ForgeDownloadList.Add(new ForgeDownloadList(forge.Version!,
+                string.Format(Localizer.Localizer.Instance["ReleaseDate"], forge.Modified)));
+        DownloadMenu.Instance.ForgeListBox.ItemsSource = GlobalVariable.ForgeDownload.ForgeDownloadList;
+
+        #endregion
+
+        #region 结束
+
+        DownloadMenu.Instance.ForgeExpander.IsEnabled = true;
+        DownloadMenu.Instance.ForgeSelectVersionTextBlock.Text = Localizer.Localizer.Instance["NotSelected"];
 
         #endregion
     }
