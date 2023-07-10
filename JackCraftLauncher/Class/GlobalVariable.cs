@@ -2,6 +2,8 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using JackCraftLauncher.Class.Launch;
+using JackCraftLauncher.Class.Models.ForgeModels;
+using JackCraftLauncher.Class.Models.InstallModels;
 using JackCraftLauncher.Class.Models.ListTemplate;
 using JackCraftLauncher.Class.Models.MinecraftVersionManifest;
 using JackCraftLauncher.Class.Utils;
@@ -47,7 +49,18 @@ public class GlobalVariable
 
     #endregion
 
-    #region Minecraft Download
+    #region 微软登录
+
+    public class MicrosoftLogin // 微软登录
+    {
+        public static string RefreshToken { get; set; } = string.Empty; // 刷新用 Token
+    }
+
+    #endregion
+
+    #region Download
+
+    public static ObservableCollection<DownloadSelectModel> DownloadSelectAttachmentsModels { get; set; } = new();
 
     public class MinecraftDownload
     {
@@ -76,13 +89,10 @@ public class GlobalVariable
         public static List<string> MinecraftOldList { get; set; } = new(); // Minecraft 远古列表
     }
 
-    #endregion
-
-    #region 微软登录
-
-    public class MicrosoftLogin // 微软登录
+    public class ForgeDownload
     {
-        public static string RefreshToken { get; set; } = string.Empty; // 刷新用 Token
+        public static ObservableCollection<ForgeDownloadList> ForgeDownloadList { get; set; } = new(); // Forge下载列表
+        public static ForgeListModel[] ForgeListModel { get; set; } = null!; // Forge 版本清单
     }
 
     #endregion
