@@ -237,9 +237,14 @@ public class GameHandler
         var resolverLibrary = new LibraryInfoResolver
         {
             BasePath = basePath,
-            ForgeUriRoot = "https://files.minecraftforge.net/maven/",
-            ForgeMavenUriRoot = "https://maven.minecraftforge.net/",
-            ForgeMavenOldUriRoot = "https://files.minecraftforge.net/maven/",
+            ForgeUriRoot = DownloadSourceHandler.GetDownloadSource(DownloadSourceHandler.DownloadTargetEnum.Forge,
+                null),
+            ForgeMavenUriRoot = DownloadSourceHandler.GetDownloadSource(
+                DownloadSourceHandler.DownloadTargetEnum.ForgeMaven,
+                null),
+            ForgeMavenOldUriRoot = DownloadSourceHandler.GetDownloadSource(
+                DownloadSourceHandler.DownloadTargetEnum.ForgeOldMaven,
+                null),
             FabricMavenUriRoot = "https://maven.fabricmc.net/",
             LibraryUriRoot = DownloadSourceHandler
                 .GetDownloadSource(DownloadSourceHandler.DownloadTargetEnum.MinecraftLibraries, null),
