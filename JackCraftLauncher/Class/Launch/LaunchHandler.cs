@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using JackCraftLauncher.Class.Utils;
 using ProjBobcat.Class.Model.MicrosoftAuth;
 using ProjBobcat.DefaultComponent.Authenticator;
 using ProjBobcat.DefaultComponent.Launch;
@@ -11,6 +12,14 @@ public class LaunchHandler
 {
     public static DefaultGameCore InitLaunch()
     {
+        #region 创建文件夹
+
+        DirectoryUtils.CreateDirectory("./JCL");
+        DirectoryUtils.CreateDirectory("./JCL/.minecraft");
+        DirectoryUtils.CreateDirectory("./JCL/cache");
+
+        #endregion
+
         ServicePointManager.DefaultConnectionLimit = 1024;
         var clientToken = new Guid("11451419-1981-0114-5141-919810114514");
         var rootPath = "JCL/.minecraft/";
