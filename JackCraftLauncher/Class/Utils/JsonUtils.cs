@@ -15,18 +15,16 @@ public class JsonUtils
     {
         // 将第二个 JObject 对象中的属性合并到第一个 JObject 对象中
         foreach (var property in source.Properties())
-        {
-            if (target[property.Name] != null && target[property.Name].Type == JTokenType.Array && property.Value.Type == JTokenType.Array)
+            if (target[property.Name] != null && target[property.Name].Type == JTokenType.Array &&
+                property.Value.Type == JTokenType.Array)
             {
                 // 如果属性值是数组，则将第二个 JObject 对象中的数组元素添加到第一个 JObject 对象中的数组元素的后面
-                JArray array1 = (JArray)target[property.Name];
-                JArray array2 = (JArray)property.Value;
-                foreach (var item in array2)
-                {
-                    array1.Add(item);
-                }
+                var array1 = (JArray)target[property.Name];
+                var array2 = (JArray)property.Value;
+                foreach (var item in array2) array1.Add(item);
             }
-            else if (target[property.Name] != null && target[property.Name].Type == JTokenType.Object && property.Value.Type == JTokenType.Object)
+            else if (target[property.Name] != null && target[property.Name].Type == JTokenType.Object &&
+                     property.Value.Type == JTokenType.Object)
             {
                 // 如果属性值是 JObject 对象，则递归调用 MergedJson() 方法
                 MergedJson((JObject)property.Value, (JObject)target[property.Name]);
@@ -36,16 +34,15 @@ public class JsonUtils
                 // 否则，将第二个 JObject 对象中的属性值添加到第一个 JObject 对象中的属性值的后面
                 target[property.Name] = property.Value;
             }
-        }
 
         return target;
     }
+
     public static JObject RemoveNullProperties(JObject obj)
     {
         // 获取所有属性
         var properties = obj.Properties().ToList();
         foreach (var property in properties)
-        {
             // 如果属性值为 null，则删除该属性
             if (property.Value.Type == JTokenType.Null)
             {
@@ -60,26 +57,22 @@ public class JsonUtils
             else if (property.Value.Type == JTokenType.Array)
             {
                 var array = (JArray)property.Value;
-                for (int i = array.Count - 1; i >= 0; i--)
-                {
+                for (var i = array.Count - 1; i >= 0; i--)
                     if (array[i].Type == JTokenType.Object)
-                    {
                         RemoveNullProperties((JObject)array[i]);
-                    }
-                }
             }
-        }
 
         return obj;
     }
+
     public static JObject RemoveEmptyProperties(JObject obj)
     {
         // 获取所有属性
         var properties = obj.Properties().ToList();
         foreach (var property in properties)
-        {
             // 如果属性值为 null 或空的 JObject 对象，则删除该属性
-            if (property.Value.Type == JTokenType.Null || (property.Value.Type == JTokenType.Object && !property.Value.HasValues))
+            if (property.Value.Type == JTokenType.Null ||
+                (property.Value.Type == JTokenType.Object && !property.Value.HasValues))
             {
                 property.Remove();
             }
@@ -92,15 +85,10 @@ public class JsonUtils
             else if (property.Value.Type == JTokenType.Array)
             {
                 var array = (JArray)property.Value;
-                for (int i = array.Count - 1; i >= 0; i--)
-                {
+                for (var i = array.Count - 1; i >= 0; i--)
                     if (array[i].Type == JTokenType.Object)
-                    {
                         RemoveEmptyProperties((JObject)array[i]);
-                    }
-                }
             }
-        }
 
         return obj;
     }
