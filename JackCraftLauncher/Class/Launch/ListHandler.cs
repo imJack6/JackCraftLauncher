@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DialogHostAvalonia;
 using JackCraftLauncher.Class.ConfigHandler;
 using JackCraftLauncher.Class.Models;
+using JackCraftLauncher.Class.Models.FabricModels;
 using JackCraftLauncher.Class.Models.ForgeModels;
 using JackCraftLauncher.Class.Models.ListTemplate;
 using JackCraftLauncher.Class.Models.MinecraftVersionManifest;
@@ -340,6 +341,80 @@ public class ListHandler
 
         DownloadMenu.Instance.ForgeExpander.IsEnabled = true;
         DownloadMenu.Instance.ForgeSelectVersionTextBlock.Text = Localizer.Localizer.Instance["NotSelected"];
+
+        #endregion
+    }
+
+    public static async Task RefreshLocalFabricDownloadList(string mcVersion)
+    {
+        #region 初始化
+
+        DownloadMenu.Instance.FabricExpander.IsEnabled = false;
+        DownloadMenu.Instance.FabricSelectVersionTextBlock.Text = Localizer.Localizer.Instance["Loading"];
+        GlobalVariable.FabricDownload.FabricListModel = null!;
+        GlobalVariable.FabricDownload.FabricDownloadList.Clear();
+
+        #endregion
+
+        #region 获取列表
+
+        #region 获取对应版本列表
+
+        var fabricUrl = $"{DownloadSourceHandler
+            .GetDownloadSource(DownloadSourceHandler.DownloadTargetEnum.FabricMeta, null)}v2/versions/loader/{mcVersion}";
+        var fabricResult = await fabricUrl.AllowAnyHttpStatus().GetStringAsync();
+
+        #endregion
+
+        #region 判断是否支持
+
+        var isSupport = true;
+        try
+        {
+            var document = JsonDocument.Parse(fabricResult);
+            if (!(document.RootElement.ValueKind == JsonValueKind.Array && document.RootElement.GetArrayLength() > 0))
+                isSupport = false;
+        }
+        catch (JsonException)
+        {
+            isSupport = false;
+        }
+
+        if (!isSupport)
+        {
+            DownloadMenu.Instance.FabricSelectVersionTextBlock.Text =
+                Localizer.Localizer.Instance["UnsupportedVersion"];
+            DownloadMenu.Instance.FabricExpander.IsEnabled = false;
+            return;
+        }
+
+        #endregion
+
+        #region 添加到数组
+
+        var fabricList = JsonSerializer.Deserialize<FabricListModel[]>(fabricResult)!;
+        GlobalVariable.FabricDownload.FabricListModel = fabricList;
+
+        #endregion
+
+        #endregion
+
+        #region 更新到UI
+
+        GlobalVariable.FabricDownload.FabricDownloadList = new ObservableCollection<FabricDownloadList>();
+        foreach (var fabric in fabricList)
+            GlobalVariable.FabricDownload.FabricDownloadList.Add(new FabricDownloadList(fabric.Loader.Version,
+                fabric.Loader.Stable
+                    ? Localizer.Localizer.Instance["OfficialVersion"]
+                    : Localizer.Localizer.Instance["BetaVersion"]));
+        DownloadMenu.Instance.FabricListBox.ItemsSource = GlobalVariable.FabricDownload.FabricDownloadList;
+
+        #endregion
+
+        #region 结束
+
+        DownloadMenu.Instance.FabricExpander.IsEnabled = true;
+        DownloadMenu.Instance.FabricSelectVersionTextBlock.Text = Localizer.Localizer.Instance["NotSelected"];
 
         #endregion
     }

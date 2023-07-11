@@ -24,7 +24,9 @@ public static class DownloadSourceHandler
         ForgeMcList,
         Forge,
         ForgeOldMaven,
-        ForgeMaven
+        ForgeMaven,
+        FabricMeta,
+        FabricMaven
     }
 
     public static string GetDownloadSource(DownloadTargetEnum target, DownloadSourceEnum? source,
@@ -45,6 +47,8 @@ public static class DownloadSourceHandler
                 DownloadTargetEnum.ForgeSupportMcList or DownloadTargetEnum.ForgeMcList => "https://download.mcbbs.net",
                 DownloadTargetEnum.Forge or DownloadTargetEnum.ForgeOldMaven => "https://files.minecraftforge.net",
                 DownloadTargetEnum.ForgeMaven => "https://maven.minecraftforge.net",
+                DownloadTargetEnum.FabricMeta => "https://meta.fabricmc.net",
+                DownloadTargetEnum.FabricMaven => "https://maven.fabricmc.net",
                 _ => "http://launchermeta.mojang.com"
             },
             _ => throw new InvalidDataException($"Selected mirror field {source} does not exist.")
@@ -65,6 +69,10 @@ public static class DownloadSourceHandler
             DownloadTargetEnum.Forge or DownloadTargetEnum.ForgeOldMaven => $"{baseUrl}/maven/",
             DownloadTargetEnum.ForgeMaven when source != DownloadSourceEnum.Official => $"{baseUrl}/maven/",
             DownloadTargetEnum.ForgeMaven => $"{baseUrl}/",
+            DownloadTargetEnum.FabricMeta when source != DownloadSourceEnum.Official => $"{baseUrl}/fabric-meta/",
+            DownloadTargetEnum.FabricMeta => $"{baseUrl}/",
+            DownloadTargetEnum.FabricMaven when source != DownloadSourceEnum.Official => $"{baseUrl}/maven/",
+            DownloadTargetEnum.FabricMaven => $"{baseUrl}/",
             _ => throw new InvalidDataException($"Selected target field {target} does not exist.")
         };
     }

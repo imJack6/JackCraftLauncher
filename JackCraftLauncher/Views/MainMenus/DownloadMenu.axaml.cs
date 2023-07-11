@@ -15,8 +15,11 @@ using JackCraftLauncher.Class.Models;
 using JackCraftLauncher.Class.Models.InstallModels;
 using JackCraftLauncher.Class.Models.ListTemplate;
 using JackCraftLauncher.Class.Utils;
+using Newtonsoft.Json.Linq;
 using ProjBobcat.Class.Helper;
 using ProjBobcat.Class.Model;
+using ProjBobcat.Class.Model.Fabric;
+using ProjBobcat.DefaultComponent.Installer;
 using ProjBobcat.DefaultComponent.Installer.ForgeInstaller;
 using ProjBobcat.Interface;
 
@@ -53,11 +56,84 @@ public partial class DownloadMenu : UserControl
         ForgeListBox.SelectedIndex = -1;
 
         #endregion
+
+        #region Fabric
+
+        FabricExpander.IsExpanded = false;
+        FabricCancelSelectButton.IsVisible = false;
+        FabricListBox.SelectedIndex = -1;
+
+        #endregion
     }
 
     private void StartInstallButton_OnClick(object? sender, RoutedEventArgs e)
     {
         StartInstall();
+    }
+
+    private static void AddDownloadSelectModel(DownloadSelectModel model)
+    {
+        if (GlobalVariable.DownloadSelectAttachmentsModels.Any(m =>
+                m.InstallAttachmentsType == model.InstallAttachmentsType))
+            GlobalVariable.DownloadSelectAttachmentsModels.Remove(
+                GlobalVariable.DownloadSelectAttachmentsModels.First(m =>
+                    m.InstallAttachmentsType == model.InstallAttachmentsType));
+        GlobalVariable.DownloadSelectAttachmentsModels.Add(model);
+        Instance.InstallAttachmentsTextBlock.Text = string.Join(", ",
+            GlobalVariable.DownloadSelectAttachmentsModels.Select(m => $"{m.InstallAttachmentsType} {m.Version}"));
+        Instance.InstallAttachmentsTextBlock.IsVisible = true;
+        if (GlobalVariable.DownloadSelectAttachmentsModels.Any(m =>
+                m.InstallAttachmentsType == DownloadAttachmentsType.Fabric))
+        {
+            #region Forge
+
+            Instance.ForgeExpander.IsEnabled = false;
+            Instance.ForgeExpander.IsExpanded = false;
+            Instance.ForgeSelectVersionTextBlock.Text = Localizer.Localizer.Instance["IncompatibleWithFabric"];
+
+            #endregion
+        }
+        else if (GlobalVariable.DownloadSelectAttachmentsModels.Any(m =>
+                     m.InstallAttachmentsType == DownloadAttachmentsType.Forge))
+        {
+            #region Fabric
+
+            Instance.FabricExpander.IsEnabled = false;
+            Instance.FabricExpander.IsExpanded = false;
+            Instance.FabricSelectVersionTextBlock.Text = Localizer.Localizer.Instance["IncompatibleWithForge"];
+
+            #endregion
+        }
+    }
+
+    private static void RemoveDownloadSelectModel(DownloadAttachmentsType type)
+    {
+        if (GlobalVariable.DownloadSelectAttachmentsModels.Any(m => m.InstallAttachmentsType == type))
+            foreach (var model in GlobalVariable.DownloadSelectAttachmentsModels
+                         .Where(m => m.InstallAttachmentsType == type).ToList())
+                GlobalVariable.DownloadSelectAttachmentsModels.Remove(model);
+        Instance.InstallAttachmentsTextBlock.Text = string.Join(", ",
+            GlobalVariable.DownloadSelectAttachmentsModels.Select(m => $"{m.InstallAttachmentsType} {m.Version}"));
+        if (GlobalVariable.DownloadSelectAttachmentsModels.Count == 0)
+            Instance.InstallAttachmentsTextBlock.IsVisible = false;
+        if (type == DownloadAttachmentsType.Fabric)
+        {
+            #region Forge
+
+            Instance.ForgeExpander.IsEnabled = true;
+            Instance.ForgeSelectVersionTextBlock.Text = Localizer.Localizer.Instance["NotSelected"];
+
+            #endregion
+        }
+        else if (type == DownloadAttachmentsType.Forge)
+        {
+            #region Fabric
+
+            Instance.FabricExpander.IsEnabled = true;
+            Instance.FabricSelectVersionTextBlock.Text = Localizer.Localizer.Instance["NotSelected"];
+
+            #endregion
+        }
     }
 
     #region Forge
@@ -91,30 +167,36 @@ public partial class DownloadMenu : UserControl
 
     #endregion
 
-    private static void AddDownloadSelectModel(DownloadSelectModel model)
+    #region Fabric
+
+    private void FabricListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        if (GlobalVariable.DownloadSelectAttachmentsModels.Any(m =>
-                m.InstallAttachmentsType == model.InstallAttachmentsType))
-            GlobalVariable.DownloadSelectAttachmentsModels.Remove(
-                GlobalVariable.DownloadSelectAttachmentsModels.First(m =>
-                    m.InstallAttachmentsType == model.InstallAttachmentsType));
-        GlobalVariable.DownloadSelectAttachmentsModels.Add(model);
-        Instance.InstallAttachmentsTextBlock.Text = string.Join(", ",
-            GlobalVariable.DownloadSelectAttachmentsModels.Select(m => $"{m.InstallAttachmentsType} {m.Version}"));
-        Instance.InstallAttachmentsTextBlock.IsVisible = true;
+        if (FabricListBox.SelectedIndex != -1)
+        {
+            var downloadList = (FabricDownloadList)FabricListBox.SelectedItem!;
+            RemoveDownloadSelectModel(DownloadAttachmentsType.Fabric);
+            AddDownloadSelectModel(
+                new DownloadSelectModel
+                {
+                    InstallAttachmentsType = DownloadAttachmentsType.Fabric,
+                    Version = downloadList.Version
+                });
+            FabricExpander.IsExpanded = false;
+            FabricCancelSelectButton.IsVisible = true;
+            FabricSelectVersionTextBlock.Text = downloadList.Version;
+        }
     }
 
-    private static void RemoveDownloadSelectModel(DownloadAttachmentsType type)
+    private void FabricCancelSelectButton_OnClick(object? sender, RoutedEventArgs e)
     {
-        if (GlobalVariable.DownloadSelectAttachmentsModels.Any(m => m.InstallAttachmentsType == type))
-            foreach (var model in GlobalVariable.DownloadSelectAttachmentsModels
-                         .Where(m => m.InstallAttachmentsType == type).ToList())
-                GlobalVariable.DownloadSelectAttachmentsModels.Remove(model);
-        Instance.InstallAttachmentsTextBlock.Text = string.Join(", ",
-            GlobalVariable.DownloadSelectAttachmentsModels.Select(m => $"{m.InstallAttachmentsType} {m.Version}"));
-        if (GlobalVariable.DownloadSelectAttachmentsModels.Count == 0)
-            Instance.InstallAttachmentsTextBlock.IsVisible = false;
+        RemoveDownloadSelectModel(DownloadAttachmentsType.Fabric);
+        FabricExpander.IsExpanded = false;
+        FabricCancelSelectButton.IsVisible = false;
+        FabricListBox.SelectedIndex = -1;
+        FabricSelectVersionTextBlock.Text = Localizer.Localizer.Instance["NotSelected"];
     }
+
+    #endregion
 
     #endregion
 
@@ -173,6 +255,8 @@ public partial class DownloadMenu : UserControl
         GlobalVariable.DownloadSelectAttachmentsModels = new ObservableCollection<DownloadSelectModel>();
         InstallAttachmentsTextBlock.IsVisible = false;
         ListHandler.RefreshLocalForgeDownloadList(mcVersion);
+        ListHandler.RefreshLocalFabricDownloadList(mcVersion);
+
 
         InstallMinecraftVersionTextBlock.Text = mcVersion;
         DownloadSaveVersionNameTextBox.Text = mcVersion;
@@ -261,6 +345,22 @@ public partial class DownloadMenu : UserControl
 
     private async void StartInstall()
     {
+        #region Forge
+
+        ForgeExpander.IsExpanded = false;
+        ForgeCancelSelectButton.IsVisible = false;
+        ForgeListBox.SelectedIndex = -1;
+
+        #endregion
+
+        #region Fabric
+
+        FabricExpander.IsExpanded = false;
+        FabricCancelSelectButton.IsVisible = false;
+        FabricListBox.SelectedIndex = -1;
+
+        #endregion
+
         MainWindow.Instance!.LoginRadioButton.IsEnabled = false;
         MainWindow.Instance.StartRadioButton.IsEnabled = false;
         MainWindow.Instance.DownloadRadioButton.IsEnabled = false;
@@ -353,7 +453,9 @@ public partial class DownloadMenu : UserControl
                 await DownloadHelper.AdvancedDownloadFile(forgeInstallerDownloadFile, downloadSettings);
                 InstallProgressBar.Value = 70;
                 AddInstallLog("下载Forge安装器完成");
-                var isLegacy = ForgeInstallerFactory.IsLegacyForgeInstaller(forgeInstallFilePath, forgeVersion);
+                var forgeArtifactVersion =
+                    ForgeInstallerFactory.GetForgeArtifactVersion(installMinecraftVersion, forgeVersion);
+                var isLegacy = ForgeInstallerFactory.IsLegacyForgeInstaller(forgeInstallFilePath, forgeArtifactVersion);
                 IForgeInstaller forgeInstaller = isLegacy
                     ? new LegacyForgeInstaller
                     {
@@ -361,7 +463,7 @@ public partial class DownloadMenu : UserControl
                         RootPath = App.Core.RootPath,
                         CustomId = forgeTempVersionName,
                         ForgeVersion = forgeVersion,
-                        InheritsFrom = installMinecraftVersion
+                        InheritsFrom = saveVersionName
                     }
                     : new HighVersionForgeInstaller
                     {
@@ -376,7 +478,7 @@ public partial class DownloadMenu : UserControl
                                 null),
                         MineCraftVersion = installMinecraftVersion,
                         MineCraftVersionId = installMinecraftVersion,
-                        InheritsFrom = installMinecraftVersion
+                        InheritsFrom = saveVersionName
                     };
                 ((InstallerBase)forgeInstaller).StageChangedEventDelegate += (_, args) =>
                 {
@@ -393,13 +495,82 @@ public partial class DownloadMenu : UserControl
                 AddInstallLog("开始安装Forge");
                 await forgeInstaller.InstallForgeTaskAsync();
                 InstallProgressBar.Value = 90;
-
+                var inheritsFromJson =
+                    await File.ReadAllTextAsync(
+                        $"./JCL/.minecraft/versions/{saveVersionName}-temp/{saveVersionName}-temp.json");
+                var normalJson =
+                    await File.ReadAllTextAsync($"./JCL/.minecraft/versions/{saveVersionName}/{saveVersionName}.json");
+                var obj1 = JObject.Parse(inheritsFromJson);
+                var obj2 = JObject.Parse(normalJson);
+                obj1 = JsonUtils.RemoveNullProperties(obj1);
+                obj1 = JsonUtils.RemoveEmptyProperties(obj1);
+                obj1.Remove("inheritsFrom");
+                obj1.Remove("minimumLauncherVersion");
+                obj1["id"] = saveVersionName;
+                var mar = JsonUtils.MergedJson(obj1, obj2);
+                DirectoryUtils.DeleteDirectory($"./JCL/.minecraft/versions/{saveVersionName}-temp");
+                await File.WriteAllTextAsync($"./JCL/.minecraft/versions/{saveVersionName}/{saveVersionName}.json",
+                    mar.ToString());
                 AddInstallLog("Forge安装完成");
             }
             else if (GlobalVariable.DownloadSelectAttachmentsModels.Any(m =>
                          m.InstallAttachmentsType == DownloadAttachmentsType.Fabric))
             {
                 // Fabric install
+                InstallProgressBar.Value = 50;
+                AddInstallLog("初始化Fabric安装");
+                var fabricVersion = GlobalVariable.DownloadSelectAttachmentsModels
+                    .FirstOrDefault(m => m.InstallAttachmentsType == DownloadAttachmentsType.Fabric)?.Version!;
+                var fabricUrl = $"{DownloadSourceHandler
+                    .GetDownloadSource(DownloadSourceHandler.DownloadTargetEnum.FabricMeta, null)}v2/versions/loader/{installMinecraftVersion}";
+                var fabricResult = await fabricUrl.AllowAnyHttpStatus().GetStringAsync();
+                // 将 JSON 响应转换为 ProjBobcat 类型 
+                var fabricLoaderArtifactModel = JsonSerializer.Deserialize<FabricLoaderArtifactModel[]>(fabricResult)!;
+                // 获取用户想要安装的版本（示例，非实际代码）
+                var userSelect = Array.FindIndex(GlobalVariable.FabricDownload.FabricListModel,
+                    x => x.Loader.Version == fabricVersion);
+                // 获取单个 Loader Artifact 
+                var selectedArtifact = fabricLoaderArtifactModel[userSelect];
+                var fabricInstaller = new FabricInstaller
+                {
+                    LoaderArtifact = selectedArtifact,
+                    VersionLocator = App.Core.VersionLocator,
+                    RootPath = App.Core.RootPath,
+                    CustomId = $"{saveVersionName}-temp",
+                    InheritsFrom = saveVersionName
+                };
+                fabricInstaller.StageChangedEventDelegate += (_, args) =>
+                {
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        InstallProgressBar2.IsVisible = true;
+                        InstallProgressBar2.Value = args.Progress;
+                        AddInstallLog($"[Fabric] - [{args.Progress}] - {args.CurrentStage}");
+                        if (Math.Abs(args.Progress - 100) < 0.01)
+                            InstallProgressBar2.IsVisible = false;
+                    });
+                };
+                InstallProgressBar.Value = 80;
+                AddInstallLog("开始安装Fabric");
+                await fabricInstaller.InstallTaskAsync();
+                InstallProgressBar.Value = 90;
+                var inheritsFromJson =
+                    await File.ReadAllTextAsync(
+                        $"./JCL/.minecraft/versions/{saveVersionName}-temp/{saveVersionName}-temp.json");
+                var normalJson =
+                    await File.ReadAllTextAsync($"./JCL/.minecraft/versions/{saveVersionName}/{saveVersionName}.json");
+                var obj1 = JObject.Parse(inheritsFromJson);
+                var obj2 = JObject.Parse(normalJson);
+                obj1 = JsonUtils.RemoveNullProperties(obj1);
+                obj1 = JsonUtils.RemoveEmptyProperties(obj1);
+                obj1.Remove("inheritsFrom");
+                obj1.Remove("minimumLauncherVersion");
+                obj1["id"] = saveVersionName;
+                var mar = JsonUtils.MergedJson(obj1, obj2);
+                DirectoryUtils.DeleteDirectory($"./JCL/.minecraft/versions/{saveVersionName}-temp");
+                await File.WriteAllTextAsync($"./JCL/.minecraft/versions/{saveVersionName}/{saveVersionName}.json",
+                    mar.ToString());
+                AddInstallLog("Fabric安装完成");
             }
             else if (GlobalVariable.DownloadSelectAttachmentsModels.Any(m =>
                          m.InstallAttachmentsType == DownloadAttachmentsType.Quilt))
@@ -416,6 +587,7 @@ public partial class DownloadMenu : UserControl
 
             #region 安装完成
 
+            await Task.Delay(1000);
             ListHandler.RefreshLocalGameList();
             AddInstallLog(
                 $"[{Localizer.Localizer.Instance["Install"]}] - [{Localizer.Localizer.Instance["Completed"]}] {string.Format(Localizer.Localizer.Instance["GameInstallCompleted"], installMinecraftVersion, saveVersionName)}");

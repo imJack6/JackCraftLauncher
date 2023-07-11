@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using JackCraftLauncher.Class.Launch;
+using JackCraftLauncher.Class.Models.FabricModels;
 using JackCraftLauncher.Class.Models.ForgeModels;
 using JackCraftLauncher.Class.Models.InstallModels;
 using JackCraftLauncher.Class.Models.ListTemplate;
@@ -93,6 +94,12 @@ public class GlobalVariable
     {
         public static ObservableCollection<ForgeDownloadList> ForgeDownloadList { get; set; } = new(); // Forge下载列表
         public static ForgeListModel[] ForgeListModel { get; set; } = null!; // Forge 版本清单
+    }
+
+    public class FabricDownload
+    {
+        public static ObservableCollection<FabricDownloadList> FabricDownloadList { get; set; } = new(); // Fabric下载列表
+        public static FabricListModel[] FabricListModel { get; set; } = null!; // Fabric 版本清单
     }
 
     #endregion
