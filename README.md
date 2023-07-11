@@ -6,7 +6,7 @@ README: [English](README_EN.md) | 简体中文
 
 > 主要作者仅 [imJack6 (Jack Lei)](https://github.com/imJack6) 一人，进度可能有所缓慢
 >
-> 开发进度: ≈ 40%
+> 开发进度: ≈ 50%
 >
 > ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
 > ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
@@ -51,8 +51,8 @@ README: [English](README_EN.md) | 简体中文
 | 下载        | 状态 |
 |-----------|----|
 | 纯净端	      | ✅  |
-| Forge端	   | ❌  |
-| Fabric端	  | ❌  |
+| Forge端	   | ❇️  |
+| Fabric端	  | ❇️  |
 | Quilt端	   | ❌  |
 | Optifine端 | ❌  |
 | 组合端	      | ❌  |
