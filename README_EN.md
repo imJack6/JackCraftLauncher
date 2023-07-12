@@ -55,7 +55,7 @@ Expected functionality and implementation status:
 | Forge	            | ❇️     |
 | Fabric	           | ❇️     |
 | Quilt	            | ❌     |
-| Optifine          | ❌     |
+| Optifine          | ✅     |
 | Combination	      | ❎     |
 
 | Start           | State |
