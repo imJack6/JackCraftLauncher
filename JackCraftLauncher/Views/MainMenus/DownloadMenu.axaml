@@ -54,11 +54,17 @@
                                                Height="40"
                                                VerticalAlignment="Center"
                                                HorizontalAlignment="Left" />
-                                        <TextBlock Text="Latest Release Version&#x0a;yyyy/mm/dd"
-                                                   Name="LatestReleaseVersionTextBlock"
-                                                   FontSize="12"
-                                                   VerticalAlignment="Center"
-                                                   Margin="50,0,0,0" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="Latest Release Version"
+                                                       Name="LatestReleaseVersionTextBlock"
+                                                       FontSize="12"
+                                                       Margin="50,0,0,0" />
+                                            <TextBlock Text="yyyy/mm/dd"
+                                                       Name="LatestReleaseTimeTextBlock"
+                                                       FontSize="12"
+                                                       Opacity="0.75"
+                                                       Margin="50,0,0,0" />
+                                        </StackPanel>
                                     </Grid>
                                 </Button>
                                 <Button Theme="{StaticResource FlatButton}"
@@ -74,11 +80,17 @@
                                                Height="40"
                                                VerticalAlignment="Top"
                                                HorizontalAlignment="Left" />
-                                        <TextBlock Text="Latest Snapshot Version&#x0a;yyyy/mm/dd"
-                                                   Name="LatestSnapshotVersionTextBlock"
-                                                   FontSize="12"
-                                                   VerticalAlignment="Center"
-                                                   Margin="50,0,0,0" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="Latest Snapshot Version"
+                                                       Name="LatestSnapshotVersionTextBlock"
+                                                       FontSize="12"
+                                                       Margin="50,0,0,0" />
+                                            <TextBlock Text="yyyy/mm/dd"
+                                                       Name="LatestSnapshotTimeTextBlock"
+                                                       FontSize="12"
+                                                       Opacity="0.75"
+                                                       Margin="50,0,0,0" />
+                                        </StackPanel>
                                     </Grid>
                                 </Button>
                             </StackPanel>
@@ -106,10 +118,14 @@
                                                 <Image Source="\Assets\Icons\Grass_Block.png" Margin="10,0,0,0"
                                                        Height="35"
                                                        HorizontalAlignment="Left" />
-                                                <TextBlock Text="{Binding Path=Version}" FontSize="15"
+                                                <TextBlock Text="{Binding Path=Version}"
+                                                           FontSize="15"
                                                            Margin="50,0,0,0"
                                                            HorizontalAlignment="Left" />
-                                                <TextBlock Text="{Binding Path=Time}" FontSize="12" Margin="51,20,0,0"
+                                                <TextBlock Text="{Binding Path=Time}"
+                                                           FontSize="12"
+                                                           Margin="51,20,0,0"
+                                                           Opacity="0.75"
                                                            HorizontalAlignment="Left" />
                                             </Grid>
                                         </DataTemplate>
@@ -138,10 +154,14 @@
                                                 <Image Source="\Assets\Icons\Impulse_Command_Block.gif"
                                                        Margin="10,0,0,0"
                                                        Height="35" HorizontalAlignment="Left" />
-                                                <TextBlock Text="{Binding Path=Version}" FontSize="15"
+                                                <TextBlock Text="{Binding Path=Version}"
+                                                           FontSize="15"
                                                            Margin="50,0,0,0"
                                                            HorizontalAlignment="Left" />
-                                                <TextBlock Text="{Binding Path=Time}" FontSize="12" Margin="51,20,0,0"
+                                                <TextBlock Text="{Binding Path=Time}"
+                                                           FontSize="12"
+                                                           Margin="51,20,0,0"
+                                                           Opacity="0.75"
                                                            HorizontalAlignment="Left" />
                                             </Grid>
                                         </DataTemplate>
@@ -170,10 +190,14 @@
                                                 <Image Source="\Assets\Icons\Badlands_Grass_Block.png"
                                                        Margin="10,0,0,0"
                                                        Height="35" HorizontalAlignment="Left" />
-                                                <TextBlock Text="{Binding Path=Version}" FontSize="15"
+                                                <TextBlock Text="{Binding Path=Version}"
+                                                           FontSize="15"
                                                            Margin="50,0,0,0"
                                                            HorizontalAlignment="Left" />
-                                                <TextBlock Text="{Binding Path=Time}" FontSize="12" Margin="51,20,0,0"
+                                                <TextBlock Text="{Binding Path=Time}"
+                                                           FontSize="12"
+                                                           Margin="51,20,0,0"
+                                                           Opacity="0.75"
                                                            HorizontalAlignment="Left" />
                                             </Grid>
                                         </DataTemplate>
@@ -226,12 +250,15 @@
                                              assists:TextFieldAssist.Label="{i18N:Localize VersionName}" />
                                     <TextBlock Text="{i18N:Localize PleaseTypeVersionName}"
                                                Name="PleaseTypeVersionNameTextBlock"
+                                               Opacity="0.75"
                                                IsVisible="False" />
                                     <TextBlock Text="{i18N:Localize FolderAlreadyExists}"
                                                Name="FolderAlreadyExistsTextBlock"
+                                               Opacity="0.75"
                                                IsVisible="False" />
                                     <TextBlock Text="{i18N:Localize FolderNameInvalidCharacter}"
                                                Name="FolderNameInvalidCharacterTextBlock"
+                                               Opacity="0.75"
                                                IsVisible="False" />
                                 </StackPanel>
                                 <Button Grid.Column="3"
@@ -276,10 +303,14 @@
                                                 <Image Source="\Assets\Icons\Anvil.png"
                                                        Margin="10,0,0,0"
                                                        Height="35" HorizontalAlignment="Left" />
-                                                <TextBlock Text="{Binding Path=Version}" FontSize="15"
+                                                <TextBlock Text="{Binding Path=Version}"
+                                                           FontSize="15"
                                                            Margin="50,0,0,0"
                                                            HorizontalAlignment="Left" />
-                                                <TextBlock Text="{Binding Path=Time}" FontSize="12" Margin="51,20,0,0"
+                                                <TextBlock Text="{Binding Path=Time}"
+                                                           FontSize="12"
+                                                           Margin="51,20,0,0"
+                                                           Opacity="0.75"
                                                            HorizontalAlignment="Left" />
                                             </Grid>
                                         </DataTemplate>
@@ -328,11 +359,14 @@
                                                 <Image Source="\Assets\Icons\fabric.png"
                                                        Margin="14,0,0,0"
                                                        Height="27" HorizontalAlignment="Left" />
-                                                <TextBlock Text="{Binding Path=Version}" FontSize="15"
+                                                <TextBlock Text="{Binding Path=Version}"
+                                                           FontSize="15"
                                                            Margin="50,0,0,0"
                                                            HorizontalAlignment="Left" />
-                                                <TextBlock Text="{Binding Path=VersionType}" FontSize="12"
+                                                <TextBlock Text="{Binding Path=VersionType}"
+                                                           FontSize="12"
                                                            Margin="51,20,0,0"
+                                                           Opacity="0.75"
                                                            HorizontalAlignment="Left" />
                                             </Grid>
                                         </DataTemplate>
@@ -343,6 +377,62 @@
                                     Name="FabricCancelSelectButton"
                                     IsVisible="False"
                                     Click="FabricCancelSelectButton_OnClick"
+                                    Margin="10,0,0,0"
+                                    CornerRadius="25">
+                                <avalonia:MaterialIcon Width="20" Height="20" Kind="Close" />
+                            </Button>
+                        </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" MinWidth="100" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0"
+                                        Margin="0,0,10,0"
+                                        Orientation="Horizontal">
+                                <Image Width="35" Source="/Assets/Icons/Redstone_Lamp.png" />
+                                <TextBlock Text="Optifine" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <Expander Grid.Column="1"
+                                      CornerRadius="16"
+                                      Name="OptifineExpander">
+                                <Expander.Header>
+                                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                        <TextBlock Text="{i18N:Localize Loading}" Name="OptifineSelectVersionTextBlock" />
+                                    </StackPanel>
+                                </Expander.Header>
+                                <ListBox Name="OptifineListBox"
+                                         SelectionChanged="OptifineListBox_OnSelectionChanged">
+                                    <ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <VirtualizingStackPanel />
+                                        </ItemsPanelTemplate>
+                                    </ListBox.ItemsPanel>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate x:DataType="listTemplate:OptifineDownloadList">
+                                            <Grid>
+                                                <Image Source="\Assets\Icons\Redstone_Lamp.png"
+                                                       Margin="10,0,0,0"
+                                                       Height="35" HorizontalAlignment="Left" />
+                                                <TextBlock Text="{Binding Path=Version}"
+                                                           FontSize="15"
+                                                           Margin="50,0,0,0"
+                                                           HorizontalAlignment="Left" />
+                                                <TextBlock Text="{Binding Path=VersionTypeAndForge}"
+                                                           FontSize="12"
+                                                           Margin="51,20,0,0"
+                                                           Opacity="0.75"
+                                                           HorizontalAlignment="Left" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Expander>
+                            <Button Grid.Column="2"
+                                    Name="OptifineCancelSelectButton"
+                                    IsVisible="False"
+                                    Click="OptifineCancelSelectButton_OnClick"
                                     Margin="10,0,0,0"
                                     CornerRadius="25">
                                 <avalonia:MaterialIcon Width="20" Height="20" Kind="Close" />

@@ -7,6 +7,7 @@ using JackCraftLauncher.Class.Models.ForgeModels;
 using JackCraftLauncher.Class.Models.InstallModels;
 using JackCraftLauncher.Class.Models.ListTemplate;
 using JackCraftLauncher.Class.Models.MinecraftVersionManifest;
+using JackCraftLauncher.Class.Models.OptifineModels;
 using JackCraftLauncher.Class.Utils;
 using ProjBobcat.Class.Model;
 using ProjBobcat.Interface;
@@ -100,6 +101,14 @@ public class GlobalVariable
     {
         public static ObservableCollection<FabricDownloadList> FabricDownloadList { get; set; } = new(); // Fabric下载列表
         public static FabricListModel[] FabricListModel { get; set; } = null!; // Fabric 版本清单
+    }
+
+    public class OptifineDownload
+    {
+        public static ObservableCollection<OptifineDownloadList> OptifineDownloadList { get; set; } =
+            new(); // Optifine下载列表
+
+        public static OptifineListModel[] OptifineListModel { get; set; } = null!; // Optifine 版本清单
     }
 
     #endregion

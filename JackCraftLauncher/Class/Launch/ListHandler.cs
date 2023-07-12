@@ -9,6 +9,7 @@ using JackCraftLauncher.Class.Models.FabricModels;
 using JackCraftLauncher.Class.Models.ForgeModels;
 using JackCraftLauncher.Class.Models.ListTemplate;
 using JackCraftLauncher.Class.Models.MinecraftVersionManifest;
+using JackCraftLauncher.Class.Models.OptifineModels;
 using JackCraftLauncher.Class.Utils;
 using JackCraftLauncher.Views.MainMenus;
 using Material.Styles.Assists;
@@ -186,15 +187,15 @@ public class ListHandler
             var latestReleaseVersionIndex =
                 GlobalVariable.MinecraftDownload.MinecraftIdList.IndexOf(GlobalVariable.MinecraftDownload
                     .LatestMinecraftReleaseVersion);
-            if (latestReleaseVersionIndex != -1)
-                DownloadMenu.Instance.LatestReleaseVersionTextBlock.Text +=
-                    $"\n{string.Format(Localizer.Localizer.Instance["OfficialVersionAndReleaseDate"], GlobalVariable.MinecraftDownload.MinecraftReleaseTimeList[latestReleaseVersionIndex])}";
+            DownloadMenu.Instance.LatestReleaseTimeTextBlock.Text =
+                string.Format(Localizer.Localizer.Instance["OfficialVersionAndReleaseDate"],
+                    GlobalVariable.MinecraftDownload.MinecraftReleaseTimeList[latestReleaseVersionIndex]);
             var latestSnapshotVersionIndex =
                 GlobalVariable.MinecraftDownload.MinecraftIdList.IndexOf(GlobalVariable.MinecraftDownload
                     .LatestMinecraftSnapshotVersion);
-            if (latestSnapshotVersionIndex != -1)
-                DownloadMenu.Instance.LatestSnapshotVersionTextBlock.Text +=
-                    $"\n{string.Format(Localizer.Localizer.Instance["BetaVersionAndReleaseDate"], GlobalVariable.MinecraftDownload.MinecraftReleaseTimeList[latestSnapshotVersionIndex])}";
+            DownloadMenu.Instance.LatestSnapshotTimeTextBlock.Text =
+                string.Format(Localizer.Localizer.Instance["BetaVersionAndReleaseDate"],
+                    GlobalVariable.MinecraftDownload.MinecraftReleaseTimeList[latestSnapshotVersionIndex]);
         }
 
         #endregion
@@ -368,19 +369,7 @@ public class ListHandler
 
         #region 判断是否支持
 
-        var isSupport = true;
-        try
-        {
-            var document = JsonDocument.Parse(fabricResult);
-            if (!(document.RootElement.ValueKind == JsonValueKind.Array && document.RootElement.GetArrayLength() > 0))
-                isSupport = false;
-        }
-        catch (JsonException)
-        {
-            isSupport = false;
-        }
-
-        if (!isSupport)
+        if (!IsVersionSupported(fabricResult))
         {
             DownloadMenu.Instance.FabricSelectVersionTextBlock.Text =
                 Localizer.Localizer.Instance["UnsupportedVersion"];
@@ -417,5 +406,88 @@ public class ListHandler
         DownloadMenu.Instance.FabricSelectVersionTextBlock.Text = Localizer.Localizer.Instance["NotSelected"];
 
         #endregion
+    }
+
+    public static async Task RefreshLocalOptifineDownloadList(string mcVersion)
+    {
+        #region 初始化
+
+        DownloadMenu.Instance.OptifineExpander.IsEnabled = false;
+        DownloadMenu.Instance.OptifineSelectVersionTextBlock.Text = Localizer.Localizer.Instance["Loading"];
+        GlobalVariable.OptifineDownload.OptifineListModel = null!;
+        GlobalVariable.OptifineDownload.OptifineDownloadList.Clear();
+
+        #endregion
+
+        #region 获取列表
+
+        #region 获取对应版本列表
+
+        var optifineUrl = $"{DownloadSourceHandler
+            .GetDownloadSource(DownloadSourceHandler.DownloadTargetEnum.OptifineMcList, null, mcVersion)}";
+        var optifineResult = await optifineUrl.AllowAnyHttpStatus().GetStringAsync();
+
+        #endregion
+
+        #region 判断是否支持
+
+        if (!IsVersionSupported(optifineResult))
+        {
+            DownloadMenu.Instance.OptifineSelectVersionTextBlock.Text =
+                Localizer.Localizer.Instance["UnsupportedVersion"];
+            DownloadMenu.Instance.OptifineExpander.IsEnabled = false;
+            return;
+        }
+
+        #endregion
+
+        #region 添加到数组
+
+        var optifineList = JsonSerializer.Deserialize<OptifineListModel[]>(optifineResult)!;
+        GlobalVariable.OptifineDownload.OptifineListModel = optifineList;
+
+        #endregion
+
+        #endregion
+
+        #region 更新到UI
+
+        GlobalVariable.OptifineDownload.OptifineDownloadList = new ObservableCollection<OptifineDownloadList>();
+        foreach (var optifine in optifineList)
+        {
+            var versionType = !optifine.Patch.Contains("pre")
+                ? Localizer.Localizer.Instance["OfficialVersion"]
+                : Localizer.Localizer.Instance["BetaVersion"];
+            GlobalVariable.OptifineDownload.OptifineDownloadList.Add(new OptifineDownloadList(
+                $"{optifine.Type} {optifine.Patch}",
+                $"{versionType} - {string.Format(Localizer.Localizer.Instance["RecommendedForgeVersion"], optifine.Forge)}"));
+        }
+
+        DownloadMenu.Instance.OptifineListBox.ItemsSource = GlobalVariable.OptifineDownload.OptifineDownloadList;
+
+        #endregion
+
+        #region 结束
+
+        DownloadMenu.Instance.OptifineExpander.IsEnabled = true;
+        DownloadMenu.Instance.OptifineSelectVersionTextBlock.Text = Localizer.Localizer.Instance["NotSelected"];
+
+        #endregion
+    }
+
+    private static bool IsVersionSupported(string result)
+    {
+        try
+        {
+            var document = JsonDocument.Parse(result);
+            if (!(document.RootElement.ValueKind == JsonValueKind.Array && document.RootElement.GetArrayLength() > 0))
+                return false;
+        }
+        catch (JsonException)
+        {
+            return false;
+        }
+
+        return true;
     }
 }

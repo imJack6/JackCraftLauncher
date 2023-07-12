@@ -14,11 +14,13 @@ using JackCraftLauncher.Class.Launch;
 using JackCraftLauncher.Class.Models;
 using JackCraftLauncher.Class.Models.InstallModels;
 using JackCraftLauncher.Class.Models.ListTemplate;
+using JackCraftLauncher.Class.Models.MinecraftDownloadModel;
 using JackCraftLauncher.Class.Utils;
 using Newtonsoft.Json.Linq;
 using ProjBobcat.Class.Helper;
 using ProjBobcat.Class.Model;
 using ProjBobcat.Class.Model.Fabric;
+using ProjBobcat.Class.Model.Optifine;
 using ProjBobcat.DefaultComponent.Installer;
 using ProjBobcat.DefaultComponent.Installer.ForgeInstaller;
 using ProjBobcat.Interface;
@@ -62,6 +64,14 @@ public partial class DownloadMenu : UserControl
         FabricExpander.IsExpanded = false;
         FabricCancelSelectButton.IsVisible = false;
         FabricListBox.SelectedIndex = -1;
+
+        #endregion
+
+        #region Optifine
+
+        OptifineExpander.IsExpanded = false;
+        OptifineCancelSelectButton.IsVisible = false;
+        OptifineListBox.SelectedIndex = -1;
 
         #endregion
     }
@@ -198,6 +208,37 @@ public partial class DownloadMenu : UserControl
 
     #endregion
 
+    #region Optifine
+
+    private void OptifineListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (OptifineListBox.SelectedIndex != -1)
+        {
+            var downloadList = (OptifineDownloadList)OptifineListBox.SelectedItem!;
+            RemoveDownloadSelectModel(DownloadAttachmentsType.Optifine);
+            AddDownloadSelectModel(
+                new DownloadSelectModel
+                {
+                    InstallAttachmentsType = DownloadAttachmentsType.Optifine,
+                    Version = downloadList.Version
+                });
+            OptifineExpander.IsExpanded = false;
+            OptifineCancelSelectButton.IsVisible = true;
+            OptifineSelectVersionTextBlock.Text = downloadList.Version;
+        }
+    }
+
+    private void OptifineCancelSelectButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        RemoveDownloadSelectModel(DownloadAttachmentsType.Optifine);
+        OptifineExpander.IsExpanded = false;
+        OptifineCancelSelectButton.IsVisible = false;
+        OptifineListBox.SelectedIndex = -1;
+        OptifineSelectVersionTextBlock.Text = Localizer.Localizer.Instance["NotSelected"];
+    }
+
+    #endregion
+
     #endregion
 
     #region 选择要安装的Minecraft界面
@@ -208,7 +249,7 @@ public partial class DownloadMenu : UserControl
         _downloadListLoadingCancellationTokenSource.Cancel();
         _downloadListLoadingCancellationTokenSource = new CancellationTokenSource();
         _downloadListLoadingCancellationToken = _downloadListLoadingCancellationTokenSource.Token;
-        await Task.Delay(1000);
+        await Task.Delay(500);
         await Task.Run(async () =>
         {
             await Dispatcher.UIThread.InvokeAsync(async () =>
@@ -256,7 +297,7 @@ public partial class DownloadMenu : UserControl
         InstallAttachmentsTextBlock.IsVisible = false;
         ListHandler.RefreshLocalForgeDownloadList(mcVersion);
         ListHandler.RefreshLocalFabricDownloadList(mcVersion);
-
+        ListHandler.RefreshLocalOptifineDownloadList(mcVersion);
 
         InstallMinecraftVersionTextBlock.Text = mcVersion;
         DownloadSaveVersionNameTextBox.Text = mcVersion;
@@ -361,6 +402,14 @@ public partial class DownloadMenu : UserControl
 
         #endregion
 
+        #region Optifine
+
+        OptifineExpander.IsExpanded = false;
+        OptifineCancelSelectButton.IsVisible = false;
+        OptifineListBox.SelectedIndex = -1;
+
+        #endregion
+
         MainWindow.Instance!.LoginRadioButton.IsEnabled = false;
         MainWindow.Instance.StartRadioButton.IsEnabled = false;
         MainWindow.Instance.DownloadRadioButton.IsEnabled = false;
@@ -390,9 +439,9 @@ public partial class DownloadMenu : UserControl
                 DownloadParts = GlobalVariable.Config.DownloadPartsCount,
                 RetryCount = GlobalVariable.Config.DownloadRetryCount,
                 CheckFile = true,
-                Timeout = (int)TimeSpan.FromMinutes(5).TotalMilliseconds
+                Timeout = (int)TimeSpan.FromMinutes(10).TotalMilliseconds
             };
-            InstallProgressBar.Value = 10;
+            InstallProgressBar.Value = 5;
 
             #endregion
 
@@ -405,18 +454,36 @@ public partial class DownloadMenu : UserControl
                 GlobalVariable.MinecraftDownload.MinecraftVersionManifestModel.VersionsModel?.FirstOrDefault(x =>
                     x.ID == idToFind);
             var minecraftJsonUrl =
-                DownloadSourceHandler.PistonMetaUrlHandle(GlobalVariable.Config.DownloadSourceEnum, versionModel!.Url!);
-            var downloadFile = new DownloadFile
+                DownloadSourceHandler.PistonMetaUrlHandle(null, versionModel!.Url!);
+            var jsonDownloadFile = new DownloadFile
             {
                 DownloadUri = minecraftJsonUrl,
                 FileName = $"{saveVersionName}.json",
                 DownloadPath = folderPath,
                 RetryCount = GlobalVariable.Config.DownloadRetryCount
             };
-            await DownloadHelper.AdvancedDownloadFile(downloadFile, downloadSettings);
+            await DownloadHelper.AdvancedDownloadFile(jsonDownloadFile, downloadSettings);
             AddInstallLog(
                 $"[{Localizer.Localizer.Instance["Download"]}] - [{Localizer.Localizer.Instance["Completed"]}] JSON - {DownloadSaveVersionNameTextBox.Text}.json - {Localizer.Localizer.Instance["DownloadCompleted"]}");
-            InstallProgressBar.Value = 20;
+            InstallProgressBar.Value = 10;
+            AddInstallLog(
+                $"[{Localizer.Localizer.Instance["Download"]}] - [{Localizer.Localizer.Instance["Start"]}] Jar - {DownloadSaveVersionNameTextBox.Text}.jar");
+            var jsonOfficial =
+                await File.ReadAllTextAsync($"./JCL/.minecraft/versions/{saveVersionName}/{saveVersionName}.json");
+            var minecraftClientUrlModel = JsonSerializer.Deserialize<MinecraftClientDownloadModel>(jsonOfficial)!;
+            var clientUrl =
+                DownloadSourceHandler.PistonMetaUrlHandle(null, minecraftClientUrlModel.Downloads.Client.Url);
+            var minecraftClientJarDownloadFile = new DownloadFile
+            {
+                DownloadUri = clientUrl,
+                FileName = $"{saveVersionName}.jar",
+                DownloadPath = folderPath,
+                RetryCount = GlobalVariable.Config.DownloadRetryCount
+            };
+            await DownloadHelper.AdvancedDownloadFile(minecraftClientJarDownloadFile, downloadSettings);
+            AddInstallLog(
+                $"[{Localizer.Localizer.Instance["Download"]}] - [{Localizer.Localizer.Instance["Completed"]}] Jar - {DownloadSaveVersionNameTextBox.Text}.jar - {Localizer.Localizer.Instance["DownloadCompleted"]}");
+            InstallProgressBar.Value = 15;
 
             #endregion
 
@@ -424,8 +491,99 @@ public partial class DownloadMenu : UserControl
 
             if (GlobalVariable.DownloadSelectAttachmentsModels.Any(m =>
                     m.InstallAttachmentsType == DownloadAttachmentsType.Optifine))
+            {
                 // Optifine install
-                InstallProgressBar.Value = 35;
+                InstallProgressBar.Value = 20;
+                AddInstallLog("初始化Optifine安装");
+                var optifineTempVersionName = $"{saveVersionName}-temp";
+                var optifineVersion = GlobalVariable.DownloadSelectAttachmentsModels
+                    .FirstOrDefault(m => m.InstallAttachmentsType == DownloadAttachmentsType.Optifine)?.Version!;
+                var optifineUrl = DownloadSourceHandler
+                    .GetDownloadSource(DownloadSourceHandler.DownloadTargetEnum.OptifineMcList, null,
+                        installMinecraftVersion);
+                var optifineResult = await optifineUrl.AllowAnyHttpStatus().GetStringAsync();
+                // 将 JSON 响应转换为 ProjBobcat 类型 
+                var optifineDownloadVersionModel =
+                    JsonSerializer.Deserialize<OptifineDownloadVersionModel[]>(optifineResult)!;
+                // 获取用户想要安装的版本（示例，非实际代码）
+                var userSelect = Array.FindIndex(GlobalVariable.OptifineDownload.OptifineListModel,
+                    x => $"{x.Type} {x.Patch}" == optifineVersion);
+                // 获取单个 Download Version Model 
+                var selectedVersion = optifineDownloadVersionModel[userSelect];
+                var optifineFileName = selectedVersion.FileName;
+                var optifineDownloadUrl = $"{DownloadSourceHandler.GetDownloadSource(
+                    DownloadSourceHandler.DownloadTargetEnum.OptifineJarDownload, null, installMinecraftVersion)}/{optifineFileName}";
+                var optifineInstallFilePath = $"./JCL/cache/{optifineFileName}";
+                var optifineInstallerDownloadFile = new DownloadFile
+                {
+                    DownloadUri = optifineDownloadUrl,
+                    FileName = optifineFileName,
+                    DownloadPath = "./JCL/cache",
+                    RetryCount = GlobalVariable.Config.DownloadRetryCount
+                };
+                InstallProgressBar.Value = 25;
+                AddInstallLog("开始下载Optifine");
+                await DownloadHelper.AdvancedDownloadFile(optifineInstallerDownloadFile, downloadSettings);
+                InstallProgressBar.Value = 30;
+                AddInstallLog("下载Optifine完成");
+                if (GlobalVariable.DownloadSelectAttachmentsModels.Any(m =>
+                        m.InstallAttachmentsType == DownloadAttachmentsType.Fabric))
+                {
+                    InstallProgressBar.Value = 35;
+                    AddInstallLog("开始安装Optifine");
+                    var fabricModsFolder = $"./JCL/.minecraft/versions/{saveVersionName}/mods";
+                    DirectoryUtils.CreateDirectory(fabricModsFolder);
+                    FileUtils.CopyToFile(optifineInstallFilePath, fabricModsFolder);
+                    InstallProgressBar.Value = 40;
+                    AddInstallLog("Optifine安装完成");
+                }
+                else
+                {
+                    var optifineInstaller = new OptifineInstaller
+                    {
+                        JavaExecutablePath = GlobalVariable.Config.GameStartJavaPath,
+                        OptifineDownloadVersion = selectedVersion,
+                        OptifineJarPath = optifineInstallFilePath,
+                        RootPath = App.Core.RootPath,
+                        CustomId = optifineTempVersionName,
+                        InheritsFrom = saveVersionName
+                    };
+                    optifineInstaller.StageChangedEventDelegate += (_, args) =>
+                    {
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            InstallProgressBar2.IsVisible = true;
+                            InstallProgressBar2.Value = args.Progress;
+                            AddInstallLog($"[Optifine] - [{args.Progress}] - {args.CurrentStage}");
+                            if (Math.Abs(args.Progress - 100) < 0.01)
+                                InstallProgressBar2.IsVisible = false;
+                        });
+                    };
+                    InstallProgressBar.Value = 35;
+                    AddInstallLog("开始安装Optifine");
+                    await optifineInstaller.InstallTaskAsync();
+                    var inheritsFromJson =
+                        await File.ReadAllTextAsync(
+                            $"./JCL/.minecraft/versions/{saveVersionName}-temp/{saveVersionName}-temp.json");
+                    var normalJson =
+                        await File.ReadAllTextAsync(
+                            $"./JCL/.minecraft/versions/{saveVersionName}/{saveVersionName}.json");
+                    var obj1 = JObject.Parse(inheritsFromJson);
+                    var obj2 = JObject.Parse(normalJson);
+                    obj1 = JsonUtils.RemoveNullProperties(obj1);
+                    obj1 = JsonUtils.RemoveEmptyProperties(obj1);
+                    obj1.Remove("inheritsFrom");
+                    obj1.Remove("minimumLauncherVersion");
+                    obj1["id"] = saveVersionName;
+                    var mar = JsonUtils.MergedJson(obj1, obj2);
+                    DirectoryUtils.DeleteDirectory($"./JCL/.minecraft/versions/{saveVersionName}-temp");
+                    await File.WriteAllTextAsync($"./JCL/.minecraft/versions/{saveVersionName}/{saveVersionName}.json",
+                        mar.ToString());
+                    InstallProgressBar.Value = 40;
+                    AddInstallLog("Optifine安装完成");
+                }
+            }
+
             if (GlobalVariable.DownloadSelectAttachmentsModels.Any(m =>
                     m.InstallAttachmentsType == DownloadAttachmentsType.Forge))
             {

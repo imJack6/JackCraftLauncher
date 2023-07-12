@@ -26,7 +26,9 @@ public static class DownloadSourceHandler
         ForgeOldMaven,
         ForgeMaven,
         FabricMeta,
-        FabricMaven
+        FabricMaven,
+        OptifineMcList,
+        OptifineJarDownload
     }
 
     public static string GetDownloadSource(DownloadTargetEnum target, DownloadSourceEnum? source,
@@ -49,6 +51,8 @@ public static class DownloadSourceHandler
                 DownloadTargetEnum.ForgeMaven => "https://maven.minecraftforge.net",
                 DownloadTargetEnum.FabricMeta => "https://meta.fabricmc.net",
                 DownloadTargetEnum.FabricMaven => "https://maven.fabricmc.net",
+                DownloadTargetEnum.OptifineMcList => "https://download.mcbbs.net",
+                DownloadTargetEnum.OptifineJarDownload => "https://download.mcbbs.net",
                 _ => "http://launchermeta.mojang.com"
             },
             _ => throw new InvalidDataException($"Selected mirror field {source} does not exist.")
@@ -73,14 +77,17 @@ public static class DownloadSourceHandler
             DownloadTargetEnum.FabricMeta => $"{baseUrl}/",
             DownloadTargetEnum.FabricMaven when source != DownloadSourceEnum.Official => $"{baseUrl}/maven/",
             DownloadTargetEnum.FabricMaven => $"{baseUrl}/",
+            DownloadTargetEnum.OptifineMcList => $"{baseUrl}/optifine/{minecraftVersion}",
+            DownloadTargetEnum.OptifineJarDownload => $"{baseUrl}/maven/com/optifine/{minecraftVersion}",
             _ => throw new InvalidDataException($"Selected target field {target} does not exist.")
         };
     }
 
-    public static string PistonMetaUrlHandle(DownloadSourceEnum source, string url)
+    public static string PistonMetaUrlHandle(DownloadSourceEnum? source, string url)
     {
         var HandleString = url;
         var baseUrl = "";
+        source ??= GlobalVariable.Config.DownloadSourceEnum;
         switch (source)
         {
             case DownloadSourceEnum.BMCL:
