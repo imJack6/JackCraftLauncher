@@ -65,6 +65,7 @@
   "IncompatibleWithFabric": "与 Fabric 不兼容",
   "IncompatibleWithForge": "与 Forge 不兼容",
   "IncompatibleWithQuilt": "与 Quilt 不兼容",
+  "RecommendedForgeVersion": "推荐 Forge 版本: {0}",
   "OK": "好的",
   "Refresh": "刷新",
   "Copy": "复制",
