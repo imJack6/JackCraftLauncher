@@ -55,7 +55,7 @@ README: [English](README_EN.md) | 简体中文
 | Fabric端	  | ❇️  |
 | Quilt端	   | ❌  |
 | Optifine端 | ✅  |
-| 组合端	      | ❌  |
+| 组合端	      | ❇️  |
 
 | 启动              | 状态 |
 |-----------------|----|

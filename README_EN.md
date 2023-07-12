@@ -56,7 +56,7 @@ Expected functionality and implementation status:
 | Fabric	           | ❇️     |
 | Quilt	            | ❌     |
 | Optifine          | ✅     |
-| Combination	      | ❎     |
+| Combination	      | ❇️     |
 
 | Start           | State |
 |-----------------|-------|
