@@ -135,7 +135,7 @@ public partial class DownloadMenu : UserControl
 
             Instance.QuiltExpander.IsEnabled = false;
             Instance.QuiltExpander.IsExpanded = false;
-            Instance.QuiltSelectVersionTextBlock.Text = Localizer.Localizer.Instance["IncompatibleWithFabric"];
+            Instance.QuiltSelectVersionTextBlock.Text = Localizer.Localizer.Instance["IncompatibleWithForge"];
 
             #endregion
         }
@@ -146,7 +146,7 @@ public partial class DownloadMenu : UserControl
 
             Instance.ForgeExpander.IsEnabled = false;
             Instance.ForgeExpander.IsExpanded = false;
-            Instance.ForgeSelectVersionTextBlock.Text = Localizer.Localizer.Instance["IncompatibleWithFabric"];
+            Instance.ForgeSelectVersionTextBlock.Text = Localizer.Localizer.Instance["IncompatibleWithQuilt"];
 
             #endregion
 
@@ -154,7 +154,7 @@ public partial class DownloadMenu : UserControl
 
             Instance.FabricExpander.IsEnabled = false;
             Instance.FabricExpander.IsExpanded = false;
-            Instance.FabricSelectVersionTextBlock.Text = Localizer.Localizer.Instance["IncompatibleWithForge"];
+            Instance.FabricSelectVersionTextBlock.Text = Localizer.Localizer.Instance["IncompatibleWithQuilt"];
 
             #endregion
         }
