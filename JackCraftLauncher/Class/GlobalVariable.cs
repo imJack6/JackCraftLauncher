@@ -8,6 +8,7 @@ using JackCraftLauncher.Class.Models.InstallModels;
 using JackCraftLauncher.Class.Models.ListTemplate;
 using JackCraftLauncher.Class.Models.MinecraftVersionManifest;
 using JackCraftLauncher.Class.Models.OptifineModels;
+using JackCraftLauncher.Class.Models.QuiltModels;
 using JackCraftLauncher.Class.Utils;
 using ProjBobcat.Class.Model;
 using ProjBobcat.Interface;
@@ -109,6 +110,12 @@ public class GlobalVariable
             new(); // Optifine下载列表
 
         public static OptifineListModel[] OptifineListModel { get; set; } = null!; // Optifine 版本清单
+    }
+
+    public class QuiltDownload
+    {
+        public static ObservableCollection<QuiltDownloadList> QuiltDownloadList { get; set; } = new(); // Quilt下载列表
+        public static QuiltListModel[] QuiltListModel { get; set; } = null!; // Quilt 版本清单
     }
 
     #endregion

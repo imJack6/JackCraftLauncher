@@ -10,6 +10,7 @@ using JackCraftLauncher.Class.Models.ForgeModels;
 using JackCraftLauncher.Class.Models.ListTemplate;
 using JackCraftLauncher.Class.Models.MinecraftVersionManifest;
 using JackCraftLauncher.Class.Models.OptifineModels;
+using JackCraftLauncher.Class.Models.QuiltModels;
 using JackCraftLauncher.Class.Utils;
 using JackCraftLauncher.Views.MainMenus;
 using Material.Styles.Assists;
@@ -471,6 +472,70 @@ public class ListHandler
 
         DownloadMenu.Instance.OptifineExpander.IsEnabled = true;
         DownloadMenu.Instance.OptifineSelectVersionTextBlock.Text = Localizer.Localizer.Instance["NotSelected"];
+
+        #endregion
+    }
+
+    public static async Task RefreshLocalQuiltDownloadList(string mcVersion)
+    {
+        #region 初始化
+
+        DownloadMenu.Instance.QuiltExpander.IsEnabled = false;
+        DownloadMenu.Instance.QuiltSelectVersionTextBlock.Text = Localizer.Localizer.Instance["Loading"];
+        GlobalVariable.QuiltDownload.QuiltListModel = null!;
+        GlobalVariable.QuiltDownload.QuiltDownloadList.Clear();
+
+        #endregion
+
+        #region 获取列表
+
+        #region 获取支持版本列表
+
+        var quiltSupportResult = await DownloadSourceHandler
+            .GetDownloadSource(DownloadSourceHandler.DownloadTargetEnum.QuiltSupportMcList, null).GetStringAsync();
+        var quiltSupportList = JsonSerializer.Deserialize<QuiltSupportMcModel[]>(quiltSupportResult);
+
+        #endregion
+
+        #region 判断是否支持
+
+        if (!quiltSupportList.Any(model => model.Version == mcVersion))
+        {
+            DownloadMenu.Instance.QuiltSelectVersionTextBlock.Text = Localizer.Localizer.Instance["UnsupportedVersion"];
+            DownloadMenu.Instance.QuiltExpander.IsEnabled = false;
+            return;
+        }
+
+        #endregion
+
+        #region 获取Quilt加载器列表
+
+        var quiltResult = await DownloadSourceHandler
+            .GetDownloadSource(DownloadSourceHandler.DownloadTargetEnum.QuiltLoaderList, null, mcVersion)
+            .GetStringAsync();
+        var quiltList = JsonSerializer.Deserialize<QuiltListModel[]>(quiltResult)!;
+        GlobalVariable.QuiltDownload.QuiltListModel = quiltList;
+
+        #endregion
+
+        #endregion
+
+        #region 更新到UI
+
+        GlobalVariable.QuiltDownload.QuiltDownloadList = new ObservableCollection<QuiltDownloadList>();
+        foreach (var quilt in quiltList)
+            GlobalVariable.QuiltDownload.QuiltDownloadList.Add(new QuiltDownloadList(quilt.Version,
+                !quilt.Version.Contains("beta")
+                    ? Localizer.Localizer.Instance["OfficialVersion"]
+                    : Localizer.Localizer.Instance["BetaVersion"]));
+        DownloadMenu.Instance.QuiltListBox.ItemsSource = GlobalVariable.QuiltDownload.QuiltDownloadList;
+
+        #endregion
+
+        #region 结束
+
+        DownloadMenu.Instance.QuiltExpander.IsEnabled = true;
+        DownloadMenu.Instance.QuiltSelectVersionTextBlock.Text = Localizer.Localizer.Instance["NotSelected"];
 
         #endregion
     }

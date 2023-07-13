@@ -21,6 +21,7 @@ using ProjBobcat.Class.Helper;
 using ProjBobcat.Class.Model;
 using ProjBobcat.Class.Model.Fabric;
 using ProjBobcat.Class.Model.Optifine;
+using ProjBobcat.Class.Model.Quilt;
 using ProjBobcat.DefaultComponent.Installer;
 using ProjBobcat.DefaultComponent.Installer.ForgeInstaller;
 using ProjBobcat.Interface;
@@ -74,6 +75,14 @@ public partial class DownloadMenu : UserControl
         OptifineListBox.SelectedIndex = -1;
 
         #endregion
+
+        #region Quilt
+
+        QuiltExpander.IsExpanded = false;
+        QuiltCancelSelectButton.IsVisible = false;
+        QuiltListBox.SelectedIndex = -1;
+
+        #endregion
     }
 
     private void StartInstallButton_OnClick(object? sender, RoutedEventArgs e)
@@ -102,10 +111,45 @@ public partial class DownloadMenu : UserControl
             Instance.ForgeSelectVersionTextBlock.Text = Localizer.Localizer.Instance["IncompatibleWithFabric"];
 
             #endregion
+
+            #region Quilt
+
+            Instance.QuiltExpander.IsEnabled = false;
+            Instance.QuiltExpander.IsExpanded = false;
+            Instance.QuiltSelectVersionTextBlock.Text = Localizer.Localizer.Instance["IncompatibleWithFabric"];
+
+            #endregion
         }
         else if (GlobalVariable.DownloadSelectAttachmentsModels.Any(m =>
                      m.InstallAttachmentsType == DownloadAttachmentsType.Forge))
         {
+            #region Fabric
+
+            Instance.FabricExpander.IsEnabled = false;
+            Instance.FabricExpander.IsExpanded = false;
+            Instance.FabricSelectVersionTextBlock.Text = Localizer.Localizer.Instance["IncompatibleWithForge"];
+
+            #endregion
+
+            #region Quilt
+
+            Instance.QuiltExpander.IsEnabled = false;
+            Instance.QuiltExpander.IsExpanded = false;
+            Instance.QuiltSelectVersionTextBlock.Text = Localizer.Localizer.Instance["IncompatibleWithFabric"];
+
+            #endregion
+        }
+        else if (GlobalVariable.DownloadSelectAttachmentsModels.Any(m =>
+                     m.InstallAttachmentsType == DownloadAttachmentsType.Quilt))
+        {
+            #region Forge
+
+            Instance.ForgeExpander.IsEnabled = false;
+            Instance.ForgeExpander.IsExpanded = false;
+            Instance.ForgeSelectVersionTextBlock.Text = Localizer.Localizer.Instance["IncompatibleWithFabric"];
+
+            #endregion
+
             #region Fabric
 
             Instance.FabricExpander.IsEnabled = false;
@@ -134,9 +178,39 @@ public partial class DownloadMenu : UserControl
             Instance.ForgeSelectVersionTextBlock.Text = Localizer.Localizer.Instance["NotSelected"];
 
             #endregion
+
+            #region Quilt
+
+            Instance.QuiltExpander.IsEnabled = true;
+            Instance.QuiltSelectVersionTextBlock.Text = Localizer.Localizer.Instance["NotSelected"];
+
+            #endregion
         }
         else if (type == DownloadAttachmentsType.Forge)
         {
+            #region Fabric
+
+            Instance.FabricExpander.IsEnabled = true;
+            Instance.FabricSelectVersionTextBlock.Text = Localizer.Localizer.Instance["NotSelected"];
+
+            #endregion
+
+            #region Quilt
+
+            Instance.QuiltExpander.IsEnabled = true;
+            Instance.QuiltSelectVersionTextBlock.Text = Localizer.Localizer.Instance["NotSelected"];
+
+            #endregion
+        }
+        else if (type == DownloadAttachmentsType.Quilt)
+        {
+            #region Forge
+
+            Instance.ForgeExpander.IsEnabled = true;
+            Instance.ForgeSelectVersionTextBlock.Text = Localizer.Localizer.Instance["NotSelected"];
+
+            #endregion
+
             #region Fabric
 
             Instance.FabricExpander.IsEnabled = true;
@@ -239,6 +313,37 @@ public partial class DownloadMenu : UserControl
 
     #endregion
 
+    #region Quilt
+
+    private void QuiltListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (QuiltListBox.SelectedIndex != -1)
+        {
+            var downloadList = (QuiltDownloadList)QuiltListBox.SelectedItem!;
+            RemoveDownloadSelectModel(DownloadAttachmentsType.Quilt);
+            AddDownloadSelectModel(
+                new DownloadSelectModel
+                {
+                    InstallAttachmentsType = DownloadAttachmentsType.Quilt,
+                    Version = downloadList.Version
+                });
+            QuiltExpander.IsExpanded = false;
+            QuiltCancelSelectButton.IsVisible = true;
+            QuiltSelectVersionTextBlock.Text = downloadList.Version;
+        }
+    }
+
+    private void QuiltCancelSelectButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        RemoveDownloadSelectModel(DownloadAttachmentsType.Quilt);
+        QuiltExpander.IsExpanded = false;
+        QuiltCancelSelectButton.IsVisible = false;
+        QuiltListBox.SelectedIndex = -1;
+        QuiltSelectVersionTextBlock.Text = Localizer.Localizer.Instance["NotSelected"];
+    }
+
+    #endregion
+
     #endregion
 
     #region 选择要安装的Minecraft界面
@@ -295,9 +400,11 @@ public partial class DownloadMenu : UserControl
 
         GlobalVariable.DownloadSelectAttachmentsModels = new ObservableCollection<DownloadSelectModel>();
         InstallAttachmentsTextBlock.IsVisible = false;
+
         ListHandler.RefreshLocalForgeDownloadList(mcVersion);
         ListHandler.RefreshLocalFabricDownloadList(mcVersion);
         ListHandler.RefreshLocalOptifineDownloadList(mcVersion);
+        ListHandler.RefreshLocalQuiltDownloadList(mcVersion);
 
         InstallMinecraftVersionTextBlock.Text = mcVersion;
         DownloadSaveVersionNameTextBox.Text = mcVersion;
@@ -407,6 +514,14 @@ public partial class DownloadMenu : UserControl
         OptifineExpander.IsExpanded = false;
         OptifineCancelSelectButton.IsVisible = false;
         OptifineListBox.SelectedIndex = -1;
+
+        #endregion
+
+        #region Quilt
+
+        QuiltExpander.IsExpanded = false;
+        QuiltCancelSelectButton.IsVisible = false;
+        QuiltListBox.SelectedIndex = -1;
 
         #endregion
 
@@ -734,6 +849,60 @@ public partial class DownloadMenu : UserControl
                          m.InstallAttachmentsType == DownloadAttachmentsType.Quilt))
             {
                 // Quilt install
+                InstallProgressBar.Value = 50;
+                AddInstallLog("初始化Quilt安装");
+                var quiltVersion = GlobalVariable.DownloadSelectAttachmentsModels
+                    .FirstOrDefault(m => m.InstallAttachmentsType == DownloadAttachmentsType.Quilt)?.Version!;
+                var quiltUrl = DownloadSourceHandler
+                    .GetDownloadSource(DownloadSourceHandler.DownloadTargetEnum.QuiltLoaderList, null);
+                var quiltResult = await quiltUrl.AllowAnyHttpStatus().GetStringAsync();
+                // 将 JSON 响应转换为 ProjBobcat 类型 
+                var artifacts = JsonSerializer.Deserialize<QuiltLoaderModel[]>(quiltResult)!;
+                // 获取用户想要安装的版本（示例，非实际代码）
+                var userSelect = Array.FindIndex(GlobalVariable.QuiltDownload.QuiltListModel,
+                    x => x.Version == quiltVersion);
+                // 获取单个 Loader Artifact 
+                var selectedArtifact = artifacts[userSelect];
+                var quiltInstaller = new QuiltInstaller
+                {
+                    RootPath = App.Core.RootPath,
+                    LoaderArtifact = selectedArtifact,
+                    MineCraftVersion = installMinecraftVersion,
+                    CustomId = $"{saveVersionName}-temp",
+                    InheritsFrom = saveVersionName
+                };
+                quiltInstaller.StageChangedEventDelegate += (_, args) =>
+                {
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        InstallProgressBar2.IsVisible = true;
+                        InstallProgressBar2.Value = args.Progress;
+                        AddInstallLog($"[Quilt] - [{args.Progress}] - {args.CurrentStage}");
+                        if (Math.Abs(args.Progress - 100) < 0.01)
+                            InstallProgressBar2.IsVisible = false;
+                    });
+                };
+                InstallProgressBar.Value = 80;
+                AddInstallLog("开始安装Quilt");
+                await quiltInstaller.InstallTaskAsync();
+                InstallProgressBar.Value = 90;
+                var inheritsFromJson =
+                    await File.ReadAllTextAsync(
+                        $"./JCL/.minecraft/versions/{saveVersionName}-temp/{saveVersionName}-temp.json");
+                var normalJson =
+                    await File.ReadAllTextAsync($"./JCL/.minecraft/versions/{saveVersionName}/{saveVersionName}.json");
+                var obj1 = JObject.Parse(inheritsFromJson);
+                var obj2 = JObject.Parse(normalJson);
+                obj1 = JsonUtils.RemoveNullProperties(obj1);
+                obj1 = JsonUtils.RemoveEmptyProperties(obj1);
+                obj1.Remove("inheritsFrom");
+                obj1.Remove("minimumLauncherVersion");
+                obj1["id"] = saveVersionName;
+                var mar = JsonUtils.MergedJson(obj1, obj2);
+                DirectoryUtils.DeleteDirectory($"./JCL/.minecraft/versions/{saveVersionName}-temp");
+                await File.WriteAllTextAsync($"./JCL/.minecraft/versions/{saveVersionName}/{saveVersionName}.json",
+                    mar.ToString());
+                AddInstallLog("Quilt安装完成");
             }
             else if (GlobalVariable.DownloadSelectAttachmentsModels.Any(m =>
                          m.InstallAttachmentsType == DownloadAttachmentsType.LiteLoader))

@@ -28,7 +28,9 @@ public static class DownloadSourceHandler
         FabricMeta,
         FabricMaven,
         OptifineMcList,
-        OptifineJarDownload
+        OptifineJarDownload,
+        QuiltSupportMcList,
+        QuiltLoaderList
     }
 
     public static string GetDownloadSource(DownloadTargetEnum target, DownloadSourceEnum? source,
@@ -38,8 +40,18 @@ public static class DownloadSourceHandler
 
         var baseUrl = source switch
         {
-            DownloadSourceEnum.MCBBS => "https://download.mcbbs.net",
-            DownloadSourceEnum.BMCL => "https://bmclapi2.bangbang93.com",
+            DownloadSourceEnum.MCBBS => target switch
+            {
+                DownloadTargetEnum.QuiltSupportMcList or DownloadTargetEnum.QuiltLoaderList =>
+                    "https://meta.quiltmc.org",
+                _ => "https://download.mcbbs.net"
+            },
+            DownloadSourceEnum.BMCL => target switch
+            {
+                DownloadTargetEnum.QuiltSupportMcList or DownloadTargetEnum.QuiltLoaderList =>
+                    "https://meta.quiltmc.org",
+                _ => "https://bmclapi2.bangbang93.com"
+            },
             DownloadSourceEnum.Official => target switch
             {
                 DownloadTargetEnum.MinecraftJar or DownloadTargetEnum.MinecraftJson => "https://download.mcbbs.net",
@@ -53,6 +65,8 @@ public static class DownloadSourceHandler
                 DownloadTargetEnum.FabricMaven => "https://maven.fabricmc.net",
                 DownloadTargetEnum.OptifineMcList => "https://download.mcbbs.net",
                 DownloadTargetEnum.OptifineJarDownload => "https://download.mcbbs.net",
+                DownloadTargetEnum.QuiltSupportMcList or DownloadTargetEnum.QuiltLoaderList =>
+                    "https://meta.quiltmc.org",
                 _ => "http://launchermeta.mojang.com"
             },
             _ => throw new InvalidDataException($"Selected mirror field {source} does not exist.")
@@ -79,6 +93,8 @@ public static class DownloadSourceHandler
             DownloadTargetEnum.FabricMaven => $"{baseUrl}/",
             DownloadTargetEnum.OptifineMcList => $"{baseUrl}/optifine/{minecraftVersion}",
             DownloadTargetEnum.OptifineJarDownload => $"{baseUrl}/maven/com/optifine/{minecraftVersion}",
+            DownloadTargetEnum.QuiltSupportMcList => $"{baseUrl}/v3/versions/game",
+            DownloadTargetEnum.QuiltLoaderList => $"{baseUrl}/v3/versions/loader",
             _ => throw new InvalidDataException($"Selected target field {target} does not exist.")
         };
     }
