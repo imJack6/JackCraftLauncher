@@ -867,9 +867,8 @@ public partial class DownloadMenu : UserControl
                 {
                     RootPath = App.Core.RootPath,
                     LoaderArtifact = selectedArtifact,
-                    MineCraftVersion = installMinecraftVersion,
                     CustomId = $"{saveVersionName}-temp",
-                    InheritsFrom = saveVersionName
+                    InheritsFrom = installMinecraftVersion
                 };
                 quiltInstaller.StageChangedEventDelegate += (_, args) =>
                 {
