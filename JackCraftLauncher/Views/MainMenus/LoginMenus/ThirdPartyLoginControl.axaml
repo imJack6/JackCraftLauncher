@@ -2,7 +2,92 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i18N="clr-namespace:JackCraftLauncher.Localizer"
+             xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="JackCraftLauncher.Views.MainMenus.LoginMenus.ThirdPartyLoginControl">
-    TODO
+    <UserControl.Resources>
+        <!-- ReSharper disable once Xaml.RedundantResource -->
+        <StackPanel x:Key="EnterAuthServerView" Spacing="15" Margin="20">
+            <TextBlock HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Classes="Headline6"
+                       Text="{i18N:Localize PleaseEnterAuthServer}" />
+            <Button Content="{i18N:Localize OK}"
+                    Margin="0,5,0,0"
+                    Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=dialogHostAvalonia:DialogHost}, Path=CloseDialogCommand}" />
+        </StackPanel>
+        <!-- ReSharper disable once Xaml.RedundantResource -->
+        <StackPanel x:Key="EnterUserNameOrEmailView" Spacing="15" Margin="20">
+            <TextBlock HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Classes="Headline6"
+                       Text="{i18N:Localize PleaseEnterUserNameOrEmail}" />
+            <Button Content="{i18N:Localize OK}"
+                    Margin="0,5,0,0"
+                    Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=dialogHostAvalonia:DialogHost}, Path=CloseDialogCommand}" />
+        </StackPanel>
+        <!-- ReSharper disable once Xaml.RedundantResource -->
+        <StackPanel x:Key="EnterPasswordView" Spacing="15" Margin="20">
+            <TextBlock HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Classes="Headline6"
+                       Text="{i18N:Localize PleaseEnterPassword}" />
+            <Button Content="{i18N:Localize OK}"
+                    Margin="0,5,0,0"
+                    Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=dialogHostAvalonia:DialogHost}, Path=CloseDialogCommand}" />
+        </StackPanel>
+        <!-- ReSharper disable once Xaml.RedundantResource -->
+        <StackPanel x:Key="LoadingView" Spacing="20" Margin="15">
+            <TextBlock Text="{i18N:Localize Loading}"
+                       HorizontalAlignment="Center"
+                       Classes="Headline7" />
+            <ProgressBar Classes="circular"
+                         Width="30"
+                         Height="30"
+                         HorizontalAlignment="Center"
+                         IsIndeterminate="True" />
+        </StackPanel>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0"
+                    Margin="30,10,30,0">
+            <avalonia:MaterialIcon Kind="AccountLock"
+                                   Margin="0,5,0,0"
+                                   Width="50"
+                                   Height="50" />
+            <TextBlock Text="{i18N:Localize Login}"
+                       Classes="Headline4"
+                       HorizontalAlignment="Center" />
+            <TextBox UseFloatingWatermark="True"
+                     Classes="clearButton"
+                     Name="AuthServerTextBox"
+                     assists:TextFieldAssist.Label="{i18N:Localize AuthServer}" />
+            <TextBox UseFloatingWatermark="True"
+                     Classes="clearButton"
+                     Name="UsernameEmailTextBox"
+                     assists:TextFieldAssist.Label="{i18N:Localize UserNameOrEmail}" />
+            <TextBox UseFloatingWatermark="True"
+                     Classes="revealPasswordButton"
+                     Name="PasswordTextBox"
+                     PasswordChar="*"
+                     assists:TextFieldAssist.Label="{i18N:Localize Password}" />
+        </StackPanel>
+        <Button Grid.Row="1"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Bottom"
+                MaxHeight="50"
+                Height="40"
+                MinHeight="30"
+                Margin="30,0,30,20"
+                Click="LoginButton_OnClick"
+                CornerRadius="15"
+                Content="{i18N:Localize Login}" />
+    </Grid>
 </UserControl>

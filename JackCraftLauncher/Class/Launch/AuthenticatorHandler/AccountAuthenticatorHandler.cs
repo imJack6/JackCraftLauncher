@@ -50,6 +50,12 @@ public class AccountAuthenticatorHandler
             authResult = await authenticator.AuthTaskAsync(false);
             DefaultConfigHandler.SetConfig(DefaultConfigConstants.LoginInformationNodes.LoginModeNode,
                 LoginType.Yggdrasil);
+            DefaultConfigHandler.SetConfig(DefaultConfigConstants.LoginInformationNodes.YggdrasilLoginAuthServerNode,
+                ((YggdrasilAuthenticator)authenticator).AuthServer!);
+            DefaultConfigHandler.SetConfig(DefaultConfigConstants.LoginInformationNodes.MicrosoftLoginRefreshTokenNode,
+                ((YggdrasilAuthenticator)authenticator).Email);
+            DefaultConfigHandler.SetConfig(DefaultConfigConstants.LoginInformationNodes.MicrosoftLoginRefreshTokenNode,
+                EncryptHandler.JcEncrypt(((YggdrasilAuthenticator)authenticator).Password));
         }
 
         DefaultConfigHandler.SetConfig(DefaultConfigConstants.LoginInformationNodes.UsernameNode, username);

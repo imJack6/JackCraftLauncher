@@ -178,6 +178,19 @@ public class DefaultConfigHandler
                 break;
             case LoginType.Yggdrasil:
                 //loginAs = string.Format(loginAs, Localizer.Localizer.Instance["ThirdPartyLogin"]);
+                await AccountAuthenticatorHandler.Login(
+                    new YggdrasilAuthenticator
+                    {
+                        AuthServer = (string)GetConfig(DefaultConfigConstants.LoginInformationNodes
+                            .YggdrasilLoginAuthServerNode),
+                        Email = (string)GetConfig(DefaultConfigConstants.LoginInformationNodes
+                            .YggdrasilLoginUserNameOrEmailNode),
+                        LauncherAccountParser =
+                            new DefaultLauncherAccountParser(App.Core.RootPath!, App.Core.ClientToken),
+                        Password = EncryptHandler.JcDecrypt((string)GetConfig(DefaultConfigConstants
+                            .LoginInformationNodes.YggdrasilLoginPasswordNode))
+                    },
+                    username);
                 break;
         }
 
