@@ -6,7 +6,7 @@ README: English | [简体中文](README.md)
 
 > The main author is only [imJack6 (Jack Lei)](https://github.com/imJack6) One person, progress may be slow
 >
-> Development Progress: ≈ 50%
+> Development Progress: ≈ 60%
 >
 > ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
 > ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
@@ -36,9 +36,9 @@ Expected functionality and implementation status:
 | Function      | State |
 |---------------|-------|
 | Settings      | ❎     |
-| Profile       | ❎     |
-| Login         | ❎️    |
-| Game Download | ❎     |
+| Profile       | ❇️     |
+| Login         | ❇️    |
+| Game Download | ❇️     |
 | Game Start	   | ❇️    |
 | Game Log		    | ❇️    |
 | ......		      | ...   |
@@ -47,14 +47,14 @@ Expected functionality and implementation status:
 |--------------------|-------|
 | Offline            | ✅     |
 | Online (Microsoft) | ❇️    |
-| Third Party        | ❌️    |
+| Third Party        | ⚠️    |
 
 | Download          | State |
 |-------------------|-------|
 | Original Edition	 | ✅     |
 | Forge	            | ❇️     |
 | Fabric	           | ❇️     |
-| Quilt	            | ❌     |
+| Quilt	            | ❇️     |
 | Optifine          | ✅     |
 | Combination	      | ❇️     |
 
