@@ -52,11 +52,18 @@ public class GlobalVariable
 
     #endregion
 
-    #region 微软登录
+    #region 登录
 
     public class MicrosoftLogin // 微软登录
     {
         public static string RefreshToken { get; set; } = string.Empty; // 刷新用 Token
+    }
+
+    public class YggdrasilLogin // Yggdrasil 登录
+    {
+        public static string AuthServer { get; set; } = string.Empty; // 验证服务器
+        public static string UserNameOrEmail { get; set; } = string.Empty; // 用户名或邮箱
+        public static string Password { get; set; } = string.Empty; // 密码
     }
 
     #endregion

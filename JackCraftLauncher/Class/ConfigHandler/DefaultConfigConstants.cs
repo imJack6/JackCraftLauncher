@@ -30,7 +30,7 @@ public static class DefaultConfigConstants
         public const string UsernameNode = "LoginInformation.Username";
         public const string MicrosoftLoginRefreshTokenNode = "LoginInformation.MicrosoftLogin.RefreshToken";
         public const string YggdrasilLoginAuthServerNode = "LoginInformation.YggdrasilLogin.AuthServer";
-        public const string YggdrasilLoginEmailNode = "LoginInformation.YggdrasilLogin.Email";
+        public const string YggdrasilLoginUserNameOrEmailNode = "LoginInformation.YggdrasilLogin.UserNameOrEmail";
         public const string YggdrasilLoginPasswordNode = "LoginInformation.YggdrasilLogin.Password";
     }
 }
