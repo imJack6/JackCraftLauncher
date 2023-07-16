@@ -53,7 +53,7 @@ public partial class ThirdPartyLoginControl : UserControl
                             new DefaultLauncherAccountParser(App.Core.RootPath!, App.Core.ClientToken),
                         Password = PasswordTextBox.Text
                     },
-                    authResult.User.UserName);
+                    authResult.SelectedProfile!.Name);
                 DialogHostUtils.Close();
             }
             else
