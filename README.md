@@ -53,7 +53,7 @@ README: [English](README_EN.md) | 简体中文
 | 纯净端	      | ✅  |
 | Forge端	   | ❇️ |
 | Fabric端	  | ❇️ |
-| Quilt端	   | ✅ |
+| Quilt端	   | ✅  |
 | Optifine端 | ✅  |
 | 组合端	      | ❇️ |
 
