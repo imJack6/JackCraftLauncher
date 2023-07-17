@@ -40,7 +40,8 @@ Expected functionality and implementation status:
 | Login         | ❇️    |
 | Game Download | ❇️    |
 | Game Start	   | ❇️    |
-| Game Log		    | ❇️    |
+| Game Log		    | ❎     |
+| i18n		        | ❌     |
 | ......		      | ...   |
 
 | Login              | State |
