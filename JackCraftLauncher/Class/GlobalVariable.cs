@@ -6,6 +6,7 @@ using JackCraftLauncher.Class.Models.FabricModels;
 using JackCraftLauncher.Class.Models.ForgeModels;
 using JackCraftLauncher.Class.Models.InstallModels;
 using JackCraftLauncher.Class.Models.ListTemplate;
+using JackCraftLauncher.Class.Models.LiteLoaderModels;
 using JackCraftLauncher.Class.Models.MinecraftVersionManifest;
 using JackCraftLauncher.Class.Models.OptifineModels;
 using JackCraftLauncher.Class.Models.QuiltModels;
@@ -123,6 +124,14 @@ public class GlobalVariable
     {
         public static ObservableCollection<QuiltDownloadList> QuiltDownloadList { get; set; } = new(); // Quilt下载列表
         public static QuiltListModel[] QuiltListModel { get; set; } = null!; // Quilt 版本清单
+    }
+
+    public class LiteLoaderDownload
+    {
+        public static ObservableCollection<LiteLoaderDownloadList> LiteLoaderDownloadList { get; set; } =
+            new(); // LiteLoader下载列表
+
+        public static LiteLoaderMcVersionModel LiteLoaderMcVersionModel { get; set; } = null!; // LiteLoader 版本
     }
 
     #endregion

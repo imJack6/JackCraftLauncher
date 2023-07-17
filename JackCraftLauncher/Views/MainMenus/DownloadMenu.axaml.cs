@@ -16,15 +16,18 @@ using JackCraftLauncher.Class.Models.InstallModels;
 using JackCraftLauncher.Class.Models.ListTemplate;
 using JackCraftLauncher.Class.Models.MinecraftDownloadModel;
 using JackCraftLauncher.Class.Utils;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ProjBobcat.Class.Helper;
 using ProjBobcat.Class.Model;
 using ProjBobcat.Class.Model.Fabric;
+using ProjBobcat.Class.Model.LiteLoader;
 using ProjBobcat.Class.Model.Optifine;
 using ProjBobcat.Class.Model.Quilt;
 using ProjBobcat.DefaultComponent.Installer;
 using ProjBobcat.DefaultComponent.Installer.ForgeInstaller;
 using ProjBobcat.Interface;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace JackCraftLauncher.Views.MainMenus;
 
@@ -81,6 +84,14 @@ public partial class DownloadMenu : UserControl
         QuiltExpander.IsExpanded = false;
         QuiltCancelSelectButton.IsVisible = false;
         QuiltListBox.SelectedIndex = -1;
+
+        #endregion
+
+        #region LiteLoader
+
+        LiteLoaderExpander.IsExpanded = false;
+        LiteLoaderCancelSelectButton.IsVisible = false;
+        LiteLoaderListBox.SelectedIndex = -1;
 
         #endregion
     }
@@ -344,6 +355,37 @@ public partial class DownloadMenu : UserControl
 
     #endregion
 
+    #region LiteLoader
+
+    private void LiteLoaderListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (LiteLoaderListBox.SelectedIndex != -1)
+        {
+            var downloadList = (LiteLoaderDownloadList)LiteLoaderListBox.SelectedItem!;
+            RemoveDownloadSelectModel(DownloadAttachmentsType.LiteLoader);
+            AddDownloadSelectModel(
+                new DownloadSelectModel
+                {
+                    InstallAttachmentsType = DownloadAttachmentsType.LiteLoader,
+                    Version = downloadList.Version
+                });
+            LiteLoaderExpander.IsExpanded = false;
+            LiteLoaderCancelSelectButton.IsVisible = true;
+            LiteLoaderSelectVersionTextBlock.Text = downloadList.Version;
+        }
+    }
+
+    private void LiteLoaderCancelSelectButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        RemoveDownloadSelectModel(DownloadAttachmentsType.LiteLoader);
+        LiteLoaderExpander.IsExpanded = false;
+        LiteLoaderCancelSelectButton.IsVisible = false;
+        LiteLoaderListBox.SelectedIndex = -1;
+        LiteLoaderSelectVersionTextBlock.Text = Localizer.Localizer.Instance["NotSelected"];
+    }
+
+    #endregion
+
     #endregion
 
     #region 选择要安装的Minecraft界面
@@ -405,6 +447,7 @@ public partial class DownloadMenu : UserControl
         ListHandler.RefreshLocalFabricDownloadList(mcVersion);
         ListHandler.RefreshLocalOptifineDownloadList(mcVersion);
         ListHandler.RefreshLocalQuiltDownloadList(mcVersion);
+        ListHandler.RefreshLocalLiteLoaderDownloadList(mcVersion);
 
         InstallMinecraftVersionTextBlock.Text = mcVersion;
         DownloadSaveVersionNameTextBox.Text = mcVersion;
@@ -522,6 +565,14 @@ public partial class DownloadMenu : UserControl
         QuiltExpander.IsExpanded = false;
         QuiltCancelSelectButton.IsVisible = false;
         QuiltListBox.SelectedIndex = -1;
+
+        #endregion
+
+        #region LiteLoader
+
+        LiteLoaderExpander.IsExpanded = false;
+        LiteLoaderCancelSelectButton.IsVisible = false;
+        LiteLoaderListBox.SelectedIndex = -1;
 
         #endregion
 
@@ -908,6 +959,64 @@ public partial class DownloadMenu : UserControl
                          m.InstallAttachmentsType == DownloadAttachmentsType.LiteLoader))
             {
                 // LiteLoader install
+                InstallProgressBar.Value = 50;
+                AddInstallLog("初始化LiteLoader安装");
+                var liteLoaderUrl = $"{DownloadSourceHandler
+                    .GetDownloadSource(DownloadSourceHandler.DownloadTargetEnum.LiteLoaderMcList, null, installMinecraftVersion)}";
+                var liteLoaderResult = await liteLoaderUrl.AllowAnyHttpStatus().GetStringAsync();
+                // 将 JSON 响应转换为 ProjBobcat 类型 
+                var liteLoaderVersionModel =
+                    JsonConvert.DeserializeObject<LiteLoaderDownloadVersionModel>(liteLoaderResult);
+                liteLoaderVersionModel.McVersion = saveVersionName;
+                // 获取版本 JSON 文件所在的路径
+                var jsonPath = $"{folderPath}/{saveVersionName}.json";
+                // 读取该文件的内容
+                var jsonContent = await File.ReadAllTextAsync(jsonPath);
+                // 将 JSON 内容转换为 RawVersionModel
+                var baseVersionModel = JsonConvert.DeserializeObject<RawVersionModel>(jsonContent);
+                var normalJson =
+                    await File.ReadAllTextAsync($"./JCL/.minecraft/versions/{saveVersionName}/{saveVersionName}.json");
+                var obj2 = JObject.Parse(normalJson);
+                obj2["id"] = saveVersionName;
+                await File.WriteAllTextAsync($"./JCL/.minecraft/versions/{saveVersionName}/{saveVersionName}.json",
+                    obj2.ToString());
+                var liteLoaderInstaller = new LiteLoaderInstaller
+                {
+                    InheritVersion = baseVersionModel,
+                    InheritsFrom = saveVersionName,
+                    RootPath = App.Core.RootPath,
+                    VersionModel = liteLoaderVersionModel,
+                    CustomId = $"{saveVersionName}-temp"
+                };
+                liteLoaderInstaller.StageChangedEventDelegate += (_, args) =>
+                {
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        InstallProgressBar2.IsVisible = true;
+                        InstallProgressBar2.Value = args.Progress;
+                        AddInstallLog($"[LiteLoader] - [{args.Progress}] - {args.CurrentStage}");
+                        if (Math.Abs(args.Progress - 100) < 0.01)
+                            InstallProgressBar2.IsVisible = false;
+                    });
+                };
+                InstallProgressBar.Value = 80;
+                AddInstallLog("开始安装LiteLoader");
+                await liteLoaderInstaller.InstallTaskAsync();
+                InstallProgressBar.Value = 90;
+                var inheritsFromJson =
+                    await File.ReadAllTextAsync(
+                        $"./JCL/.minecraft/versions/{saveVersionName}-temp/{saveVersionName}-temp.json");
+                var obj1 = JObject.Parse(inheritsFromJson);
+                obj1 = JsonUtils.RemoveNullProperties(obj1);
+                obj1 = JsonUtils.RemoveEmptyProperties(obj1);
+                obj1.Remove("inheritsFrom");
+                obj1.Remove("minimumLauncherVersion");
+                obj1["id"] = saveVersionName;
+                var mar = JsonUtils.MergedJson(obj1, obj2);
+                DirectoryUtils.DeleteDirectory($"./JCL/.minecraft/versions/{saveVersionName}-temp");
+                await File.WriteAllTextAsync($"./JCL/.minecraft/versions/{saveVersionName}/{saveVersionName}.json",
+                    mar.ToString());
+                AddInstallLog("LiteLoader安装完成");
             }
 
             #endregion

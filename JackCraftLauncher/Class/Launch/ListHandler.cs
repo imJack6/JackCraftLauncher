@@ -8,6 +8,7 @@ using JackCraftLauncher.Class.Models;
 using JackCraftLauncher.Class.Models.FabricModels;
 using JackCraftLauncher.Class.Models.ForgeModels;
 using JackCraftLauncher.Class.Models.ListTemplate;
+using JackCraftLauncher.Class.Models.LiteLoaderModels;
 using JackCraftLauncher.Class.Models.MinecraftVersionManifest;
 using JackCraftLauncher.Class.Models.OptifineModels;
 using JackCraftLauncher.Class.Models.QuiltModels;
@@ -536,6 +537,72 @@ public class ListHandler
 
         DownloadMenu.Instance.QuiltExpander.IsEnabled = true;
         DownloadMenu.Instance.QuiltSelectVersionTextBlock.Text = Localizer.Localizer.Instance["NotSelected"];
+
+        #endregion
+    }
+
+    public static async Task RefreshLocalLiteLoaderDownloadList(string mcVersion)
+    {
+        #region 初始化
+
+        DownloadMenu.Instance.LiteLoaderExpander.IsEnabled = false;
+        DownloadMenu.Instance.LiteLoaderSelectVersionTextBlock.Text = Localizer.Localizer.Instance["Loading"];
+        GlobalVariable.LiteLoaderDownload.LiteLoaderMcVersionModel = null!;
+        GlobalVariable.LiteLoaderDownload.LiteLoaderDownloadList.Clear();
+
+        #endregion
+
+        #region 获取加速器
+
+        #region 获取对应版本
+
+        var liteLoaderUrl = $"{DownloadSourceHandler
+            .GetDownloadSource(DownloadSourceHandler.DownloadTargetEnum.LiteLoaderMcList, null, mcVersion)}";
+        var liteLoaderResult = await liteLoaderUrl.AllowAnyHttpStatus().GetStringAsync();
+
+        #endregion
+
+        #region 判断是否支持
+
+        try
+        {
+            var document = JsonDocument.Parse(liteLoaderResult);
+        }
+        catch (JsonException)
+        {
+            DownloadMenu.Instance.LiteLoaderSelectVersionTextBlock.Text =
+                Localizer.Localizer.Instance["UnsupportedVersion"];
+            DownloadMenu.Instance.LiteLoaderExpander.IsEnabled = false;
+            return;
+        }
+
+        #endregion
+
+        #region 获取LiteLoader加载器
+
+        var liteLoaderLoader = JsonSerializer.Deserialize<LiteLoaderMcVersionModel>(liteLoaderResult)!;
+        GlobalVariable.LiteLoaderDownload.LiteLoaderMcVersionModel = liteLoaderLoader;
+
+        #endregion
+
+        #endregion
+
+        #region 更新到UI
+
+        GlobalVariable.LiteLoaderDownload.LiteLoaderDownloadList = new ObservableCollection<LiteLoaderDownloadList>();
+        GlobalVariable.LiteLoaderDownload.LiteLoaderDownloadList.Add(new LiteLoaderDownloadList(
+            liteLoaderLoader.Version,
+            !liteLoaderLoader.Type.Contains("SNAPSHOT")
+                ? Localizer.Localizer.Instance["OfficialVersion"]
+                : Localizer.Localizer.Instance["BetaVersion"]));
+        DownloadMenu.Instance.LiteLoaderListBox.ItemsSource = GlobalVariable.LiteLoaderDownload.LiteLoaderDownloadList;
+
+        #endregion
+
+        #region 结束
+
+        DownloadMenu.Instance.LiteLoaderExpander.IsEnabled = true;
+        DownloadMenu.Instance.LiteLoaderSelectVersionTextBlock.Text = Localizer.Localizer.Instance["NotSelected"];
 
         #endregion
     }

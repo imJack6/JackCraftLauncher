@@ -272,7 +272,7 @@
                         </controls:Card>
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" MinWidth="100" />
+                                <ColumnDefinition Width="Auto" MinWidth="120" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
@@ -328,7 +328,7 @@
                         </Grid>
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" MinWidth="100" />
+                                <ColumnDefinition Width="Auto" MinWidth="120" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
@@ -384,14 +384,14 @@
                         </Grid>
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" MinWidth="100" />
+                                <ColumnDefinition Width="Auto" MinWidth="120" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0"
                                         Margin="0,0,10,0"
                                         Orientation="Horizontal">
-                                <Image Width="35" Source="/Assets/Icons/Redstone_Lamp.png" />
+                                <Image Width="30" Margin="2.5" Source="/Assets/Icons/Redstone_Lamp.png" />
                                 <TextBlock Text="Optifine" VerticalAlignment="Center" />
                             </StackPanel>
                             <Expander Grid.Column="1"
@@ -413,8 +413,8 @@
                                         <DataTemplate x:DataType="listTemplate:OptifineDownloadList">
                                             <Grid>
                                                 <Image Source="\Assets\Icons\Redstone_Lamp.png"
-                                                       Margin="10,0,0,0"
-                                                       Height="35" HorizontalAlignment="Left" />
+                                                       Margin="12.5,0,2.5,0"
+                                                       Height="30" HorizontalAlignment="Left" />
                                                 <TextBlock Text="{Binding Path=Version}"
                                                            FontSize="15"
                                                            Margin="50,0,0,0"
@@ -440,14 +440,14 @@
                         </Grid>
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" MinWidth="100" />
+                                <ColumnDefinition Width="Auto" MinWidth="120" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0"
                                         Margin="0,0,10,0"
                                         Orientation="Horizontal">
-                                <Image Width="35" Source="/Assets/Icons/quilt.png" />
+                                <Image Width="30" Margin="2.5" Source="/Assets/Icons/quilt.png" />
                                 <TextBlock Text="Quilt" VerticalAlignment="Center" />
                             </StackPanel>
                             <Expander Grid.Column="1"
@@ -469,8 +469,8 @@
                                         <DataTemplate x:DataType="listTemplate:QuiltDownloadList">
                                             <Grid>
                                                 <Image Source="\Assets\Icons\quilt.png"
-                                                       Margin="10,0,0,0"
-                                                       Height="35" HorizontalAlignment="Left" />
+                                                       Margin="12.5,0,2.5,0"
+                                                       Height="30" HorizontalAlignment="Left" />
                                                 <TextBlock Text="{Binding Path=Version}"
                                                            FontSize="15"
                                                            Margin="50,0,0,0"
@@ -489,6 +489,63 @@
                                     Name="QuiltCancelSelectButton"
                                     IsVisible="False"
                                     Click="QuiltCancelSelectButton_OnClick"
+                                    Margin="10,0,0,0"
+                                    CornerRadius="25">
+                                <avalonia:MaterialIcon Width="20" Height="20" Kind="Close" />
+                            </Button>
+                        </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" MinWidth="120" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0"
+                                        Margin="0,0,10,0"
+                                        Orientation="Horizontal">
+                                <Image Width="30" Margin="2.5" Source="/Assets/Icons/Chicken.png" />
+                                <TextBlock Text="LiteLoader" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <Expander Grid.Column="1"
+                                      CornerRadius="16"
+                                      Name="LiteLoaderExpander">
+                                <Expander.Header>
+                                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                        <TextBlock Text="{i18N:Localize Loading}"
+                                                   Name="LiteLoaderSelectVersionTextBlock" />
+                                    </StackPanel>
+                                </Expander.Header>
+                                <ListBox Name="LiteLoaderListBox"
+                                         SelectionChanged="LiteLoaderListBox_OnSelectionChanged">
+                                    <ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <VirtualizingStackPanel />
+                                        </ItemsPanelTemplate>
+                                    </ListBox.ItemsPanel>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate x:DataType="listTemplate:LiteLoaderDownloadList">
+                                            <Grid>
+                                                <Image Source="\Assets\Icons\Chicken.png"
+                                                       Margin="12.5,0,2.5,0"
+                                                       Height="30" HorizontalAlignment="Left" />
+                                                <TextBlock Text="{Binding Path=Version}"
+                                                           FontSize="15"
+                                                           Margin="50,0,0,0"
+                                                           HorizontalAlignment="Left" />
+                                                <TextBlock Text="{Binding Path=VersionType}"
+                                                           FontSize="12"
+                                                           Margin="51,20,0,0"
+                                                           Opacity="0.75"
+                                                           HorizontalAlignment="Left" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Expander>
+                            <Button Grid.Column="2"
+                                    Name="LiteLoaderCancelSelectButton"
+                                    IsVisible="False"
+                                    Click="LiteLoaderCancelSelectButton_OnClick"
                                     Margin="10,0,0,0"
                                     CornerRadius="25">
                                 <avalonia:MaterialIcon Width="20" Height="20" Kind="Close" />

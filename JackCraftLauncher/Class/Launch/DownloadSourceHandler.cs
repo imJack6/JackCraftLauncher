@@ -30,7 +30,8 @@ public static class DownloadSourceHandler
         OptifineMcList,
         OptifineJarDownload,
         QuiltSupportMcList,
-        QuiltLoaderList
+        QuiltLoaderList,
+        LiteLoaderMcList
     }
 
     public static string GetDownloadSource(DownloadTargetEnum target, DownloadSourceEnum? source,
@@ -67,6 +68,7 @@ public static class DownloadSourceHandler
                 DownloadTargetEnum.OptifineJarDownload => "https://download.mcbbs.net",
                 DownloadTargetEnum.QuiltSupportMcList or DownloadTargetEnum.QuiltLoaderList =>
                     "https://meta.quiltmc.org",
+                DownloadTargetEnum.LiteLoaderMcList => "https://download.mcbbs.net",
                 _ => "http://launchermeta.mojang.com"
             },
             _ => throw new InvalidDataException($"Selected mirror field {source} does not exist.")
@@ -95,6 +97,7 @@ public static class DownloadSourceHandler
             DownloadTargetEnum.OptifineJarDownload => $"{baseUrl}/maven/com/optifine/{minecraftVersion}",
             DownloadTargetEnum.QuiltSupportMcList => $"{baseUrl}/v3/versions/game",
             DownloadTargetEnum.QuiltLoaderList => $"{baseUrl}/v3/versions/loader",
+            DownloadTargetEnum.LiteLoaderMcList => $"{baseUrl}/liteloader/list?mcversion={minecraftVersion}",
             _ => throw new InvalidDataException($"Selected target field {target} does not exist.")
         };
     }
