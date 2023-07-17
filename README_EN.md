@@ -53,9 +53,10 @@ Expected functionality and implementation status:
 |-------------------|-------|
 | Original Edition	 | ✅     |
 | Forge	            | ❇️    |
-| Fabric	           | ❇️    |
-| Quilt	            | ❇️    |
+| Fabric	           | ✅     |
+| Quilt	            | ✅     |
 | Optifine          | ✅     |
+| LiteLoader        | ❇️    |
 | Combination	      | ❇️    |
 
 | Start           | State |
