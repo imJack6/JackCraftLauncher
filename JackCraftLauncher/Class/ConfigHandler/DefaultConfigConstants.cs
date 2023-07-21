@@ -9,6 +9,8 @@ public static class DefaultConfigConstants
         public const string GcTypeNode = "GlobalGameSettings.GcType";
         public const string ResolutionWidthNode = "GlobalGameSettings.ResolutionWidth";
         public const string ResolutionHeightNode = "GlobalGameSettings.ResolutionHeight";
+        public const string StartMemoryTypeNode = "GlobalGameSettings.StartMemoryType";
+        public const string StartMemoryNode = "GlobalGameSettings.StartMemory";
     }
 
     public class DownloadSettingsNodes

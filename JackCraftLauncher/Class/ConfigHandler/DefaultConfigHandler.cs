@@ -6,6 +6,7 @@ using JackCraftLauncher.Class.Launch;
 using JackCraftLauncher.Class.Launch.AuthenticatorHandler;
 using JackCraftLauncher.Class.Models.ErrorModels;
 using JackCraftLauncher.Class.Models.LoginModels;
+using JackCraftLauncher.Class.Models.SettingModels;
 using JackCraftLauncher.Class.Utils;
 using JackCraftLauncher.Views.MainMenus;
 using JackCraftLauncher.Views.MyWindow;
@@ -50,6 +51,7 @@ public class DefaultConfigHandler
         LoadStartJavaConfig();
         LoadGameGcTypeConfig();
         LoadGameResolutionConfig();
+        LoadGameStartMemoryConfig();
     }
 
     #region 启动器配置
@@ -138,6 +140,25 @@ public class DefaultConfigHandler
         GlobalVariable.Config.GameResolutionHeight = resolutionHeight;
         SettingMenu.Instance!.GameResolutionWidthTextBox.Text = resolutionWidth.ToString();
         SettingMenu.Instance!.GameResolutionHeightTextBox.Text = resolutionHeight.ToString();
+    }
+
+    private static void LoadGameStartMemoryConfig()
+    {
+        var startMemoryTypeNode =
+            (StartMemoryType)GetConfig(DefaultConfigConstants.GlobalGameSettingsNodes.StartMemoryTypeNode);
+        var startMemory = (uint)GetConfig(DefaultConfigConstants.GlobalGameSettingsNodes.StartMemoryNode);
+        GlobalVariable.Config.StartMemoryType = startMemoryTypeNode;
+        GlobalVariable.Config.StartMemory = startMemory;
+        SettingMenu.Instance!.StartMemorySlider.Value = (double)startMemory / 1024;
+        switch (startMemoryTypeNode)
+        {
+            case StartMemoryType.Auto:
+                SettingMenu.Instance!.AutoConfigStartMemoryRadioButton.IsChecked = true;
+                break;
+            case StartMemoryType.Custom:
+                SettingMenu.Instance!.CustomStartMemoryRadioButton.IsChecked = true;
+                break;
+        }
     }
 
     #endregion
@@ -371,6 +392,8 @@ public class DefaultConfigHandler
         public GcType GcType { get; set; } = GcType.G1Gc;
         public uint ResolutionWidth { get; set; } = 854;
         public uint ResolutionHeight { get; set; } = 480;
+        public StartMemoryType StartMemoryType { get; set; } = StartMemoryType.Auto;
+        public uint StartMemory { get; set; } = 1024;
     }
 
     public class LoginInformation

@@ -20,6 +20,21 @@ public partial class MainWindow : Window
         Instance = this;
         Localizer.Localizer.Instance.LoadLanguage("zh-CN");
         DefaultConfigHandler.LoadSettingsConfig();
+        Task.Run(async () =>
+        {
+            while (true)
+            {
+                #region 刷新内存占用
+
+                if (SettingMenu.Instance is not null)
+                {
+                    GameHandler.RefreshStartMemory();
+                    await Task.Delay(100);
+                }
+
+                #endregion
+            }
+        });
     }
 
     public static MainWindow Instance { get; private set; } = null!;

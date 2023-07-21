@@ -10,6 +10,7 @@ using JackCraftLauncher.Class.Models.LiteLoaderModels;
 using JackCraftLauncher.Class.Models.MinecraftVersionManifest;
 using JackCraftLauncher.Class.Models.OptifineModels;
 using JackCraftLauncher.Class.Models.QuiltModels;
+using JackCraftLauncher.Class.Models.SettingModels;
 using JackCraftLauncher.Class.Utils;
 using ProjBobcat.Class.Model;
 using ProjBobcat.Interface;
@@ -47,6 +48,8 @@ public class GlobalVariable
         public static GcType GameGcType { get; set; } = GcType.G1Gc; // 游戏 GC 类型
         public static uint GameResolutionWidth { get; set; } = 854; // 游戏分辨率宽度
         public static uint GameResolutionHeight { get; set; } = 480; // 游戏分辨率高度
+        public static StartMemoryType StartMemoryType { get; set; } = StartMemoryType.Auto; // 启动内存类型
+        public static uint StartMemory { get; set; } = 1024; // 启动内存
 
         #endregion
     }

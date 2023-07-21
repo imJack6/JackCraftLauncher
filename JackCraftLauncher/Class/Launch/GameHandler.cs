@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using DialogHostAvalonia;
@@ -55,8 +56,8 @@ public class GameHandler
                         Height = GlobalVariable.Config.GameResolutionHeight, // 高度
                         Width = GlobalVariable.Config.GameResolutionWidth // 宽度
                     },
-                    MinMemory = 2048, // 最小内存
-                    MaxMemory = 4096 // 最大内存
+                    MinMemory = GlobalVariable.Config.StartMemory / 2, // 最小内存
+                    MaxMemory = GlobalVariable.Config.StartMemory // 最大内存
                 },
             Version = versionInfo.Id!, // 需要启动的游戏ID，例如1.7.10或者1.15.2
             //VersionInsulation = false, // 版本隔离
@@ -300,5 +301,30 @@ public class GameHandler
             });
         });
         DialogHostUtils.Close();
+    }
+
+    public static async void RefreshStartMemory()
+    {
+        var memoryInfo = ProjBobcat.Class.Helper.SystemInfoHelper.GetMemoryUsage();
+        var memoryTotalMb = (int)(memoryInfo?.Total ?? 0);
+        var memoryUsedMb = (int)(memoryInfo?.Used ?? 0);
+        var memoryFreeMb = (int)(memoryInfo?.Free ?? 0);
+        var memoryTotalGb = Math.Round((double)memoryTotalMb / 1024, 2);
+        var memoryUsedGb = Math.Round((double)memoryUsedMb / 1024, 2);
+        var memoryFreeGb = Math.Round((double)memoryFreeMb / 1024, 2);
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            SettingMenu.Instance.TotalMemoryTextBlock.Text = memoryTotalGb.ToString(CultureInfo.InvariantCulture);
+            SettingMenu.Instance.UsedMemoryTextBlock.Text = memoryUsedGb.ToString(CultureInfo.InvariantCulture);
+            SettingMenu.Instance.NotUsedMemoryTextBlock.Text = memoryFreeGb.ToString(CultureInfo.InvariantCulture);
+            if (SettingMenu.Instance.AutoConfigStartMemoryRadioButton.IsChecked == true)
+            {
+                var allocateMb = (int)(memoryFreeMb * 0.8);
+                if (allocateMb > 17000)
+                    allocateMb = 17000;
+                var gameAllocatesMemoryGb = Math.Round((double)allocateMb / 1024, 2);
+                SettingMenu.Instance.StartMemorySlider.Value = gameAllocatesMemoryGb;
+            }
+        });
     }
 }

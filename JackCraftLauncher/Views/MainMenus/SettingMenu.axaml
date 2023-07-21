@@ -139,6 +139,64 @@
                                              Margin="10,0,0,0" />
                                 </Grid>
                             </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition MinWidth="106" Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                           Margin="20,5"
+                                           Text="{i18N:Localize StartMemory}"
+                                           VerticalAlignment="Top"
+                                           FontSize="16" />
+                                <StackPanel Grid.Column="1"
+                                            Margin="0,0,20,0">
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="20">
+                                        <RadioButton GroupName="StartMemoryGroup"
+                                                     Name="AutoConfigStartMemoryRadioButton"
+                                                     Click="AutoConfigStartMemoryRadioButton_OnClick"
+                                                     IsChecked="True"
+                                                     Content="{i18N:Localize AutoConfig}" />
+                                        <RadioButton GroupName="StartMemoryGroup"
+                                                     Name="CustomStartMemoryRadioButton"
+                                                     Click="CustomStartMemoryRadioButton_OnClick"
+                                                     Content="{i18N:Localize Custom}" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <TextBlock Text="{i18N:Localize StartMemory}" />
+                                        <TextBlock Text=": " />
+                                        <TextBlock Name="TotalMemoryTextBlock" Text="-" />
+                                        <TextBlock Text=" GB" />
+                                        <TextBlock Text=" / " />
+                                        <TextBlock Text=": " />
+                                        <TextBlock Text="{i18N:Localize StartMemory}" />
+                                        <TextBlock Name="UsedMemoryTextBlock" Text="-" />
+                                        <TextBlock Text=" GB" />
+                                        <TextBlock Text=" / " />
+                                        <TextBlock Text=": " />
+                                        <TextBlock Text="{i18N:Localize NotUsed}" />
+                                        <TextBlock Name="NotUsedMemoryTextBlock" Text="-" />
+                                        <TextBlock Text=" GB" />
+                                    </StackPanel>
+                                    <Slider Margin="0,5"
+                                            Maximum="{Binding ElementName=TotalMemoryTextBlock, Path=Text}"
+                                            IsEnabled="{Binding ElementName=CustomStartMemoryRadioButton, Path=IsChecked}"
+                                            Minimum="0.05"
+                                            IsSnapToTickEnabled="True"
+                                            TickFrequency="0.01"
+                                            Classes=" Discrete"
+                                            ValueChanged="StartMemorySlider_OnValueChanged"
+                                            Name="StartMemorySlider" />
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <TextBlock Text="{i18N:Localize GameAllocation}" />
+                                        <TextBlock Text=": " />
+                                        <TextBlock Name="GameAllocatesMemoryTextBlock"
+                                                   Text="{Binding ElementName=StartMemorySlider, Path=Value}" />
+                                        <TextBlock Text=" GB" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
                         </StackPanel>
                     </controls:Card>
                 </StackPanel>

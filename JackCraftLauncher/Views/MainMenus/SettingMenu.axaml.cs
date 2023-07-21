@@ -1,11 +1,13 @@
 ﻿using System.Text.RegularExpressions;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using JackCraftLauncher.Class;
 using JackCraftLauncher.Class.ConfigHandler;
 using JackCraftLauncher.Class.Launch;
+using JackCraftLauncher.Class.Models.SettingModels;
 using Material.Styles.Themes;
 using Material.Styles.Themes.Base;
 using ProjBobcat.Class.Model;
@@ -87,6 +89,38 @@ public partial class SettingMenu : UserControl
                 DefaultConfigHandler.SetConfig(DefaultConfigConstants.GlobalGameSettingsNodes.ResolutionHeightNode,
                     GlobalVariable.Config.GameResolutionHeight);
                 break;
+        }
+    }
+
+    private void StartMemorySlider_OnValueChanged(object? sender, RangeBaseValueChangedEventArgs e)
+    {
+        if (StartMemorySlider != null)
+        {
+            GlobalVariable.Config.StartMemory = (uint)(StartMemorySlider.Value * 1024);
+            DefaultConfigHandler.SetConfig(DefaultConfigConstants.GlobalGameSettingsNodes.StartMemoryNode,
+                GlobalVariable.Config.StartMemory);
+        }
+    }
+
+    private void AutoConfigStartMemoryRadioButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (AutoConfigStartMemoryRadioButton != null)
+        {
+            GameHandler.RefreshStartMemory();
+            GlobalVariable.Config.StartMemoryType = StartMemoryType.Auto;
+            DefaultConfigHandler.SetConfig(DefaultConfigConstants.GlobalGameSettingsNodes.StartMemoryTypeNode,
+                GlobalVariable.Config.StartMemoryType);
+        }
+    }
+
+    private void CustomStartMemoryRadioButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (CustomStartMemoryRadioButton != null)
+        {
+            GameHandler.RefreshStartMemory();
+            GlobalVariable.Config.StartMemoryType = StartMemoryType.Custom;
+            DefaultConfigHandler.SetConfig(DefaultConfigConstants.GlobalGameSettingsNodes.StartMemoryTypeNode,
+                GlobalVariable.Config.StartMemoryType);
         }
     }
 
