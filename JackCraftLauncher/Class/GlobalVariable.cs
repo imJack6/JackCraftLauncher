@@ -17,7 +17,7 @@ using ProjBobcat.Interface;
 
 namespace JackCraftLauncher.Class;
 
-public class GlobalVariable
+public abstract class GlobalVariable
 {
     public static List<VersionInfo> LocalGameList { get; set; } = null!;
     public static List<string> LocalJavaList { get; set; } = new();
@@ -25,7 +25,7 @@ public class GlobalVariable
 
     #region 配置
 
-    public class Config
+    public abstract class Config
     {
         public static string MainConfigPath { get; } =
             $"{PlatformUtils.GetSystemUserDirectory()}{Path.DirectorySeparatorChar}JackCraft{Path.DirectorySeparatorChar}Launcher{Path.DirectorySeparatorChar}Desktop{Path.DirectorySeparatorChar}config.json";
