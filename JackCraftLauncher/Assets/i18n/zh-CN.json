@@ -143,5 +143,12 @@
   "Initialize": "初始化",
   "InstallingMinecraftWithVersionAndName": "正在安装Minecraft中: 版本 - {0} | 名称 - {1}",
   "CreateFolder": "创建文件夹",
-  "StartingGameVersion": "开始启动游戏 {0}"
+  "StartingGameVersion": "开始启动游戏 {0}",
+  "StartMemory": "启动内存",
+  "AutoConfig": "自动配置",
+  "Custom": "自定义",
+  "TotalMemory": "总内存",
+  "Used": "已使用",
+  "NotUsed": "未使用",
+  "GameAllocation": "游戏分配"
 }
