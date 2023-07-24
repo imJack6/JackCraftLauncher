@@ -36,7 +36,7 @@ public class LaunchHandler
         };
         MicrosoftAuthenticator.Configure(new MicrosoftAuthenticatorAPISettings
         {
-            ClientId = EncryptHandler.JcDecrypt("fFlRXiZKWFZZfgRDWU5cAUp9TFpTJRNMU0AtUkZbBQ4GEytV"),
+            ClientId = EncryptHandler.JcDecrypt("fwdSDXBHB1VZeQdAXk5cBxYuTAIJIhdMVUx8VUZWBwxTRn0E"),
             TenentId = "consumers",
             Scopes = new[] { "XboxLive.signin", "offline_access", "openid", "profile", "email" }
         });
